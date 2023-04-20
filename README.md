@@ -1,6 +1,6 @@
 <h1 align="center">SafeArchive</h1>
 
-Allows you to backup your essential files locally with cloud support quickly and also schedule past backup deletions to optimize storage space.
+Allows you to backup your essential local files (+cloud support) quickly and schedule past backup deletions to optimize storage space.
 
 ## Setup & Configuration
 1. Download or clone the repo and install the requirements using:
