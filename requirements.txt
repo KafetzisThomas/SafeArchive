@@ -1,0 +1,7 @@
+customtkinter==5.1.2
+PyDrive2==1.15.1
+humanize==4.6.0
+pystray==0.19.4
+psutil==5.9.4
+Pillow==9.5.0
+plyer==2.1.0
