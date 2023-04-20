@@ -1,4 +1,14 @@
-<h1 align="center">SafeArchive</h1>
+<h1 align = 'center'>
+    <img 
+        src = '/assets/icon.ico' 
+        height = '100' 
+        width = '100' 
+        alt = 'Icon' 
+    />
+    <br>
+    SafeArchive
+    <br>
+</h1>
 
 Allows you to backup your essential local files (+cloud support) quickly and schedule past backup deletions to optimize storage space.
 
