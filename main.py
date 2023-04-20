@@ -5,7 +5,7 @@
 # Author / Project Owner: KafetzisThomas (https://github.com/KafetzisThomas)
 
 # Import built-in modules
-import os, zipfile, json, time, datetime, threading
+import os, zipfile, json, datetime, threading
 from datetime import date
 from tkinter import filedialog
 import tkinter as tk
@@ -310,7 +310,7 @@ class App(ctk.CTk):
       title="Files Restored Sucessfully",
       app_name="SafeArchive",
       message=f"SafeArchive has finished the restore.",
-      app_icon="assets/restore.png",
+      app_icon="assets/icon.ico",
       timeout = 10
     )
 
