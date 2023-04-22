@@ -96,21 +96,18 @@ class App(ctk.CTk):
 
       filename, _, filetype = most_recently_modified_file.partition('.')
 
+      # Get the modification time of the most recently modified file
+      modification_time = datetime.datetime.fromtimestamp(os.path.getmtime(f"{destination_path}{most_recently_modified_file}"))
+
+      # Check if the file is older than three months
+      if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=30)):
+        self.reconnect_drive_notification()
+
       if filetype != 'zip':
         filename = "No backup"
 
     except IndexError:
       filename = "No backup"
-
-    for filename in os.listdir(destination_path): 
-      filepath = os.path.join(destination_path, filename)
-
-      # Get the modification time of the file
-      modification_time = datetime.datetime.fromtimestamp(os.path.getmtime(filepath))
-
-      # Check if the file is older than three months
-      if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=90)):
-        self.reconnect_drive_notification()
 
     backup_options_label = ctk.CTkLabel(master=self, text="Drive Properties ━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
     backup_options_label.place(x=15, y=15)
