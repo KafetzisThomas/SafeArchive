@@ -6,6 +6,8 @@
 # License: GPLv3
 # NOTE: By contributing to this project, you agree to the terms of the GPLv3 license, and agree to grant the project owner the right to also provide or sell this software, including your contribution, to anyone under any other license, with no compensation to you.
 
+version = "1.0.0"
+
 # Import built-in modules
 import os, zipfile, json, datetime, threading
 from datetime import date
@@ -60,7 +62,7 @@ class App(ctk.CTk):
     ctk.set_appearance_mode("dark")
     ctk.set_default_color_theme("blue")
 
-    self.title(f"SafeArchive")  # Set window title
+    self.title(f"SafeArchive {version}")  # Set window title
     self.resizable(False, False)  # Disable minimize/maximize buttons
     self.geometry("500x500")  # Set window size
     self.iconbitmap("assets/icon.ico")  # Set window title icon
