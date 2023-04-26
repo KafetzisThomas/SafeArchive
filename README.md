@@ -12,7 +12,7 @@
 
 Allows you to backup your essential local files (+cloud support) quickly and schedule past backup deletions to optimize storage space.
 
-**How to Download:** Click the ["Releases"](https://github.com/KafetzisThomas/SafeArchive/releases) link on the right, then on the latest release, under 'Assets' click to download the executable file. (You might have to click "Assets" to view the files for the release)
+**How to Download:** Click the "[Releases](https://github.com/KafetzisThomas/SafeArchive/releases)" link on the right, then on the latest release, under 'Assets' click to download the executable file. (You might have to click "Assets" to view the files for the release)
 
 > * Linux Setup Instructions - not available yet
 > * MacOS Setup Instructions - not available yet
