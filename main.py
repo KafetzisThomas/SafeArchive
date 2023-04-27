@@ -241,7 +241,7 @@ class App(ctk.CTk):
     self.restore_button = ctk.CTkButton(master=self, text="", fg_color="#242424", image=restore_image, width=5, height=5, command=self.restore_backup)
     self.restore_button.place(x=15, y=450)
 
-    self.backup_button = ctk.CTkButton(master=self, text="BACKUP", command=self.start_function)
+    self.backup_button = ctk.CTkButton(master=self, text="BACKUP", command=self.run_backup)
     self.backup_button.place(x=200, y=450)
 
     close_button = ctk.CTkButton(master=self, text="CLOSE", command=self.destroy)
@@ -297,7 +297,7 @@ class App(ctk.CTk):
       # Check if the file is older than JSON value
       if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=days)):
         os.remove(filepath)  # Delete the file
-  
+
   # Show notification message when backup process successfully completes
   def backup_completed_notification(self):
     # Show notification
@@ -425,6 +425,15 @@ class App(ctk.CTk):
     
     self.backup_completed_notification()
 
+  # Set progress bar
+  def start_progress_bar(self):
+    self.backup_progressbar.start()
+    self.backup()
+    self.backup_progressbar.stop()
+
+  def run_backup(self):
+    threading.Thread(target=self.start_progress_bar, daemon=True).start()  # Create backup process thread
+
   def restore_backup(self):
     restore_window = tk.Toplevel(self)  # Open new window (restore_window)
     restore_window.title("Select backup to restore")  # Set window title
@@ -473,22 +482,6 @@ class App(ctk.CTk):
 
     self.restore_button = ctk.CTkButton(master=restore_window, text="Restore backup", command=run_restore)
     self.restore_button.place(x=150, y=197)
-
-  def start_function(self):
-    self.is_running = True
-    self.run_function()
-
-  def run_function(self):
-    if self.is_running:
-      threading.Thread(target=self.start_progress_bar, daemon=True).start()  # Create backup process thread
-
-  is_running = False
-
-  # Set progress bar
-  def start_progress_bar(self):
-    self.backup_progressbar.start()
-    self.backup()
-    self.backup_progressbar.stop()
 
   # Backup from taskbar
   def backup_from_taskbar(self, icon):
