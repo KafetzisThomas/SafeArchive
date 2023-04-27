@@ -469,7 +469,7 @@ class App(ctk.CTk):
       self.restore_button.configure(state="normal")  # Change backup button state back to normal
 
     def run_restore():
-      threading.Thread(target=selected_item).start()  # Create new thread
+      threading.Thread(target=selected_item, daemon=True).start()  # Create restore process thread
 
     self.restore_button = ctk.CTkButton(master=restore_window, text="Restore backup", command=run_restore)
     self.restore_button.place(x=150, y=197)
@@ -480,7 +480,7 @@ class App(ctk.CTk):
 
   def run_function(self):
     if self.is_running:
-      threading.Thread(target=self.start_progress_bar).start()  # Create new thread
+      threading.Thread(target=self.start_progress_bar, daemon=True).start()  # Create backup process thread
 
   is_running = False
 
