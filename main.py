@@ -9,7 +9,7 @@
 version = "1.0.0"
 
 # Import built-in modules
-import os, zipfile, json, datetime, threading
+import os, sys, zipfile, json, datetime, threading
 from datetime import date
 from tkinter import filedialog
 import tkinter as tk
@@ -49,10 +49,6 @@ with open('settings.json', 'r') as file:
 # Set the destination directory path (type: string)
 destination_path = config['destination_path'] + 'SafeArchive/'
 
-# Create the destination directory path if it doesn't exist
-if not os.path.exists(destination_path):
-  os.makedirs(destination_path)
-
 # =================================== MAIN ====================================
 
 class App(ctk.CTk):
@@ -66,6 +62,15 @@ class App(ctk.CTk):
     self.resizable(False, False)  # Disable minimize/maximize buttons
     self.geometry("500x500")  # Set window size
     self.iconbitmap("assets/icon.ico")  # Set window title icon
+
+    try:
+      # Create the destination directory path if it doesn't exist
+      if not os.path.exists(destination_path):
+        os.makedirs(destination_path)
+
+    except FileNotFoundError:
+      self.reconnect_drive_notification()
+      sys.exit()
 
     ## Get backup size
 
@@ -304,7 +309,7 @@ class App(ctk.CTk):
       timeout = 10
     )
 
-  # Show notification message when backup process successfully completes
+  # Show notification message when restore process successfully completes
   def restore_completed_notification(self):
     # Show notification
     notification.notify(
@@ -315,7 +320,7 @@ class App(ctk.CTk):
       timeout = 10
     )
 
-  # Show notification message when drive was disconnected for too long
+  # Show notification message when drive was disconnected / for too long
   def reconnect_drive_notification(self):
     # Show notification
     notification.notify(
