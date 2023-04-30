@@ -6,13 +6,19 @@
 # License: GPLv3
 # NOTE: By contributing to this project, you agree to the terms of the GPLv3 license, and agree to grant the project owner the right to also provide or sell this software, including your contribution, to anyone under any other license, with no compensation to you.
 
-version = "1.0.0"
+version = "1.0.1"
 
 # Import built-in modules
 import os, sys, zipfile, json, datetime, threading
 from datetime import date
 from tkinter import filedialog
 import tkinter as tk
+# added by me #
+from tkinter import Label, BOTTOM
+import requests
+from tkinter import ttk, messagebox
+from packaging import version as V
+###############
 
 # Import other (third-party) modules
 from plyer import notification
@@ -23,6 +29,48 @@ from PIL import Image
 import humanize, psutil, pystray
 import customtkinter as ctk
 
+def main():
+  try:
+    Splash_win.destroy()
+  except:
+    pass
+  app = App()
+  app.mainloop()
+
+def check_updates():
+  with requests.get("https://raw.githubusercontent.com/KafetzisThomas/SafeArchive/main/main.py") as rq:
+    with open('_temp_.py', 'wb') as file:
+      file.write(rq.content)
+      file.close()
+  from _temp_ import version as _version_
+  if V.parse(_version_) > V.parse(version):
+    messagebox.showinfo('Software Update', 'Update Available!')
+    mb = messagebox.askyesno('Update Available!', f'SafeArchive version {version} can be updated to {_version_}. Would you like to update it?\nNOTE: The original files will be deleted!')
+    if mb is True:
+      os.remove("_temp_.py")
+      os.startfile("updater.py")
+      quit()
+    elif mb == False:
+        os.remove("_temp_.py")
+    else:
+      os.remove("_temp_.py")
+#========================== Splash Window ============================
+Splash_win = tk.Tk()
+app_width = 300
+app_height = 350
+screen_width = Splash_win.winfo_screenwidth()
+screen_height = Splash_win.winfo_screenheight()
+x = (screen_width/2)-(app_width/2)
+y = (screen_height/2)-(app_height/2)
+Splash_win.geometry(f"{app_width}x{app_height}+{int(x)}+{int(y)}")
+Splash_win.overrideredirect(True)
+Splash_win.resizable(False, False)
+Splash_win.config(bg="#303033")
+SplashLabel = Label(Splash_win, text="Checking For Updates...",
+                    font=("Helvetica", 15), bg="#303033", fg="white")
+SplashLabel.pack(side=BOTTOM, pady=50)
+Splash_win.after(2000, check_updates)
+Splash_win.mainloop()
 # ================================ SET CONFIGS ================================
 
 config = {
@@ -508,5 +556,4 @@ class App(ctk.CTk):
     self.icon.run()
 
 if __name__ == "__main__":
-  app = App()
-  app.mainloop()
+  main()
