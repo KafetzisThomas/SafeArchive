@@ -14,12 +14,6 @@ from tkinter import filedialog, Label, BOTTOM, messagebox
 from packaging import version as V
 from datetime import date
 import tkinter as tk
-# added by me #
-from tkinter import Label, BOTTOM
-import requests
-from tkinter import ttk, messagebox
-from packaging import version as V
-###############
 
 # Import other (third-party) modules
 from plyer import notification
