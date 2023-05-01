@@ -31,16 +31,9 @@ import humanize, psutil, pystray
 import customtkinter as ctk
 
 def main():
-<<<<<<< Updated upstream
-  try:
-    Splash_win.destroy()
-  except:
-    pass
-=======
   try: Splash_win.destroy()
   except: pass
   
->>>>>>> Stashed changes
   app = App()
   app.mainloop()
 
@@ -49,32 +42,10 @@ def check_updates():
     with open('_temp_.py', 'wb') as file:
       file.write(rq.content)
       file.close()
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
   from _temp_ import version as _version_
   if V.parse(_version_) > V.parse(version):
     messagebox.showinfo('Software Update', 'Update Available!')
     mb = messagebox.askyesno('Update Available!', f'SafeArchive version {version} can be updated to {_version_}. Would you like to update it?\nNOTE: The original files will be deleted!')
-<<<<<<< Updated upstream
-    if mb is True:
-      os.remove("_temp_.py")
-      os.startfile("updater.py")
-      quit()
-    elif mb == False:
-        os.remove("_temp_.py")
-    else:
-      os.remove("_temp_.py")
-#========================== Splash Window ============================
-Splash_win = tk.Tk()
-app_width = 300
-app_height = 350
-screen_width = Splash_win.winfo_screenwidth()
-screen_height = Splash_win.winfo_screenheight()
-x = (screen_width/2)-(app_width/2)
-y = (screen_height/2)-(app_height/2)
-=======
     if mb == True:
       os.remove("_temp_.py")
       os.startfile("updater.py")
@@ -98,18 +69,10 @@ screen_height = Splash_win.winfo_screenheight()
 x = (screen_width/2)-(app_width/2)
 y = (screen_height/2)-(app_height/2)
 
->>>>>>> Stashed changes
 Splash_win.geometry(f"{app_width}x{app_height}+{int(x)}+{int(y)}")
 Splash_win.overrideredirect(True)
 Splash_win.resizable(False, False)
 Splash_win.config(bg="#303033")
-<<<<<<< Updated upstream
-SplashLabel = Label(Splash_win, text="Checking For Updates...",
-                    font=("Helvetica", 15), bg="#303033", fg="white")
-SplashLabel.pack(side=BOTTOM, pady=50)
-Splash_win.after(2000, check_updates)
-Splash_win.mainloop()
-=======
 
 image = ctk.CTkImage(Image.open("assets/icon.ico"), size=(150, 150))
 
@@ -122,7 +85,6 @@ SplashLabel.pack(side=BOTTOM, pady=50)
 Splash_win.after(2000, check_updates)
 Splash_win.mainloop()
 
->>>>>>> Stashed changes
 # ================================ SET CONFIGS ================================
 
 config = {
