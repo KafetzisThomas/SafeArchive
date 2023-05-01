@@ -1,3 +1,6 @@
+
+<!---------------------------------[ Header ]---------------------------------->
+
 <h1 align = 'center'>
     <img 
         src = '/assets/icon.ico' 
@@ -10,15 +13,27 @@
     <br>
 </h1>
 
+<!---------------------------------[ Badge ]---------------------------------->
+
+<div align = 'center'>
+    <a href = 'https://github.com/KafetzisThomas/SafeArchive/releases'>
+        <img src = 'https://img.shields.io/github/v/release/KafetzisThomas/SafeArchive?include_prereleases&label=Latest%20Release'/>
+    </a>
+</div>
+
+<br>
+
 Allows you to backup your essential local files (+cloud support) quickly and schedule past backup deletions to optimize storage space.
 
-**How to Download:** Click the "[Releases](https://github.com/KafetzisThomas/SafeArchive/releases)" link on the right, then on the latest release, under 'Assets' click to download the executable file. (You might have to click "Assets" to view the files for the release)
+**How to Download:** Click the "[Releases](https://github.com/KafetzisThomas/SafeArchive/releases)" link on the right, then on the latest release, under 'Assets' click to download the zip file. (You might have to click "Assets" to view the files for the release)
 
 > * Linux Setup Instructions - not available yet
 > * MacOS Setup Instructions - not available yet
 > * (Windows installation not necessary if using exe file. But see how to set up API key for uploading your backups to the cloud [on this page](https://github.com/KafetzisThomas/SafeArchive/wiki/Obtaining-API-Key))
 
 **Note:** No matter the settings, the program runs completely locally on your own machine using the API key and Google Cloud project you created yourself, so even as the program's creator I will never have access to your account.
+
+* For the first run, I recommend you to exit the program after setting your preferences, so changes to be applied.
 
 * I wrote this using Python 3.9 but it will probably work with earlier versions too.
 
@@ -36,7 +51,7 @@ Allows you to backup your essential local files (+cloud support) quickly and sch
 * Restore past backups to their original location
 * Pop up system notifications when backup process completes, selected backup restored successfully and drive hasn't reconnected for too long.
 
-## Manual Setup & Configuration
+## Manual Setup
 1. Download or clone the repo and install the requirements using:
 
     ```py
