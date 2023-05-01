@@ -40,12 +40,10 @@ if not os.path.exists('settings.json'):
   with open('settings.json', 'w') as file:
     json.dump(config, file, indent=2)
 
-# Load the JSON file into memory
 with open('settings.json', 'r') as file:
-  config = json.load(file)
+  config = json.load(file)  # Load the JSON file into memory
 
-## Get value from the JSON file
-
+'''Get value from the JSON file'''
 # Set the destination directory path (type: string)
 destination_path = config['destination_path'] + 'SafeArchive/'
 
@@ -64,45 +62,31 @@ class App(ctk.CTk):
     self.iconbitmap("assets/icon.ico")  # Set window title icon
 
     try:
-      # Create the destination directory path if it doesn't exist
-      if not os.path.exists(destination_path):
+      if not os.path.exists(destination_path):  # Create the destination directory path if it doesn't exist
         os.makedirs(destination_path)
-
     except FileNotFoundError:
       self.reconnect_drive_notification()
       sys.exit()
 
-    ## Get backup size
+    '''Get backup size'''
+    total_size = 0  # Initialize total size to 0
 
-    # Initialize total size to 0
-    total_size = 0
-
-    # Walk through all files in the destination path
+    '''Walk through all files in the destination path'''
     for dirpath, dirnames, filenames in os.walk(destination_path):
       for file in filenames:
         filepath = os.path.join(dirpath, file)
-          
-        # Add the size of each file to the total size
-        total_size += os.path.getsize(filepath)
 
-    ## Get storage media free space
+        total_size += os.path.getsize(filepath)  # Add the size of each file to the total size
 
-    # Get disk usage statistics in bytes
-    disk_usage = psutil.disk_usage(config['destination_path']).free
-
-    # Convert free space to GB
-    free_space = round(disk_usage / (1024**3), 2)
+    '''Get storage media free space'''
+    disk_usage = psutil.disk_usage(config['destination_path']).free  # Get disk usage statistics in bytes
+    free_space = round(disk_usage / (1024**3), 2)  # Convert free space to GB
 
     try:
-      # Get a list of all the files in the destination path
-      files = [file for file in os.listdir(destination_path) if os.path.isfile(os.path.join(destination_path, file))]
+      files = [file for file in os.listdir(destination_path) if os.path.isfile(os.path.join(destination_path, file))]  # Get a list of all the files in the destination path
+      files.sort(key=self.get_modification_time)  # Sort the list of files based on their modification time
 
-      # Sort the list of files based on their modification time
-      files.sort(key=self.get_modification_time)
-
-      # The most recently modified file
-      most_recently_modified_file = files[-1]
-
+      most_recently_modified_file = files[-1]  # The most recently modified file
       filename, _, filetype = most_recently_modified_file.partition('.')
 
       # Get the modification time of the most recently modified file
@@ -112,10 +96,9 @@ class App(ctk.CTk):
       if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=30)):
         self.reconnect_drive_notification()
 
-      if filetype != 'zip':
+      if filetype != 'zip': 
         filename = "No backup"
-
-    except IndexError:
+    except IndexError: 
       filename = "No backup"
 
     backup_options_label = ctk.CTkLabel(master=self, text="Drive Properties ━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
@@ -213,12 +196,10 @@ class App(ctk.CTk):
       source_path_file_explorer = filedialog.askdirectory(title='Backup these folders') + '/'
 
       if (source_path_file_explorer != '/') and (source_path_file_explorer not in config['source_path']):
-        # Add value to key
         config['source_path'].append(source_path_file_explorer)
 
-        # Write the updated dictionary to the JSON file
         with open('settings.json', 'w') as f:
-          json.dump(config, f, indent=2)
+          json.dump(config, f, indent=2)  # Write the updated dictionary to the JSON file
 
         listbox_1.insert(self.counter, source_path_file_explorer)
 
@@ -250,43 +231,35 @@ class App(ctk.CTk):
     self.protocol('WM_DELETE_WINDOW', self.hide_window)
 
 
-  # Get the modification time of zip file
+  '''Get the modification time of zip file'''
   def get_modification_time(self, file):
     file_path = os.path.join(destination_path, file)
     return os.path.getmtime(file_path)
 
   def drives_combobox(self, choice):
-    # Update the value of the key in the dictionary
-    config['destination_path'] = choice
+    config['destination_path'] = choice  # Update the value of the key in the dictionary
 
-    # Write the updated dictionary back to the JSON file
     with open('settings.json', 'w') as f:
-      json.dump(config, f, indent=2)
+      json.dump(config, f, indent=2)  # Write the updated dictionary back to the JSON file
 
-  # Upload the local folder and its content
+  '''Upload the local folder and its content'''
   def cloud_switch(self):
-    # Update the value of the key in the dictionary
-    config['backup_to_cloud'] = self.cloud_switch_var.get()
+    config['backup_to_cloud'] = self.cloud_switch_var.get()  # Update the value of the key in the dictionary
 
-    # Write the updated dictionary back to the JSON file
     with open('settings.json', 'w') as f:
-      json.dump(config, f, indent=2)
+      json.dump(config, f, indent=2)  # Write the updated dictionary back to the JSON file
 
   def backup_expiry_date_combobox(self, choice):
-    # Update the value of the key in the dictionary
-    config['backup_expiry_date'] = choice
+    config['backup_expiry_date'] = choice  # Update the value of the key in the dictionary
 
-    # Write the updated dictionary back to the JSON file
     with open('settings.json', 'w') as f:
-      json.dump(config, f, indent=2)
+      json.dump(config, f, indent=2)  # Write the updated dictionary back to the JSON file
 
   def BackupExpiryDate(self):
-    # Iterate through all files in the destination directory
-    for filename in os.listdir(destination_path): 
+    for filename in os.listdir(destination_path):  # Iterate through all files in the destination directory
       filepath = os.path.join(destination_path, filename)
 
-      # Get the modification time of the file
-      modification_time = datetime.datetime.fromtimestamp(os.path.getmtime(filepath))
+      modification_time = datetime.datetime.fromtimestamp(os.path.getmtime(filepath))  # Get the modification time of the file
 
       if config['backup_expiry_date'] == "1 month": days = 30
       elif config['backup_expiry_date'] == "3 months": days = 90
@@ -294,13 +267,11 @@ class App(ctk.CTk):
       elif config['backup_expiry_date'] == "9 months": days = 270
       elif config['backup_expiry_date'] == "1 year": days = 365
     
-      # Check if the file is older than JSON value
-      if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=days)):
+      if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=days)):  # Check if the file is older than JSON value
         os.remove(filepath)  # Delete the file
 
-  # Show notification message when backup process successfully completes
+  '''Show notification message when backup process successfully completes'''
   def backup_completed_notification(self):
-    # Show notification
     notification.notify(
       title="Backup Completed",
       app_name="SafeArchive",
@@ -309,9 +280,8 @@ class App(ctk.CTk):
       timeout = 10
     )
 
-  # Show notification message when restore process successfully completes
+  '''Show notification message when restore process successfully completes'''
   def restore_completed_notification(self):
-    # Show notification
     notification.notify(
       title="Files Restored Sucessfully",
       app_name="SafeArchive",
@@ -320,9 +290,8 @@ class App(ctk.CTk):
       timeout = 10
     )
 
-  # Show notification message when drive was disconnected / for too long
+  '''Show notification message when drive was disconnected / for too long'''
   def reconnect_drive_notification(self):
-    # Show notification
     notification.notify(
       title="Reconnect your drive",
       app_name="SafeArchive",
@@ -337,18 +306,14 @@ class App(ctk.CTk):
     if config['backup_expiry_date'] != "Forever (default)":
       self.BackupExpiryDate()
   
-    # Open the zipfile in write mode, create zip file with the current date in its name
+    # Open the zipfile in write mode, create zip file with current date in its name
     with zipfile.ZipFile(f'{destination_path}{date.today()}.zip', mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True, compresslevel=9) as zipObj:
-      # Iterate over each path in the source list
-      for item in config['source_path']:
-        # Iterate over the files and folders in the path
-        for root, dirs, files in os.walk(item):
-          # Add each directory to the archive
+      for item in config['source_path']:  # Iterate over each path in the source list
+        for root, dirs, files in os.walk(item):  # Iterate over the files and folders in the path
           for dirname in dirs:
             dirpath = os.path.join(root, dirname)
             zipObj.write(dirpath)  # Write the folder to the zip archive
 
-          # Add each file to the archive
           for filename in files:
             filepath = os.path.join(root, filename)
             zipObj.write(filepath)  # Write the file to the zip archive
@@ -383,8 +348,7 @@ class App(ctk.CTk):
         gdrive_folder = drive.CreateFile({'title': 'SafeArchive', 'mimeType': 'application/vnd.google-apps.folder'})
         gdrive_folder.Upload()
 
-
-    # Upload backup files
+    '''Upload backup files'''
     def backup_to_cloud(folderpath, parent_folder_id=None):
       foldername = os.path.basename(folderpath)
       folder_metadata = {'title': foldername, 'mimeType': 'application/vnd.google-apps.folder'}
@@ -418,14 +382,12 @@ class App(ctk.CTk):
 
     # Choose if you want local backups to be uploaded to cloud (type: boolean)
     if config['backup_to_cloud'] != "off":
-      # Upload the local folder and its content
-      backup_to_cloud(destination_path[:-1], parent_folder_id=gdrive_folder['id'])
+      backup_to_cloud(destination_path[:-1], parent_folder_id=gdrive_folder['id'])  # Upload the local folder and its content
     
     self.backup_button.configure(state="normal")  # Change backup button state back to normal
-    
     self.backup_completed_notification()
 
-  # Set progress bar
+  '''Set progress bar'''
   def start_progress_bar(self):
     self.backup_progressbar.start()
     self.backup()
@@ -445,7 +407,6 @@ class App(ctk.CTk):
     frame = ctk.CTkFrame(master=restore_window, corner_radius=10, height=180, width=425)
     frame.place(x=8, y=8)
 
-    # create listbox object
     listbox = tk.Listbox(
       master=frame,
       height=9,
@@ -483,23 +444,23 @@ class App(ctk.CTk):
     self.restore_button = ctk.CTkButton(master=restore_window, text="Restore backup", command=run_restore)
     self.restore_button.place(x=150, y=197)
 
-  # Backup from taskbar
+  '''Backup from taskbar'''
   def backup_from_taskbar(self, icon):
     icon.stop()
     self.backup()
     self.hide_window()
 
-  # Show window
+  '''Show window'''
   def show_window(self, icon):
     icon.stop()
     self.after(0, self.deiconify())
 
-  # Quit window
+  '''Quit window'''
   def quit_window(self, icon):
     icon.stop()
     self.destroy()
 
-  # Hide window and show system taskbar
+  '''Hide window and show system taskbar'''
   def hide_window(self):
     self.withdraw()
     image = Image.open("assets/icon.ico")
