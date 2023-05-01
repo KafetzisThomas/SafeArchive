@@ -6,12 +6,13 @@
 # License: GPLv3
 # NOTE: By contributing to this project, you agree to the terms of the GPLv3 license, and agree to grant the project owner the right to also provide or sell this software, including your contribution, to anyone under any other license, with no compensation to you.
 
-version = "1.0.1"
+version = "1.0.0"
 
 # Import built-in modules
-import os, sys, zipfile, json, datetime, threading
+import os, sys, zipfile, json, datetime, threading, requests
+from tkinter import filedialog, Label, BOTTOM, messagebox
+from packaging import version as V
 from datetime import date
-from tkinter import filedialog
 import tkinter as tk
 # added by me #
 from tkinter import Label, BOTTOM
@@ -30,10 +31,16 @@ import humanize, psutil, pystray
 import customtkinter as ctk
 
 def main():
+<<<<<<< Updated upstream
   try:
     Splash_win.destroy()
   except:
     pass
+=======
+  try: Splash_win.destroy()
+  except: pass
+  
+>>>>>>> Stashed changes
   app = App()
   app.mainloop()
 
@@ -42,10 +49,15 @@ def check_updates():
     with open('_temp_.py', 'wb') as file:
       file.write(rq.content)
       file.close()
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
   from _temp_ import version as _version_
   if V.parse(_version_) > V.parse(version):
     messagebox.showinfo('Software Update', 'Update Available!')
     mb = messagebox.askyesno('Update Available!', f'SafeArchive version {version} can be updated to {_version_}. Would you like to update it?\nNOTE: The original files will be deleted!')
+<<<<<<< Updated upstream
     if mb is True:
       os.remove("_temp_.py")
       os.startfile("updater.py")
@@ -62,15 +74,55 @@ screen_width = Splash_win.winfo_screenwidth()
 screen_height = Splash_win.winfo_screenheight()
 x = (screen_width/2)-(app_width/2)
 y = (screen_height/2)-(app_height/2)
+=======
+    if mb == True:
+      os.remove("_temp_.py")
+      os.startfile("updater.py")
+      Splash_win.destroy()
+      sys.exit()
+    elif mb == False:
+      os.remove("_temp_.py")
+      Splash_win.destroy()
+  else:
+    Splash_win.destroy()
+
+# ========================== Splash Window ============================
+
+Splash_win = tk.Tk()
+app_width = 300
+app_height = 350
+
+screen_width = Splash_win.winfo_screenwidth()
+screen_height = Splash_win.winfo_screenheight()
+
+x = (screen_width/2)-(app_width/2)
+y = (screen_height/2)-(app_height/2)
+
+>>>>>>> Stashed changes
 Splash_win.geometry(f"{app_width}x{app_height}+{int(x)}+{int(y)}")
 Splash_win.overrideredirect(True)
 Splash_win.resizable(False, False)
 Splash_win.config(bg="#303033")
+<<<<<<< Updated upstream
 SplashLabel = Label(Splash_win, text="Checking For Updates...",
                     font=("Helvetica", 15), bg="#303033", fg="white")
 SplashLabel.pack(side=BOTTOM, pady=50)
 Splash_win.after(2000, check_updates)
 Splash_win.mainloop()
+=======
+
+image = ctk.CTkImage(Image.open("assets/icon.ico"), size=(150, 150))
+
+image_button = ctk.CTkButton(master=Splash_win, text="", state="DISABLED", fg_color="#303033", image=image, width=5, height=5)
+image_button.place(x=70, y=80)
+
+SplashLabel = Label(master=Splash_win, text="Checking For Updates...", font=("Helvetica", 15), bg="#303033", fg="white")
+SplashLabel.pack(side=BOTTOM, pady=50)
+
+Splash_win.after(2000, check_updates)
+Splash_win.mainloop()
+
+>>>>>>> Stashed changes
 # ================================ SET CONFIGS ================================
 
 config = {
