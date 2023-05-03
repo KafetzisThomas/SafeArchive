@@ -5,3 +5,5 @@ pystray==0.19.4
 psutil==5.9.4
 Pillow==9.5.0
 plyer==2.1.0
+tqdm
+dbus-python; sys_platform=='linux'
