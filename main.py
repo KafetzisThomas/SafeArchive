@@ -63,7 +63,7 @@ config = ConfigDict({
     str(Path('~/Downloads').expanduser()),
   ],
   'destination_path': os.path.abspath(os.sep).replace("\\", "/") + 'SafeArchive/',
-  'backup_to_cloud': "off",
+  'backup_to_cloud': False,
   'backup_expiry_date': "Forever (default)"
 }, SETTINGS_PATH)
 
@@ -179,7 +179,7 @@ class App(ctk.CTk):
 
     combobox_2.place(x=15, y=225)
     
-    self.cloud_switch_var = ctk.StringVar(value=config['backup_to_cloud'])  # Set initial value
+    self.cloud_switch_var = ctk.StringVar(value="on" if config['backup_to_cloud'] else "off")  # Set initial value
     
     switch = ctk.CTkSwitch(
       master=self,
@@ -273,7 +273,8 @@ class App(ctk.CTk):
 
   '''Upload the local folder and its content'''
   def cloud_switch(self):
-    config['backup_to_cloud'] = self.cloud_switch_var.get()  # Update the value of the key in the dictionary
+    switch_position = self.cloud_switch_var.get()
+    config['backup_to_cloud'] = True if switch_position == "on" else False # Update the value of the key in the dictionary
 
   def backup_expiry_date_combobox(self, choice):
     config['backup_expiry_date'] = choice  # Update the value of the key in the dictionary
@@ -344,7 +345,7 @@ class App(ctk.CTk):
   
     # ============================== AUTHENTICATION ===============================
 
-    if config['backup_to_cloud'] != "off":
+    if config['backup_to_cloud']:
       gauth = GoogleAuth()  # Create a GoogleAuth instance
 
       gauth.LoadCredentialsFile('credentials.txt')  # Load the stored OAuth2 credential
@@ -405,7 +406,7 @@ class App(ctk.CTk):
           file.Trash()
 
     # Choose if you want local backups to be uploaded to cloud (type: boolean)
-    if config['backup_to_cloud'] != "off":
+    if config['backup_to_cloud']:
       backup_to_cloud(destination_path[:-1], parent_folder_id=gdrive_folder['id'])  # Upload the local folder and its content
     
     self.backup_button.configure(state="normal")  # Change backup button state back to normal
