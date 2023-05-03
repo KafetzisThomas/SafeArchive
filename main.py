@@ -62,7 +62,7 @@ config = ConfigDict({
     str(Path('~/Documents').expanduser()),
     str(Path('~/Downloads').expanduser()),
   ],
-  'destination_path': os.path.abspath(os.sep).replace("\\", "/") + 'SafeArchive/',
+  'destination_path': os.path.abspath(os.sep).replace("\\", "/"),
   'backup_to_cloud': False,
   'backup_expiry_date': "Forever (default)"
 }, SETTINGS_PATH)
@@ -76,7 +76,7 @@ config.load() # Load the JSON file into memory
 
 '''Get value from the JSON file'''
 # Set the destination directory path (type: string)
-destination_path = config['destination_path']
+destination_path = config['destination_path'] + 'SafeArchive/'
 
 # =================================== MAIN ====================================
 
