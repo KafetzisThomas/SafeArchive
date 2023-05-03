@@ -68,7 +68,6 @@ config = ConfigDict({
 }, SETTINGS_PATH)
 
 
-
 if not os.path.exists(config.path):
   config.save()
 
@@ -90,7 +89,7 @@ class App(ctk.CTk):
     self.title(f"SafeArchive {version}")  # Set window title
     self.resizable(False, False)  # Disable minimize/maximize buttons
     self.geometry("500x500")  # Set window size
-    # self.iconbitmap("assets/icon.ico")  # Set window title icon
+    self.iconbitmap("assets/icon.ico")  # Set window title icon
 
     try:
       if not os.path.exists(destination_path):  # Create the destination directory path if it doesn't exist
