@@ -10,6 +10,7 @@ version = "1.0.0"
 
 # Import built-in modules
 import os, sys, zipfile, json, datetime, threading
+from pathlib import Path
 from datetime import date
 from tkinter import filedialog
 import tkinter as tk
@@ -22,30 +23,60 @@ from pystray import MenuItem as item
 from PIL import Image
 import humanize, psutil, pystray
 import customtkinter as ctk
+from tqdm import tqdm
 
 # ================================ SET CONFIGS ================================
 
-config = {
+class ConfigDict(dict):
+  __slots__=["path"]
+  # A subclass of dict designed to save every time a setting changes.
+  def __init__(self, config: dict, path: str):
+    self.update(config)
+    self.path = Path(path)
+
+  def __setitem__(self, key, value):
+    # Triggers whenever a value is set
+    super().__setitem__(key, value)
+    self.save()
+
+  def __delitem__(self, key):
+    # Triggers whenever a value is deleted
+    super().__delitem__(key)
+    self.save()
+
+  def save(self):
+    # Saves the config file to the given path
+    with open(self.path, 'w') as file:
+      json.dump(self, file, indent=2)
+  
+  def load(self):
+    # Loads the config file from the given path
+    with open(self.path, 'r') as file:
+      self.update(json.load(file))
+
+
+SETTINGS_PATH = 'settings.json'
+config = ConfigDict({
   'source_path': [
-  os.path.expanduser('~/Desktop').replace('\\', '/') + '/',
-  os.path.expanduser('~/Documents').replace('\\', '/') + '/',
-  os.path.expanduser('~/Downloads').replace('\\', '/') + '/'
+    str(Path('~/Desktop').expanduser()),
+    str(Path('~/Documents').expanduser()),
+    str(Path('~/Downloads').expanduser()),
   ],
-  'destination_path': os.path.abspath(os.sep).replace("\\", "/"),
-  'backup_to_cloud': "off",
+  'destination_path': os.path.abspath(os.sep).replace("\\", "/") + 'SafeArchive/',
+  'backup_to_cloud': False,
   'backup_expiry_date': "Forever (default)"
-}
+}, SETTINGS_PATH)
 
-if not os.path.exists('settings.json'):
-  with open('settings.json', 'w') as file:
-    json.dump(config, file, indent=2)
 
-with open('settings.json', 'r') as file:
-  config = json.load(file)  # Load the JSON file into memory
+
+if not os.path.exists(config.path):
+  config.save()
+
+config.load() # Load the JSON file into memory
 
 '''Get value from the JSON file'''
 # Set the destination directory path (type: string)
-destination_path = config['destination_path'] + 'SafeArchive/'
+destination_path = config['destination_path']
 
 # =================================== MAIN ====================================
 
@@ -59,7 +90,7 @@ class App(ctk.CTk):
     self.title(f"SafeArchive {version}")  # Set window title
     self.resizable(False, False)  # Disable minimize/maximize buttons
     self.geometry("500x500")  # Set window size
-    self.iconbitmap("assets/icon.ico")  # Set window title icon
+    # self.iconbitmap("assets/icon.ico")  # Set window title icon
 
     try:
       if not os.path.exists(destination_path):  # Create the destination directory path if it doesn't exist
@@ -67,6 +98,10 @@ class App(ctk.CTk):
     except FileNotFoundError:
       self.reconnect_drive_notification()
       sys.exit()
+    except PermissionError:
+      print(f"No permissions given to make directory: '{destination_path}'.",
+            "Change it in settings.json or run with elevated priveleges")
+      sys.exit(77)
 
     '''Get backup size'''
     total_size = 0  # Initialize total size to 0
@@ -144,7 +179,7 @@ class App(ctk.CTk):
 
     combobox_2.place(x=15, y=225)
     
-    self.cloud_switch_var = ctk.StringVar(value=config['backup_to_cloud'])  # Set initial value
+    self.cloud_switch_var = ctk.StringVar(value="on" if config['backup_to_cloud'] else "off")  # Set initial value
     
     switch = ctk.CTkSwitch(
       master=self,
@@ -185,10 +220,8 @@ class App(ctk.CTk):
       selected_items = listbox_1.curselection()
       for i in reversed(selected_items):
         del config['source_path'][i]
+      config.save()
 
-      with open('settings.json', 'w') as f:
-        json.dump(config, f, indent=2)
-      
       try: listbox_1.delete(i)  
       except UnboundLocalError: pass
 
@@ -198,8 +231,7 @@ class App(ctk.CTk):
       if (source_path_file_explorer != '/') and (source_path_file_explorer not in config['source_path']):
         config['source_path'].append(source_path_file_explorer)
 
-        with open('settings.json', 'w') as f:
-          json.dump(config, f, indent=2)  # Write the updated dictionary to the JSON file
+        config.save() # This needs to be done because the saver may not be triggered by the sublist appending
 
         listbox_1.insert(self.counter, source_path_file_explorer)
 
@@ -239,21 +271,13 @@ class App(ctk.CTk):
   def drives_combobox(self, choice):
     config['destination_path'] = choice  # Update the value of the key in the dictionary
 
-    with open('settings.json', 'w') as f:
-      json.dump(config, f, indent=2)  # Write the updated dictionary back to the JSON file
-
   '''Upload the local folder and its content'''
   def cloud_switch(self):
-    config['backup_to_cloud'] = self.cloud_switch_var.get()  # Update the value of the key in the dictionary
-
-    with open('settings.json', 'w') as f:
-      json.dump(config, f, indent=2)  # Write the updated dictionary back to the JSON file
+    switch_position = self.cloud_switch_var.get()
+    config['backup_to_cloud'] = True if switch_position == "on" else False # Update the value of the key in the dictionary
 
   def backup_expiry_date_combobox(self, choice):
     config['backup_expiry_date'] = choice  # Update the value of the key in the dictionary
-
-    with open('settings.json', 'w') as f:
-      json.dump(config, f, indent=2)  # Write the updated dictionary back to the JSON file
 
   def BackupExpiryDate(self):
     for filename in os.listdir(destination_path):  # Iterate through all files in the destination directory
@@ -308,8 +332,9 @@ class App(ctk.CTk):
   
     # Open the zipfile in write mode, create zip file with current date in its name
     with zipfile.ZipFile(f'{destination_path}{date.today()}.zip', mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True, compresslevel=9) as zipObj:
-      for item in config['source_path']:  # Iterate over each path in the source list
-        for root, dirs, files in os.walk(item):  # Iterate over the files and folders in the path
+      for item in tqdm(config['source_path']):  # Iterate over each path in the source list
+        print(f"Writing {item} to ZipFile....")
+        for root, dirs, files in tqdm(os.walk(item)):  # Iterate over the files and folders in the path
           for dirname in dirs:
             dirpath = os.path.join(root, dirname)
             zipObj.write(dirpath)  # Write the folder to the zip archive
@@ -318,9 +343,9 @@ class App(ctk.CTk):
             filepath = os.path.join(root, filename)
             zipObj.write(filepath)  # Write the file to the zip archive
   
-    # ============================== AUTHENTICATION ===============================    
+    # ============================== AUTHENTICATION ===============================
 
-    if config['backup_to_cloud'] != "off":
+    if config['backup_to_cloud']:
       gauth = GoogleAuth()  # Create a GoogleAuth instance
 
       gauth.LoadCredentialsFile('credentials.txt')  # Load the stored OAuth2 credential
@@ -381,7 +406,7 @@ class App(ctk.CTk):
           file.Trash()
 
     # Choose if you want local backups to be uploaded to cloud (type: boolean)
-    if config['backup_to_cloud'] != "off":
+    if config['backup_to_cloud']:
       backup_to_cloud(destination_path[:-1], parent_folder_id=gdrive_folder['id'])  # Upload the local folder and its content
     
     self.backup_button.configure(state="normal")  # Change backup button state back to normal
