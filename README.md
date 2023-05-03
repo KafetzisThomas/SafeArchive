@@ -64,6 +64,31 @@ Allows you to backup your essential local files (+cloud support) quickly and sch
     $ python3 main.py
     ```
 
+## Screenshots
+
+<div align = 'center'>
+    <h2>Software Startup<br>(Drive Properties, Backup Options)</h2>
+    <br>
+    <img
+        alt = 'Software Startup (Drive Properties, Backup Options)' 
+        src = 'https://user-images.githubusercontent.com/105563667/236015929-cf0020ad-4cab-425a-8a87-26e6668d2d65.png'>
+    <br>
+    <h2>Restore Selected Backup</h2>
+    <br>
+    <img
+        alt = 'Restore Selected Backup' 
+        src = 'https://user-images.githubusercontent.com/105563667/236017273-263abe17-26de-4c22-ba2d-f6be8d3dad18.png'>
+    <br>
+    <h2>System Tray Icon<br>(Taskbar Icon)</h2>
+    <br>
+    <img
+        alt = 'System Tray Icon (Taskbar Icon)'
+        src = 'https://user-images.githubusercontent.com/105563667/236020690-da79fd52-fce6-4266-8d66-e0ad3a8d2583.png'>
+    <br>
+</div>
+
+<br>
+
 ## Obtaining API Key
 
 To upload your backups to your cloud account (Google Drive), you will need an "Oauth2" credential to make the GUI switch to work.
