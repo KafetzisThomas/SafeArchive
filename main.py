@@ -333,6 +333,9 @@ class App(ctk.CTk):
     with zipfile.ZipFile(f'{destination_path}{date.today()}.zip', mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True, compresslevel=9) as zipObj:
       for item in tqdm(config['source_path']):  # Iterate over each path in the source list
         print(f"Writing {item} to ZipFile....")
+        source_item_label = ctk.CTkLabel(master=self, text=item, height=20, font=('Helvetica', 12))
+        source_item_label.place(x=15, y=430)
+
         for root, dirs, files in tqdm(os.walk(item)):  # Iterate over the files and folders in the path
           for dirname in dirs:
             dirpath = os.path.join(root, dirname)
@@ -342,6 +345,8 @@ class App(ctk.CTk):
             filepath = os.path.join(root, filename)
             zipObj.write(filepath)  # Write the file to the zip archive
   
+        source_item_label.place_forget()
+
     # ============================== AUTHENTICATION ===============================
 
     if config['backup_to_cloud']:
