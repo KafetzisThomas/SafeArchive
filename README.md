@@ -35,8 +35,6 @@ Allows you to backup your essential local files (+cloud support) quickly and sch
 
 * For the first run, I recommend you to exit the program after setting your preferences, so changes to be applied.
 
-* I wrote this using Python 3.9 but it will probably work with earlier versions too.
-
 ## Features
 
 * Zip (backup) source path files to destination path
