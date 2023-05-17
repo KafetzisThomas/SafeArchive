@@ -145,5 +145,7 @@ dmypy.json
 cython_debug/
 
 # Configuration & other files
+client_secrets.json
+credentials.txt
 settings.json
 other
