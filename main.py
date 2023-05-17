@@ -24,7 +24,6 @@ from pystray import MenuItem as item
 from PIL import Image
 import humanize, psutil, pystray
 import customtkinter as ctk
-from tqdm import tqdm
 
 configs.config.load() # Load the JSON file into memory
 
@@ -284,12 +283,12 @@ class App(ctk.CTk):
   
     # Open the zipfile in write mode, create zip file with current date in its name
     with zipfile.ZipFile(f'{destination_path}{date.today()}.zip', mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True, compresslevel=9) as zipObj:
-      for item in tqdm(configs.config['source_path']):  # Iterate over each path in the source list
+      for item in configs.config['source_path']:  # Iterate over each path in the source list
         print(f"Writing {item} to ZipFile....")
         source_item_label = ctk.CTkLabel(master=self, text=item, height=20, font=('Helvetica', 12))
         source_item_label.place(x=15, y=430)
 
-        for root, dirs, files in tqdm(os.walk(item)):  # Iterate over the files and folders in the path
+        for root, dirs, files in os.walk(item):  # Iterate over the files and folders in the path
           for dirname in dirs:
             dirpath = os.path.join(root, dirname)
             zipObj.write(dirpath)  # Write the folder to the zip archive
