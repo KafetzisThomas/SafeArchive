@@ -9,75 +9,28 @@
 version = "1.0.0"
 
 # Import built-in modules
-import os, sys, zipfile, json, datetime, threading
-from pathlib import Path
+import os, sys, zipfile, datetime, threading
 from datetime import date
 from tkinter import filedialog
 import tkinter as tk
 
+# Import module files
+import Scripts.configs as configs
+import Scripts.cloud as cloud
+
 # Import other (third-party) modules
 from plyer import notification
-from pydrive2.auth import GoogleAuth
-from pydrive2.drive import GoogleDrive
 from pystray import MenuItem as item
 from PIL import Image
 import humanize, psutil, pystray
 import customtkinter as ctk
 from tqdm import tqdm
 
-# ================================ SET CONFIGS ================================
-
-class ConfigDict(dict):
-  __slots__=["path"]
-  # A subclass of dict designed to save every time a setting changes.
-  def __init__(self, config: dict, path: str):
-    self.update(config)
-    self.path = Path(path)
-
-  def __setitem__(self, key, value):
-    # Triggers whenever a value is set
-    super().__setitem__(key, value)
-    self.save()
-
-  def __delitem__(self, key):
-    # Triggers whenever a value is deleted
-    super().__delitem__(key)
-    self.save()
-
-  def save(self):
-    # Saves the config file to the given path
-    with open(self.path, 'w') as file:
-      json.dump(self, file, indent=2)
-  
-  def load(self):
-    # Loads the config file from the given path
-    with open(self.path, 'r') as file:
-      self.update(json.load(file))
-
-
-SETTINGS_PATH = 'settings.json'
-config = ConfigDict({
-  'source_path': [
-    str(Path('~/Desktop').expanduser()),
-    str(Path('~/Documents').expanduser()),
-    str(Path('~/Downloads').expanduser()),
-  ],
-  'destination_path': os.path.abspath(os.sep).replace("\\", "/"),
-  'backup_to_cloud': False,
-  'backup_expiry_date': "Forever (default)"
-}, SETTINGS_PATH)
-
-
-if not os.path.exists(config.path):
-  config.save()
-
-config.load() # Load the JSON file into memory
+configs.config.load() # Load the JSON file into memory
 
 '''Get value from the JSON file'''
 # Set the destination directory path (type: string)
-destination_path = config['destination_path'] + 'SafeArchive/'
-
-# =================================== MAIN ====================================
+destination_path = configs.config['destination_path'] + 'SafeArchive/'
 
 class App(ctk.CTk):
   def __init__(self):
@@ -113,7 +66,7 @@ class App(ctk.CTk):
         total_size += os.path.getsize(filepath)  # Add the size of each file to the total size
 
     '''Get storage media free space'''
-    disk_usage = psutil.disk_usage(config['destination_path']).free  # Get disk usage statistics in bytes
+    disk_usage = psutil.disk_usage(configs.config['destination_path']).free  # Get disk usage statistics in bytes
     free_space = round(disk_usage / (1024**3), 2)  # Convert free space to GB
 
     try:
@@ -164,7 +117,7 @@ class App(ctk.CTk):
     keep_my_backups_label = ctk.CTkLabel(master=self, text="Keep my backups", font=('Helvetica', 12))
     keep_my_backups_label.place(x=15, y=200)
     
-    backup_expiry_date_combobox_var = ctk.StringVar(value=config['backup_expiry_date'])  # Set initial value
+    backup_expiry_date_combobox_var = ctk.StringVar(value=configs.config['backup_expiry_date'])  # Set initial value
     
     backup_expiry_date_options = ["1 month", "3 months", "6 months", "9 months", "1 year", "Forever (default)"]
 
@@ -178,7 +131,7 @@ class App(ctk.CTk):
 
     combobox_2.place(x=15, y=225)
     
-    self.cloud_switch_var = ctk.StringVar(value="on" if config['backup_to_cloud'] else "off")  # Set initial value
+    self.cloud_switch_var = ctk.StringVar(value="on" if configs.config['backup_to_cloud'] else "off")  # Set initial value
     
     switch = ctk.CTkSwitch(
       master=self,
@@ -211,15 +164,15 @@ class App(ctk.CTk):
 
     self.counter = 1
     def update_listbox():
-      for item in config['source_path']:
+      for item in configs.config['source_path']:
         listbox_1.insert(self.counter, item)
         self.counter += 1
 
     def remove_item():
       selected_items = listbox_1.curselection()
       for i in reversed(selected_items):
-        del config['source_path'][i]
-      config.save()
+        del configs.config['source_path'][i]
+      configs.config.save()
 
       try: listbox_1.delete(i)  
       except UnboundLocalError: pass
@@ -227,10 +180,10 @@ class App(ctk.CTk):
     def add_item():
       source_path_file_explorer = filedialog.askdirectory(title='Backup these folders') + '/'
 
-      if (source_path_file_explorer != '/') and (source_path_file_explorer not in config['source_path']):
-        config['source_path'].append(source_path_file_explorer)
+      if (source_path_file_explorer != '/') and (source_path_file_explorer not in configs.config['source_path']):
+        configs.config['source_path'].append(source_path_file_explorer)
 
-        config.save() # This needs to be done because the saver may not be triggered by the sublist appending
+        configs.config.save() # This needs to be done because the saver may not be triggered by the sublist appending
 
         listbox_1.insert(self.counter, source_path_file_explorer)
 
@@ -268,15 +221,15 @@ class App(ctk.CTk):
     return os.path.getmtime(file_path)
 
   def drives_combobox(self, choice):
-    config['destination_path'] = choice  # Update the value of the key in the dictionary
+    configs.config['destination_path'] = choice  # Update the value of the key in the dictionary
 
   '''Upload the local folder and its content'''
   def cloud_switch(self):
     switch_position = self.cloud_switch_var.get()
-    config['backup_to_cloud'] = True if switch_position == "on" else False # Update the value of the key in the dictionary
+    configs.config['backup_to_cloud'] = True if switch_position == "on" else False # Update the value of the key in the dictionary
 
   def backup_expiry_date_combobox(self, choice):
-    config['backup_expiry_date'] = choice  # Update the value of the key in the dictionary
+    configs.config['backup_expiry_date'] = choice  # Update the value of the key in the dictionary
 
   def BackupExpiryDate(self):
     for filename in os.listdir(destination_path):  # Iterate through all files in the destination directory
@@ -284,11 +237,11 @@ class App(ctk.CTk):
 
       modification_time = datetime.datetime.fromtimestamp(os.path.getmtime(filepath))  # Get the modification time of the file
 
-      if config['backup_expiry_date'] == "1 month": days = 30
-      elif config['backup_expiry_date'] == "3 months": days = 90
-      elif config['backup_expiry_date'] == "6 months": days = 180
-      elif config['backup_expiry_date'] == "9 months": days = 270
-      elif config['backup_expiry_date'] == "1 year": days = 365
+      if configs.config['backup_expiry_date'] == "1 month": days = 30
+      elif configs.config['backup_expiry_date'] == "3 months": days = 90
+      elif configs.config['backup_expiry_date'] == "6 months": days = 180
+      elif configs.config['backup_expiry_date'] == "9 months": days = 270
+      elif configs.config['backup_expiry_date'] == "1 year": days = 365
     
       if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=days)):  # Check if the file is older than JSON value
         os.remove(filepath)  # Delete the file
@@ -326,12 +279,12 @@ class App(ctk.CTk):
   def backup(self):
     self.backup_button.configure(state="disabled")  # Change backup button state to disabled
 
-    if config['backup_expiry_date'] != "Forever (default)":
+    if configs.config['backup_expiry_date'] != "Forever (default)":
       self.BackupExpiryDate()
   
     # Open the zipfile in write mode, create zip file with current date in its name
     with zipfile.ZipFile(f'{destination_path}{date.today()}.zip', mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True, compresslevel=9) as zipObj:
-      for item in tqdm(config['source_path']):  # Iterate over each path in the source list
+      for item in tqdm(configs.config['source_path']):  # Iterate over each path in the source list
         print(f"Writing {item} to ZipFile....")
         source_item_label = ctk.CTkLabel(master=self, text=item, height=20, font=('Helvetica', 12))
         source_item_label.place(x=15, y=430)
@@ -347,72 +300,12 @@ class App(ctk.CTk):
   
         source_item_label.place_forget()
 
-    # ============================== AUTHENTICATION ===============================
-
-    if config['backup_to_cloud']:
-      gauth = GoogleAuth()  # Create a GoogleAuth instance
-
-      gauth.LoadCredentialsFile('credentials.txt')  # Load the stored OAuth2 credential
-
-      # Check if stored credential is valid
-      if gauth.credentials is None:
-        gauth.LocalWebserverAuth()  # If not, authenticate with LocalWebserverAuth()
-      elif gauth.access_token_expired:
-        gauth.Refresh()  # If expired, refresh the token
-      else:
-        gauth.Authorize()  # If valid, use credential to authenticate with GoogleDrive
-
-      gauth.SaveCredentialsFile('credentials.txt')  # Save credentials to file
-
-      drive = GoogleDrive(gauth)  # Create a GoogleDrive instance to interact with Google Drive
-
-      # Check if the folder already exists in Google Drive
-      file_list = drive.ListFile({'q': f"title='SafeArchive' and mimeType='application/vnd.google-apps.folder' and trashed=false"}).GetList()
-
-      if file_list:
-        gdrive_folder = file_list[0]  # The folder already exists, so just update the existing files
-
-      else:
-        # The folder doesn't exist, so create a new one
-        gdrive_folder = drive.CreateFile({'title': 'SafeArchive', 'mimeType': 'application/vnd.google-apps.folder'})
-        gdrive_folder.Upload()
-
-    '''Upload backup files'''
-    def backup_to_cloud(folderpath, parent_folder_id=None):
-      foldername = os.path.basename(folderpath)
-      folder_metadata = {'title': foldername, 'mimeType': 'application/vnd.google-apps.folder'}
-
-      if parent_folder_id is not None:
-        folder_metadata['parents'] = [{'id': parent_folder_id}]
-
-      file_list = drive.ListFile({'q': f"title='{foldername}' and mimeType='application/vnd.google-apps.folder' and trashed=false"}).GetList()
-
-      for filename in os.listdir(folderpath):
-        filepath = os.path.join(folderpath, filename)
-
-        file_list = drive.ListFile({'q': f"title='{filename}' and '{gdrive_folder['id']}' in parents and trashed=false"}).GetList()
-
-        if file_list:
-          # The file already exists, so just update it
-          gdrive_file = file_list[0]
-          gdrive_file.SetContentFile(filepath)
-          gdrive_file.Upload()
-        
-        else:
-          # The file doesn't exist, so create a new one
-          gdrive_file = drive.CreateFile({'title': filename, 'parents': [{'id': gdrive_folder['id']}]})
-          gdrive_file.SetContentFile(filepath)
-          gdrive_file.Upload()
-
-      # Delete files in Google Drive that don't exist in the local folder anymore
-      for file in drive.ListFile({'q': f"'{gdrive_folder['id']}' in parents and trashed=false"}).GetList():
-        if not os.path.exists(os.path.join(destination_path[:-1], file['title'])):
-          file.Trash()
+    if configs.config['backup_to_cloud']: cloud.initialize()
 
     # Choose if you want local backups to be uploaded to cloud (type: boolean)
-    if config['backup_to_cloud']:
-      backup_to_cloud(destination_path[:-1], parent_folder_id=gdrive_folder['id'])  # Upload the local folder and its content
-    
+    if configs.config['backup_to_cloud']:
+      cloud.backup_to_cloud(destination_path[:-1], parent_folder_id=cloud.gdrive_folder['id'])  # Upload the local folder and its content
+
     self.backup_button.configure(state="normal")  # Change backup button state back to normal
     self.backup_completed_notification()
 
@@ -462,7 +355,7 @@ class App(ctk.CTk):
       for i in listbox.curselection():
         # Open the zipfile in read mode, extract its content
         with zipfile.ZipFile(f'{destination_path}{listbox.get(i)}.zip', mode='r') as zipObj:
-          zipObj.extractall(config['destination_path'])
+          zipObj.extractall(configs.config['destination_path'])
 
       self.restore_completed_notification()
       self.restore_button.configure(state="normal")  # Change backup button state back to normal
