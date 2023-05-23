@@ -29,7 +29,7 @@ configs.config.load() # Load the JSON file into memory
 
 '''Get value from the JSON file'''
 # Set the destination directory path (type: string)
-destination_path = configs.config['destination_path'] + 'SafeArchive/'
+DESTINATION_PATH = configs.config['destination_path'] + 'SafeArchive/'
 
 class App(ctk.CTk):
   def __init__(self):
@@ -44,13 +44,13 @@ class App(ctk.CTk):
     self.iconbitmap("assets/icon.ico")  # Set window title icon
 
     try:
-      if not os.path.exists(destination_path):  # Create the destination directory path if it doesn't exist
-        os.makedirs(destination_path)
+      if not os.path.exists(DESTINATION_PATH):  # Create the destination directory path if it doesn't exist
+        os.makedirs(DESTINATION_PATH)
     except FileNotFoundError:
       self.reconnect_drive_notification()
       sys.exit()
     except PermissionError:
-      print(f"No permissions given to make directory: '{destination_path}'.",
+      print(f"No permissions given to make directory: '{DESTINATION_PATH}'.",
             "Change it in settings.json or run with elevated priveleges")
       sys.exit(77)
 
@@ -58,7 +58,7 @@ class App(ctk.CTk):
     total_size = 0  # Initialize total size to 0
 
     '''Walk through all files in the destination path'''
-    for dirpath, dirnames, filenames in os.walk(destination_path):
+    for dirpath, dirnames, filenames in os.walk(DESTINATION_PATH):
       for file in filenames:
         filepath = os.path.join(dirpath, file)
 
@@ -69,14 +69,14 @@ class App(ctk.CTk):
     free_space = round(disk_usage / (1024**3), 2)  # Convert free space to GB
 
     try:
-      files = [file for file in os.listdir(destination_path) if os.path.isfile(os.path.join(destination_path, file))]  # Get a list of all the files in the destination path
+      files = [file for file in os.listdir(DESTINATION_PATH) if os.path.isfile(os.path.join(DESTINATION_PATH, file))]  # Get a list of all the files in the destination path
       files.sort(key=self.get_modification_time)  # Sort the list of files based on their modification time
 
       most_recently_modified_file = files[-1]  # The most recently modified file
       filename, _, filetype = most_recently_modified_file.partition('.')
 
       # Get the modification time of the most recently modified file
-      modification_time = datetime.datetime.fromtimestamp(os.path.getmtime(f"{destination_path}{most_recently_modified_file}"))
+      modification_time = datetime.datetime.fromtimestamp(os.path.getmtime(f"{DESTINATION_PATH}{most_recently_modified_file}"))
 
       # Check if the file is older than three months
       if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=30)):
@@ -96,7 +96,7 @@ class App(ctk.CTk):
     drives = psutil.disk_partitions()
     drive_options = [drive.device.replace('\\', '/') for drive in drives]
     
-    device_combobox_var = ctk.StringVar(value=destination_path.replace('SafeArchive/', ''))  # Set initial value
+    device_combobox_var = ctk.StringVar(value=DESTINATION_PATH.replace('SafeArchive/', ''))  # Set initial value
 
     combobox_1 = ctk.CTkComboBox(master=self, width=470, values=drive_options, command=self.drives_combobox, variable=device_combobox_var)
     combobox_1.place(x=15, y=70)
@@ -104,7 +104,7 @@ class App(ctk.CTk):
     size_of_backup_label = ctk.CTkLabel(master=self, text=f"Size of backup: {humanize.naturalsize(total_size)}", font=('Helvetica', 12))
     size_of_backup_label.place(x=15, y=100)
 
-    total_drive_space_label = ctk.CTkLabel(master=self, text=f"Free space on ({destination_path.replace('SafeArchive/', '')}): {free_space} GB", font=('Helvetica', 12))
+    total_drive_space_label = ctk.CTkLabel(master=self, text=f"Free space on ({DESTINATION_PATH.replace('SafeArchive/', '')}): {free_space} GB", font=('Helvetica', 12))
     total_drive_space_label.place(x=15, y=120)
 
     last_backup_label = ctk.CTkLabel(master=self, text=f"Last backup: {filename}", font=('Helvetica', 12))
@@ -161,11 +161,10 @@ class App(ctk.CTk):
 
     listbox_1.pack(padx=7, pady=7)
 
-    self.counter = 1
     def update_listbox():
-      for item in configs.config['source_path']:
-        listbox_1.insert(self.counter, item)
-        self.counter += 1
+      global index
+      for index, item in enumerate(configs.config['source_path']):
+        listbox_1.insert(index, item)
 
     def remove_item():
       selected_items = listbox_1.curselection()
@@ -178,13 +177,11 @@ class App(ctk.CTk):
 
     def add_item():
       source_path_file_explorer = filedialog.askdirectory(title='Backup these folders') + '/'
-
       if (source_path_file_explorer != '/') and (source_path_file_explorer not in configs.config['source_path']):
         configs.config['source_path'].append(source_path_file_explorer)
-
         configs.config.save() # This needs to be done because the saver may not be triggered by the sublist appending
 
-        listbox_1.insert(self.counter, source_path_file_explorer)
+        listbox_1.insert(len(configs.config['source_path']) - 1, source_path_file_explorer)
 
     update_listbox()
 
@@ -216,7 +213,7 @@ class App(ctk.CTk):
 
   '''Get the modification time of zip file'''
   def get_modification_time(self, file):
-    file_path = os.path.join(destination_path, file)
+    file_path = os.path.join(DESTINATION_PATH, file)
     return os.path.getmtime(file_path)
 
   def drives_combobox(self, choice):
@@ -231,8 +228,8 @@ class App(ctk.CTk):
     configs.config['backup_expiry_date'] = choice  # Update the value of the key in the dictionary
 
   def BackupExpiryDate(self):
-    for filename in os.listdir(destination_path):  # Iterate through all files in the destination directory
-      filepath = os.path.join(destination_path, filename)
+    for filename in os.listdir(DESTINATION_PATH):  # Iterate through all files in the destination directory
+      filepath = os.path.join(DESTINATION_PATH, filename)
 
       modification_time = datetime.datetime.fromtimestamp(os.path.getmtime(filepath))  # Get the modification time of the file
 
@@ -250,7 +247,7 @@ class App(ctk.CTk):
     notification.notify(
       title="Backup Completed",
       app_name="SafeArchive",
-      message=f"SafeArchive has finished the backup to '{destination_path.replace('SafeArchive/', '')}'.",
+      message=f"SafeArchive has finished the backup to '{DESTINATION_PATH.replace('SafeArchive/', '')}'.",
       app_icon="assets/icon.ico",
       timeout = 10
     )
@@ -282,7 +279,7 @@ class App(ctk.CTk):
       self.BackupExpiryDate()
   
     # Open the zipfile in write mode, create zip file with current date in its name
-    with zipfile.ZipFile(f'{destination_path}{date.today()}.zip', mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True, compresslevel=9) as zipObj:
+    with zipfile.ZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True, compresslevel=9) as zipObj:
       for item in configs.config['source_path']:  # Iterate over each path in the source list
         source_item_label = ctk.CTkLabel(master=self, text=item, height=20, font=('Helvetica', 12))
         source_item_label.place(x=15, y=430)
@@ -302,7 +299,7 @@ class App(ctk.CTk):
 
     # Choose if you want local backups to be uploaded to cloud (type: boolean)
     if configs.config['backup_to_cloud']:
-      cloud.backup_to_cloud(destination_path[:-1], parent_folder_id=cloud.gdrive_folder['id'])  # Upload the local folder and its content
+      cloud.backup_to_cloud(DESTINATION_PATH[:-1], parent_folder_id=cloud.gdrive_folder['id'])  # Upload the local folder and its content
 
     self.backup_button.configure(state="normal")  # Change backup button state back to normal
     self.backup_completed_notification()
@@ -340,7 +337,7 @@ class App(ctk.CTk):
     listbox.pack()
 
     counter = 1
-    for zip_file in os.listdir(destination_path):
+    for zip_file in os.listdir(DESTINATION_PATH):
       filename, _,filetype = zip_file.partition('.')
 
       if filetype == 'zip':  
@@ -352,7 +349,7 @@ class App(ctk.CTk):
 
       for i in listbox.curselection():
         # Open the zipfile in read mode, extract its content
-        with zipfile.ZipFile(f'{destination_path}{listbox.get(i)}.zip', mode='r') as zipObj:
+        with zipfile.ZipFile(f'{DESTINATION_PATH}{listbox.get(i)}.zip', mode='r') as zipObj:
           zipObj.extractall(configs.config['destination_path'])
 
       self.restore_completed_notification()
