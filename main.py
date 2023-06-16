@@ -120,7 +120,7 @@ class App(ctk.CTk):
     
     backup_expiry_date_options = ["1 month", "3 months", "6 months", "9 months", "1 year", "Forever (default)"]
 
-    combobox_2 = ctk.CTkComboBox(
+    backup_expiry_date_combobox = ctk.CTkComboBox(
       master=self,
       width=150,
       values=backup_expiry_date_options,
@@ -128,7 +128,7 @@ class App(ctk.CTk):
       variable=backup_expiry_date_combobox_var
     )
 
-    combobox_2.place(x=15, y=225)
+    backup_expiry_date_combobox.place(x=15, y=225)
     
     self.cloud_switch_var = ctk.StringVar(value="on" if configs.config['backup_to_cloud'] else "off")  # Set initial value
     
@@ -149,7 +149,7 @@ class App(ctk.CTk):
     listbox_frame = ctk.CTkFrame(master=self, corner_radius=10)
     listbox_frame.place(x=10, y=280)
 
-    listbox_1 = tk.Listbox(
+    source_listbox = tk.Listbox(
       master=listbox_frame,
       height=4,
       width=52,
@@ -159,20 +159,20 @@ class App(ctk.CTk):
       font='Helvetica'
     )
 
-    listbox_1.pack(padx=7, pady=7)
+    source_listbox.pack(padx=7, pady=7)
 
     def update_listbox():
       global index
       for index, item in enumerate(configs.config['source_path']):
-        listbox_1.insert(index, item)
+        source_listbox.insert(index, item)
 
     def remove_item():
-      selected_items = listbox_1.curselection()
+      selected_items = source_listbox.curselection()
       for i in reversed(selected_items):
         del configs.config['source_path'][i]
       configs.config.save()
 
-      try: listbox_1.delete(i)  
+      try: source_listbox.delete(i)  
       except UnboundLocalError: pass
 
     def add_item():
@@ -181,7 +181,7 @@ class App(ctk.CTk):
         configs.config['source_path'].append(source_path_file_explorer)
         configs.config.save() # This needs to be done because the saver may not be triggered by the sublist appending
 
-        listbox_1.insert(len(configs.config['source_path']) - 1, source_path_file_explorer)
+        source_listbox.insert(len(configs.config['source_path']) - 1, source_path_file_explorer)
 
     update_listbox()
 
@@ -243,7 +243,7 @@ class App(ctk.CTk):
         os.remove(filepath)  # Delete the file
 
   '''Show notification message when backup process successfully completes'''
-  def backup_completed_notification(self):
+  def notify_backup_completion(self):
     notification.notify(
       title="Backup Completed",
       app_name="SafeArchive",
@@ -253,7 +253,7 @@ class App(ctk.CTk):
     )
 
   '''Show notification message when restore process successfully completes'''
-  def restore_completed_notification(self):
+  def notify_restore_completion(self):
     notification.notify(
       title="Files Restored Sucessfully",
       app_name="SafeArchive",
@@ -263,7 +263,7 @@ class App(ctk.CTk):
     )
 
   '''Show notification message when drive was disconnected / for too long'''
-  def reconnect_drive_notification(self):
+  def notify_drive_reconnection(self):
     notification.notify(
       title="Reconnect your drive",
       app_name="SafeArchive",
@@ -302,7 +302,7 @@ class App(ctk.CTk):
       cloud.backup_to_cloud(DESTINATION_PATH[:-1], parent_folder_id=cloud.gdrive_folder['id'])  # Upload the local folder and its content
 
     self.backup_button.configure(state="normal")  # Change backup button state back to normal
-    self.backup_completed_notification()
+    self.notify_backup_completion()
 
   '''Set progress bar'''
   def start_progress_bar(self):
@@ -352,7 +352,7 @@ class App(ctk.CTk):
         with zipfile.ZipFile(f'{DESTINATION_PATH}{listbox.get(i)}.zip', mode='r') as zipObj:
           zipObj.extractall(configs.config['destination_path'])
 
-      self.restore_completed_notification()
+      self.notify_restore_completion()
       self.restore_button.configure(state="normal")  # Change backup button state back to normal
 
     def run_restore():
