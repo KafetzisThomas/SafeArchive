@@ -47,7 +47,7 @@ class App(ctk.CTk):
       if not os.path.exists(DESTINATION_PATH):  # Create the destination directory path if it doesn't exist
         os.makedirs(DESTINATION_PATH)
     except FileNotFoundError:
-      self.reconnect_drive_notification()
+      self.notify_drive_reconnection()
       sys.exit()
     except PermissionError:
       print(f"No permissions given to make directory: '{DESTINATION_PATH}'.",
@@ -80,7 +80,7 @@ class App(ctk.CTk):
 
       # Check if the file is older than three months
       if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=30)):
-        self.reconnect_drive_notification()
+        self.notify_drive_reconnection()
 
       if filetype != 'zip': 
         filename = "No backup"
