@@ -27,7 +27,7 @@ import customtkinter as ctk
 
 configs.config.load() # Load the JSON file into memory
 
-'''Get value from the JSON file'''
+# Get value from the JSON file
 # Set the destination directory path (type: string)
 DESTINATION_PATH = configs.config['destination_path'] + 'SafeArchive/'
 
@@ -54,39 +54,6 @@ class App(ctk.CTk):
             "Change it in settings.json or run with elevated priveleges")
       sys.exit(77)
 
-    '''Get backup size'''
-    total_size = 0  # Initialize total size to 0
-
-    '''Walk through all files in the destination path'''
-    for dirpath, dirnames, filenames in os.walk(DESTINATION_PATH):
-      for file in filenames:
-        filepath = os.path.join(dirpath, file)
-
-        total_size += os.path.getsize(filepath)  # Add the size of each file to the total size
-
-    '''Get storage media free space'''
-    disk_usage = psutil.disk_usage(configs.config['destination_path']).free  # Get disk usage statistics in bytes
-    free_space = round(disk_usage / (1024**3), 2)  # Convert free space to GB
-
-    try:
-      files = [file for file in os.listdir(DESTINATION_PATH) if os.path.isfile(os.path.join(DESTINATION_PATH, file))]  # Get a list of all the files in the destination path
-      files.sort(key=self.get_modification_time)  # Sort the list of files based on their modification time
-
-      most_recently_modified_file = files[-1]  # The most recently modified file
-      filename, _, filetype = most_recently_modified_file.partition('.')
-
-      # Get the modification time of the most recently modified file
-      modification_time = datetime.datetime.fromtimestamp(os.path.getmtime(f"{DESTINATION_PATH}{most_recently_modified_file}"))
-
-      # Check if the file is older than three months
-      if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=30)):
-        self.notify_drive_reconnection()
-
-      if filetype != 'zip': 
-        filename = "No backup"
-    except IndexError: 
-      filename = "No backup"
-
     backup_options_label = ctk.CTkLabel(master=self, text="Drive Properties ━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
     backup_options_label.place(x=15, y=15)
 
@@ -101,13 +68,13 @@ class App(ctk.CTk):
     combobox_1 = ctk.CTkComboBox(master=self, width=470, values=drive_options, command=self.drives_combobox, variable=device_combobox_var)
     combobox_1.place(x=15, y=70)
 
-    size_of_backup_label = ctk.CTkLabel(master=self, text=f"Size of backup: {humanize.naturalsize(total_size)}", font=('Helvetica', 12))
+    size_of_backup_label = ctk.CTkLabel(master=self, text=f"Size of backup: {humanize.naturalsize(self.get_backup_size())}", font=('Helvetica', 12))
     size_of_backup_label.place(x=15, y=100)
 
-    total_drive_space_label = ctk.CTkLabel(master=self, text=f"Free space on ({DESTINATION_PATH.replace('SafeArchive/', '')}): {free_space} GB", font=('Helvetica', 12))
+    total_drive_space_label = ctk.CTkLabel(master=self, text=f"Free space on ({DESTINATION_PATH.replace('SafeArchive/', '')}): {self.storage_media_free_space()} GB", font=('Helvetica', 12))
     total_drive_space_label.place(x=15, y=120)
 
-    last_backup_label = ctk.CTkLabel(master=self, text=f"Last backup: {filename}", font=('Helvetica', 12))
+    last_backup_label = ctk.CTkLabel(master=self, text=f"Last backup: {self.last_backup()}", font=('Helvetica', 12))
     last_backup_label.place(x=15, y=140)
 
     additional_settings_label = ctk.CTkLabel(master=self, text="Backup Options ━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
@@ -162,11 +129,13 @@ class App(ctk.CTk):
     source_listbox.pack(padx=7, pady=7)
 
     def update_listbox():
+      """Insert source paths from JSON file inside a listbox"""
       global index
       for index, item in enumerate(configs.config['source_path']):
         source_listbox.insert(index, item)
 
     def remove_item():
+      """Remove a source path from listbox & JSON file, by selecting a specific one"""
       selected_items = source_listbox.curselection()
       for i in reversed(selected_items):
         del configs.config['source_path'][i]
@@ -176,6 +145,7 @@ class App(ctk.CTk):
       except UnboundLocalError: pass
 
     def add_item():
+      """Add a source path to the listbox & JSON file"""
       source_path_file_explorer = filedialog.askdirectory(title='Backup these folders') + '/'
       if (source_path_file_explorer != '/') and (source_path_file_explorer not in configs.config['source_path']):
         configs.config['source_path'].append(source_path_file_explorer)
@@ -211,23 +181,74 @@ class App(ctk.CTk):
     self.protocol('WM_DELETE_WINDOW', self.hide_window)
 
 
-  '''Get the modification time of zip file'''
+  def drives_combobox(self, choice):
+    """Update the value of the key in the dictionary"""
+    configs.config['destination_path'] = choice
+
+  def cloud_switch(self):
+    """
+    Get switch position (True/False)
+    Update the value of the key in the dictionary
+    """
+    switch_position = self.cloud_switch_var.get()
+    configs.config['backup_to_cloud'] = True if switch_position == "on" else False
+
+  def backup_expiry_date_combobox(self, choice):
+    """Update the value of the key in the dictionary"""
+    configs.config['backup_expiry_date'] = choice
+
+  def get_backup_size(self):
+    """Walk through all files in the destination path & return backup size"""
+    total_size = 0  # Initialize total size to 0
+
+    for dirpath, _, filenames in os.walk(DESTINATION_PATH):
+      for file in filenames:
+        filepath = os.path.join(dirpath, file)
+
+        total_size += os.path.getsize(filepath)  # Add the size of each file to the total size
+    return total_size
+
+  def storage_media_free_space(self):
+    """Return storage media free space"""
+    disk_usage = psutil.disk_usage(configs.config['destination_path']).free  # Get disk usage statistics in bytes
+    free_space = round(disk_usage / (1024**3), 2)  # Convert free space to GB
+    return free_space
+
+  def last_backup(self):
+    """
+    Check if last backup is older than 30 days, if True then display a system notification message
+    Return last backup date
+    """
+    try:
+      files = [file for file in os.listdir(DESTINATION_PATH) if os.path.isfile(os.path.join(DESTINATION_PATH, file))]  # Get a list of all the files in the destination path
+      files.sort(key=self.get_modification_time)  # Sort the list of files based on their modification time
+
+      most_recently_modified_file = files[-1]  # The most recently modified file
+      filename, _, filetype = most_recently_modified_file.partition('.')
+
+      # Get the modification time of the most recently modified file
+      modification_time = datetime.datetime.fromtimestamp(os.path.getmtime(f"{DESTINATION_PATH}{most_recently_modified_file}"))
+
+      # Check if the file is older than three months
+      if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=30)):
+        self.notify_drive_reconnection()
+
+      if filetype != 'zip': 
+        filename = "No backup"
+    except IndexError: 
+      filename = "No backup"
+    return filename
+
   def get_modification_time(self, file):
+    """Return the modification time of zip file"""
     file_path = os.path.join(DESTINATION_PATH, file)
     return os.path.getmtime(file_path)
 
-  def drives_combobox(self, choice):
-    configs.config['destination_path'] = choice  # Update the value of the key in the dictionary
-
-  '''Upload the local folder and its content'''
-  def cloud_switch(self):
-    switch_position = self.cloud_switch_var.get()
-    configs.config['backup_to_cloud'] = True if switch_position == "on" else False # Update the value of the key in the dictionary
-
-  def backup_expiry_date_combobox(self, choice):
-    configs.config['backup_expiry_date'] = choice  # Update the value of the key in the dictionary
-
-  def BackupExpiryDate(self):
+  def backup_expiry_date(self):
+    """
+    Check if previous backups are older than expiry date
+    Remove every past backup if True
+    """
     for filename in os.listdir(DESTINATION_PATH):  # Iterate through all files in the destination directory
       filepath = os.path.join(DESTINATION_PATH, filename)
 
@@ -242,8 +263,8 @@ class App(ctk.CTk):
       if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=days)):  # Check if the file is older than JSON value
         os.remove(filepath)  # Delete the file
 
-  '''Show notification message when backup process successfully completes'''
   def notify_backup_completion(self):
+    """Display notification message when backup process successfully completes"""
     notification.notify(
       title="Backup Completed",
       app_name="SafeArchive",
@@ -252,8 +273,8 @@ class App(ctk.CTk):
       timeout = 10
     )
 
-  '''Show notification message when restore process successfully completes'''
   def notify_restore_completion(self):
+    """Display notification message when restore process successfully completes"""
     notification.notify(
       title="Files Restored Sucessfully",
       app_name="SafeArchive",
@@ -262,8 +283,8 @@ class App(ctk.CTk):
       timeout = 10
     )
 
-  '''Show notification message when drive was disconnected / for too long'''
   def notify_drive_reconnection(self):
+    """Display notification message when drive was disconnected / for too long"""
     notification.notify(
       title="Reconnect your drive",
       app_name="SafeArchive",
@@ -273,11 +294,16 @@ class App(ctk.CTk):
     )
 
   def backup(self):
+    """
+    Zip (backup) source path files to destination path:
+      * Compression method: ZIP_DEFLATED
+      * allowZip64 is set to True (this parameter use the ZIP64 extensions when the zip file is larger than 4gb)
+      * Compresslevel is set to 9 (its sometimes really slow when source path files are too large, saves storage space)
+    Initialize & Upload local backups to cloud if JSON value is True
+    """
     self.backup_button.configure(state="disabled")  # Change backup button state to disabled
-
-    if configs.config['backup_expiry_date'] != "Forever (default)":
-      self.BackupExpiryDate()
-  
+    # Set expiry date for old backups (type: integer)
+    if configs.config['backup_expiry_date'] != "Forever (default)": self.backup_expiry_date()
     # Open the zipfile in write mode, create zip file with current date in its name
     with zipfile.ZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True, compresslevel=9) as zipObj:
       for item in configs.config['source_path']:  # Iterate over each path in the source list
@@ -295,25 +321,30 @@ class App(ctk.CTk):
   
         source_item_label.place_forget()
 
-    if configs.config['backup_to_cloud']: cloud.initialize()
-
     # Choose if you want local backups to be uploaded to cloud (type: boolean)
     if configs.config['backup_to_cloud']:
+      cloud.initialize()
       cloud.backup_to_cloud(DESTINATION_PATH[:-1], parent_folder_id=cloud.gdrive_folder['id'])  # Upload the local folder and its content
 
     self.backup_button.configure(state="normal")  # Change backup button state back to normal
     self.notify_backup_completion()
 
-  '''Set progress bar'''
   def start_progress_bar(self):
+    """Start/Stop progress bar & call backup() function"""
     self.backup_progressbar.start()
     self.backup()
     self.backup_progressbar.stop()
 
   def run_backup(self):
-    threading.Thread(target=self.start_progress_bar, daemon=True).start()  # Create backup process thread
+    """Start thread when backup is about to take action"""
+    threading.Thread(target=self.start_progress_bar, daemon=True).start()
 
   def restore_backup(self):
+    """
+    Create a toplevel widget containing a listbox inside a frame
+    Show last backups inside the listbox
+    Restore last backup files by selecting a specific one
+    """
     restore_window = tk.Toplevel(self)  # Open new window (restore_window)
     restore_window.title("Select backup to restore")  # Set window title
     restore_window.geometry("440x240")  # Set window size
@@ -336,49 +367,52 @@ class App(ctk.CTk):
 
     listbox.pack()
 
-    counter = 1
-    for zip_file in os.listdir(DESTINATION_PATH):
+    for index, zip_file in enumerate(os.listdir(DESTINATION_PATH)):
       filename, _,filetype = zip_file.partition('.')
-
+      
       if filetype == 'zip':  
-        listbox.insert(counter, zip_file.replace('.zip', ''))
-        counter += 1
+        listbox.insert(index, filename)
 
     def selected_item():
+      """
+      Extract (restore) selected zip file (backup)
+      Move zip file content to it's original location
+      """
       self.restore_button.configure(state="disabled")  # Change backup button state to disabled
 
-      for i in listbox.curselection():
+      for item in listbox.curselection():
         # Open the zipfile in read mode, extract its content
-        with zipfile.ZipFile(f'{DESTINATION_PATH}{listbox.get(i)}.zip', mode='r') as zipObj:
+        with zipfile.ZipFile(f'{DESTINATION_PATH}{listbox.get(item)}.zip') as zipObj:
           zipObj.extractall(configs.config['destination_path'])
 
       self.notify_restore_completion()
       self.restore_button.configure(state="normal")  # Change backup button state back to normal
 
     def run_restore():
+      """Start thread when restoration is processing"""
       threading.Thread(target=selected_item, daemon=True).start()  # Create restore process thread
 
     self.restore_button = ctk.CTkButton(master=restore_window, text="Restore backup", command=run_restore)
     self.restore_button.place(x=150, y=197)
 
-  '''Backup from taskbar'''
   def backup_from_taskbar(self, icon):
+    """Backup from taskbar"""
     icon.stop()
     self.backup()
     self.hide_window()
 
-  '''Show window'''
   def show_window(self, icon):
+    """Show window"""
     icon.stop()
     self.after(0, self.deiconify())
 
-  '''Quit window'''
   def quit_window(self, icon):
+    """Quit window"""
     icon.stop()
     self.destroy()
 
-  '''Hide window and show system taskbar'''
   def hide_window(self):
+    """Hide window & show system taskbar"""
     self.withdraw()
     image = Image.open("assets/icon.ico")
     menu = item('Backup Now', self.backup_from_taskbar), item('Open', self.show_window), item('Exit', self.quit_window)

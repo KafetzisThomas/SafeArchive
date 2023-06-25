@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
+
+"""
+This file provides cloud support for backing up files to Google Drive.
+It allows uploading, updating, and deleting files in a specified folder on Google Drive.
+Note: This feature becomes optional in the program. If you want to use it, just turn the cloud switch on.
+Follow instructions to get your Oauth2 credential key:
+https://github.com/KafetzisThomas/SafeArchive/wiki/Obtaining-API-Key
+"""
+
 import os
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
@@ -7,11 +16,11 @@ from pydrive2.drive import GoogleDrive
 import Scripts.configs as configs
 configs.config.load() # Load the JSON file into memory
 
-'''Get value from the JSON file'''
-destination_path = configs.config['destination_path'] + 'SafeArchive/'
+# Get the values from the JSON file
+DESTINATION_PATH = configs.config['destination_path'] + 'SafeArchive/'  # Get value from the JSON file
 
-'''Authenticate request & store authorization credentials'''
 def initialize():
+  """Authenticate request & store authorization credentials"""
   global drive, gdrive_folder
 
   gauth = GoogleAuth()  # Create a GoogleAuth instance
@@ -19,7 +28,7 @@ def initialize():
   gauth.LoadCredentialsFile('credentials.txt')  # Load the stored OAuth2 credential
 
   # Check if stored credential is valid
-  if gauth.credentials is None:
+  if not gauth.credentials:
     gauth.LocalWebserverAuth()  # If not, authenticate with LocalWebserverAuth()
   elif gauth.access_token_expired:
     gauth.Refresh()  # If expired, refresh the token
@@ -41,12 +50,17 @@ def initialize():
     gdrive_folder = drive.CreateFile({'title': 'SafeArchive', 'mimeType': 'application/vnd.google-apps.folder'})
     gdrive_folder.Upload()
 
-'''Upload backup files'''
 def backup_to_cloud(folderpath, parent_folder_id=None):
+  """
+  Upload local backup files to cloud (google drive)
+    * Delete files that have been locally removed
+    * Upload files that have been added locally
+    * Update existing files with new content
+  """
   foldername = os.path.basename(folderpath)
   folder_metadata = {'title': foldername, 'mimeType': 'application/vnd.google-apps.folder'}
 
-  if parent_folder_id is not None:
+  if parent_folder_id:
     folder_metadata['parents'] = [{'id': parent_folder_id}]
 
   file_list = drive.ListFile({'q': f"title='{foldername}' and mimeType='application/vnd.google-apps.folder' and trashed=false"}).GetList()
@@ -61,7 +75,7 @@ def backup_to_cloud(folderpath, parent_folder_id=None):
       gdrive_file = file_list[0]
       gdrive_file.SetContentFile(filepath)
       gdrive_file.Upload()
-    
+
     else:
       # The file doesn't exist, so create a new one
       gdrive_file = drive.CreateFile({'title': filename, 'parents': [{'id': gdrive_folder['id']}]})
@@ -70,5 +84,5 @@ def backup_to_cloud(folderpath, parent_folder_id=None):
 
   # Delete files in Google Drive that don't exist in the local folder anymore
   for file in drive.ListFile({'q': f"'{gdrive_folder['id']}' in parents and trashed=false"}).GetList():
-    if not os.path.exists(os.path.join(destination_path[:-1], file['title'])):
+    if not os.path.exists(os.path.join(DESTINATION_PATH[:-1], file['title'])):
       file.Trash()

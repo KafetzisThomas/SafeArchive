@@ -1,33 +1,38 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
+
+"""
+This file manages configurations and provides functionality to save and load them as well.
+It also automatically triggers the saving of the configuration file whenever a setting is changed or deleted.
+"""
+
 import os, json
 from pathlib import Path
 
-'''Set configs'''
-# Save every time a setting changes
 class ConfigDict(dict):
+  """Set configs & save every time a setting changes"""
   __slots__=["path"]
   def __init__(self, config: dict, path: str):
     self.update(config)
     self.path = Path(path)
 
-  '''Triggers whenever value is set'''
-  def __setitem__(self, key, value):  
+  def __setitem__(self, key, value):
+    """Triggers whenever value is set"""
     super().__setitem__(key, value)
     self.save()
 
-  '''Triggers whenever value is deleted'''
   def __delitem__(self, key):
+    """Triggers whenever value is deleted"""
     super().__delitem__(key)
     self.save()
 
-  '''Saves config file to given path'''
   def save(self):  
+    """Saves config file to given path"""
     with open(self.path, 'w') as file:
       json.dump(self, file, indent=2)
 
-  '''Loads config file from given path'''
   def load(self):
+    """Loads config file from given path"""
     with open(self.path, 'r') as file:
       self.update(json.load(file))
 
