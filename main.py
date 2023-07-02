@@ -293,6 +293,16 @@ class App(ctk.CTk):
       timeout = 10
     )
 
+  def notify_cloud_space_limitation(self):
+    """Display notification message when cloud storage is running out"""
+    notification.notify(
+      title="Warning: Your Google Drive storage is running out.",
+      app_name="SafeArchive",
+      message="Your Google Drive storage is almost full. To make sure your files can sync, clean up space.",
+      app_icon="assets/icon.ico",
+      timeout = 10
+    )
+
   def backup(self):
     """
     Zip (backup) source path files to destination path:
@@ -324,7 +334,8 @@ class App(ctk.CTk):
     # Choose if you want local backups to be uploaded to cloud (type: boolean)
     if configs.config['backup_to_cloud']:
       cloud.initialize()
-      cloud.backup_to_cloud(DESTINATION_PATH[:-1], parent_folder_id=cloud.gdrive_folder['id'])  # Upload the local folder and its content
+      if cloud.get_storage_usage_percentage() >= 90: self.notify_cloud_space_limitation()  # Check if cloud storage usage is above 90%
+      else: cloud.backup_to_cloud(DESTINATION_PATH[:-1], parent_folder_id=cloud.gdrive_folder['id'])  # Upload the local folder and its content
 
     self.backup_button.configure(state="normal")  # Change backup button state back to normal
     self.notify_backup_completion()

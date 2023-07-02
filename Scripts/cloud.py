@@ -50,6 +50,16 @@ def initialize():
     gdrive_folder = drive.CreateFile({'title': 'SafeArchive', 'mimeType': 'application/vnd.google-apps.folder'})
     gdrive_folder.Upload()
 
+def get_storage_usage_percentage():
+  """Return storage usage percentage"""
+  account_details = drive.GetAbout()  # Get account details
+
+  # Calculate storage usage percentage
+  used_storage = int(account_details['quotaBytesUsed'])
+  total_storage = int(account_details['quotaBytesTotal'])
+  storage_usage_percentage = (used_storage / total_storage) * 100
+  return storage_usage_percentage
+
 def backup_to_cloud(folderpath, parent_folder_id=None):
   """
   Upload local backup files to cloud (google drive)
