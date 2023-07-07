@@ -434,7 +434,7 @@ class App(ctk.CTk):
   def show_window(self, icon):
     """Show window"""
     icon.stop()
-    self.after(0, self.deiconify())
+    self.after(0, self.deiconify)
 
   def quit_window(self, icon):
     """Quit window"""
