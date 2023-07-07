@@ -214,6 +214,11 @@ class App(ctk.CTk):
     free_space = round(disk_usage / (1024**3), 2)  # Convert free space to GB
     return free_space
 
+  def get_drive_usage_percentage(self):
+    """Return drive usage percentage"""
+    drive_usage_percentage = psutil.disk_usage(configs.config['destination_path']).percent  # Get drive usage percentage
+    return drive_usage_percentage
+
   def last_backup(self):
     """
     Check if last backup is older than 30 days, if True then display a system notification message
@@ -293,6 +298,16 @@ class App(ctk.CTk):
       timeout = 10
     )
 
+  def notify_drive_space_limitation(self):
+    """Display notification message when drive storage is running out"""
+    notification.notify(
+      title="Warning: Your Drive storage is running out.",
+      app_name="SafeArchive",
+      message="Your Drive storage is almost full. To make sure your files can sync, clean up space.",
+      app_icon="assets/icon.ico",
+      timeout = 10
+    )
+
   def notify_cloud_space_limitation(self):
     """Display notification message when cloud storage is running out"""
     notification.notify(
@@ -312,33 +327,37 @@ class App(ctk.CTk):
     Initialize & Upload local backups to cloud if JSON value is True
     """
     self.backup_button.configure(state="disabled")  # Change backup button state to disabled
-    # Set expiry date for old backups (type: integer)
-    if configs.config['backup_expiry_date'] != "Forever (default)": self.backup_expiry_date()
-    # Open the zipfile in write mode, create zip file with current date in its name
-    with zipfile.ZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True, compresslevel=9) as zipObj:
-      for item in configs.config['source_path']:  # Iterate over each path in the source list
-        source_item_label = ctk.CTkLabel(master=self, text=item, height=20, font=('Helvetica', 12))
-        source_item_label.place(x=15, y=430)
+    # Check if drive usage is below or equal to 90%
+    if self.get_drive_usage_percentage() <= 90:
+      # Set expiry date for old backups (type: integer)
+      if configs.config['backup_expiry_date'] != "Forever (default)": self.backup_expiry_date()
+      # Open the zipfile in write mode, create zip file with current date in its name
+      with zipfile.ZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True, compresslevel=9) as zipObj:
+        for item in configs.config['source_path']:  # Iterate over each path in the source list
+          source_item_label = ctk.CTkLabel(master=self, text=item, height=20, font=('Helvetica', 12))
+          source_item_label.place(x=15, y=430)
 
-        for root, dirs, files in os.walk(item):  # Iterate over the files and folders in the path
-          for dirname in dirs:
-            dirpath = os.path.join(root, dirname)
-            zipObj.write(dirpath)  # Write the folder to the zip archive
+          for root, dirs, files in os.walk(item):  # Iterate over the files and folders in the path
+            for dirname in dirs:
+              dirpath = os.path.join(root, dirname)
+              zipObj.write(dirpath)  # Write the folder to the zip archive
 
-          for filename in files:
-            filepath = os.path.join(root, filename)
-            zipObj.write(filepath)  # Write the file to the zip archive
-  
-        source_item_label.place_forget()
+            for filename in files:
+              filepath = os.path.join(root, filename)
+              zipObj.write(filepath)  # Write the file to the zip archive
+    
+          source_item_label.place_forget()
 
-    # Choose if you want local backups to be uploaded to cloud (type: boolean)
-    if configs.config['backup_to_cloud']:
-      cloud.initialize()
-      if cloud.get_storage_usage_percentage() >= 90: self.notify_cloud_space_limitation()  # Check if cloud storage usage is above 90%
-      else: cloud.backup_to_cloud(DESTINATION_PATH[:-1], parent_folder_id=cloud.gdrive_folder['id'])  # Upload the local folder and its content
+      # Choose if you want local backups to be uploaded to cloud (type: boolean)
+      if configs.config['backup_to_cloud']:
+        cloud.initialize()
+        if cloud.get_storage_usage_percentage() >= 90: self.notify_cloud_space_limitation()  # Check if cloud storage usage is above or equal to 90%
+        else: cloud.backup_to_cloud(DESTINATION_PATH[:-1], parent_folder_id=cloud.gdrive_folder['id'])  # Upload the local folder and its content
+
+      self.notify_backup_completion()
+    else: self.notify_drive_space_limitation()
 
     self.backup_button.configure(state="normal")  # Change backup button state back to normal
-    self.notify_backup_completion()
 
   def start_progress_bar(self):
     """Start/Stop progress bar & call backup() function"""
