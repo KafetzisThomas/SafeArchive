@@ -88,6 +88,6 @@ Allows you to backup your essential local files (+cloud support) quickly and sch
 
 ## Obtaining API Key
 
-To upload your backups to your cloud account (Google Drive), you will need an "Oauth2" credential to make the GUI switch to work.
+To sync your backups to your cloud account (Google Drive), you will need an "Oauth2" credential to make the GUI switch to work.
 
 * **Instructions can be found on this page: [Obtaining API Key](https://github.com/KafetzisThomas/SafeArchive/wiki/Obtaining-API-Key)**
