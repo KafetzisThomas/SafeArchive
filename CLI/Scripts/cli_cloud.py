@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 """
-This file provides cloud support for backing up files to Google Drive.
+This file allows you to sync your files with Google Drive.
 It allows uploading, updating, and deleting files in a specified folder on Google Drive.
 Note: This feature becomes optional in the script. If you want to use it, just switch the JSON value to true.
 Follow instructions to get your Oauth2 credential key:
