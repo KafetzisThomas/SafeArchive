@@ -46,7 +46,7 @@ Allows you to backup your essential local files (+cloud support) quickly and sch
 * Separate backup process from the main one (GUI) by creating a new thread to prevent script crash
 * Add system tray icon to hide the main window instead of terminating it when clicking the X button upper-right. Specifically, a taskbar icon appears with options to backup your files from anywhere without opening the GUI window, open the GUI window and exit the script
 * Restore past backups to their original location
-* Pop up system notifications when backup process completes, selected backup restored successfully and drive hasn't reconnected for too long.
+* Pop up system notifications when backup process completes, selected backup restored successfully, drive or cloud storage is running out, and drive hasn't reconnected for too long.
 
 ## Manual Setup
 1. Download or clone the repo and install the requirements using:
