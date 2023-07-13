@@ -210,7 +210,7 @@ class App(ctk.CTk):
 
   def storage_media_free_space(self):
     """Return storage media free space"""
-    disk_usage = psutil.disk_usage(configs.config['destination_path']).free  # Get disk usage statistics in bytes
+    disk_usage = psutil.disk_usage(configs.config['destination_path']).free  # Get drive free space
     free_space = round(disk_usage / (1024**3), 2)  # Convert free space to GB
     return free_space
 
@@ -351,7 +351,7 @@ class App(ctk.CTk):
       # Choose if you want local backups to be uploaded to cloud (type: boolean)
       if configs.config['backup_to_cloud']:
         cloud.initialize()
-        if cloud.get_storage_usage_percentage() >= 90: self.notify_cloud_space_limitation()  # Check if cloud storage usage is above or equal to 90%
+        if cloud.get_cloud_usage_percentage() >= 90: self.notify_cloud_space_limitation()  # Check if cloud storage usage is above or equal to 90%
         else: cloud.backup_to_cloud(DESTINATION_PATH[:-1], parent_folder_id=cloud.gdrive_folder['id'])  # Upload the local folder and its content
 
       self.notify_backup_completion()

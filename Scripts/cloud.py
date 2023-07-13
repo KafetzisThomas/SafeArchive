@@ -12,11 +12,9 @@ https://github.com/KafetzisThomas/SafeArchive/wiki/Obtaining-API-Key
 import os
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
-
 import Scripts.configs as configs
 configs.config.load() # Load the JSON file into memory
 
-# Get the values from the JSON file
 DESTINATION_PATH = configs.config['destination_path'] + 'SafeArchive/'  # Get value from the JSON file
 
 def initialize():
@@ -50,8 +48,8 @@ def initialize():
     gdrive_folder = drive.CreateFile({'title': 'SafeArchive', 'mimeType': 'application/vnd.google-apps.folder'})
     gdrive_folder.Upload()
 
-def get_storage_usage_percentage():
-  """Return storage usage percentage"""
+def get_cloud_usage_percentage():
+  """Return cloud usage percentage"""
   account_details = drive.GetAbout()  # Get account details
 
   # Calculate storage usage percentage
