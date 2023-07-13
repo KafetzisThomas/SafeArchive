@@ -1,0 +1,6 @@
+prettytable==3.7.0
+PyDrive2==1.15.1
+humanize==4.6.0
+colorama==0.4.6
+psutil==5.9.4
+art==5.9
