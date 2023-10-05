@@ -3,5 +3,5 @@ PyDrive2==1.15.1
 humanize==4.6.0
 pystray==0.19.4
 psutil==5.9.4
-Pillow==9.5.0
+Pillow==10.0.1
 plyer==2.1.0
