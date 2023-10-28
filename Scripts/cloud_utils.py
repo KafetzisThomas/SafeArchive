@@ -12,10 +12,10 @@ https://github.com/KafetzisThomas/SafeArchive/wiki/Obtaining-API-Key
 import os
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
-import Scripts.configs as configs
-configs.config.load() # Load the JSON file into memory
+from Scripts.configs import config
+config.load() # Load the JSON file into memory
 
-DESTINATION_PATH = configs.config['destination_path'] + 'SafeArchive/'  # Get value from the JSON file
+DESTINATION_PATH = config['destination_path'] + 'SafeArchive/'  # Get value from the JSON file
 
 def initialize():
   """Authenticate request & store authorization credentials"""

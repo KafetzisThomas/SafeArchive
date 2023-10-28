@@ -6,7 +6,8 @@ This file manages configurations and provides functionality to save and load the
 It also automatically triggers the saving of the configuration file whenever a setting is changed or deleted.
 """
 
-import os, json
+import os
+import json
 from pathlib import Path
 
 class ConfigDict(dict):
