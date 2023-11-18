@@ -2,11 +2,9 @@
 # -*- coding: UTF-8 -*-
 
 from plyer import notification
-from Scripts.configs import config
 
-DESTINATION_PATH = config['destination_path'] + 'SafeArchive/'
 
-def notify_backup_completion():
+def notify_backup_completion(DESTINATION_PATH):
   """Display notification message when backup process successfully completes"""
   notification.notify(
     title="Backup Completed",

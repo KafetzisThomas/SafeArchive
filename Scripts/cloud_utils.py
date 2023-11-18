@@ -15,7 +15,6 @@ from pydrive2.drive import GoogleDrive
 from Scripts.configs import config
 config.load() # Load the JSON file into memory
 
-DESTINATION_PATH = config['destination_path'] + 'SafeArchive/'  # Get value from the JSON file
 
 def initialize():
   """Authenticate request & store authorization credentials"""
@@ -58,7 +57,7 @@ def get_cloud_usage_percentage():
   storage_usage_percentage = (used_storage / total_storage) * 100
   return storage_usage_percentage
 
-def backup_to_cloud(folderpath, parent_folder_id=None):
+def backup_to_cloud(folderpath, DESTINATION_PATH, parent_folder_id=None):
   """
   Upload local backup files to cloud (google drive)
     * Delete files that have been locally removed

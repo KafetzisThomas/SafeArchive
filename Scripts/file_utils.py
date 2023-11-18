@@ -8,9 +8,8 @@ from Scripts.notification_handlers import notify_drive_reconnection
 from tkinter import filedialog
 from Scripts.configs import config
 
-DESTINATION_PATH = config['destination_path'] + 'SafeArchive/'
 
-def get_backup_size():
+def get_backup_size(DESTINATION_PATH):
   """Walk through all files in the destination path & return total size"""
   total_size = 0  # Initialize total size to 0
 
@@ -35,20 +34,20 @@ def get_drive_usage_percentage():
   return drive_usage_percentage
 
 
-def get_modification_time(file):
+def get_modification_time(file, DESTINATION_PATH):
   """Return the modification time of zip file"""
   file_path = os.path.join(DESTINATION_PATH, file)
   return os.path.getmtime(file_path)
 
 
-def last_backup():
+def last_backup(DESTINATION_PATH):
   """
   Check if last backup is older than 30 days, if True then display a system notification message
   Return last backup date
   """
   try:
     files = [file for file in os.listdir(DESTINATION_PATH) if os.path.isfile(os.path.join(DESTINATION_PATH, file))]  # Get a list of all the files in the destination path
-    files.sort(key=get_modification_time)  # Sort the list of files based on their modification time
+    files.sort(key=lambda file: get_modification_time(DESTINATION_PATH, file))  # Sort the list of files based on their modification time
 
     most_recently_modified_file = files[-1]  # The most recently modified file
     filename, _, filetype = most_recently_modified_file.partition('.')
@@ -67,7 +66,7 @@ def last_backup():
   return filename
 
 
-def backup_expiry_date():
+def backup_expiry_date(DESTINATION_PATH):
   """
   Check if previous backups are older than expiry date
   Remove every past backup if True

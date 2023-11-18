@@ -3,6 +3,7 @@
 
 from Scripts.configs import config
 
+
 def drivesCombobox(choice):
   """Update the value of the key in the dictionary"""
   config['destination_path'] = choice

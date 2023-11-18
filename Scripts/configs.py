@@ -10,6 +10,7 @@ import os
 import json
 from pathlib import Path
 
+
 class ConfigDict(dict):
   """Set configs & save every time a setting changes"""
   __slots__=["path"]

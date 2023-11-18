@@ -19,9 +19,8 @@ from Scripts.file_utils import backup_expiry_date
 from Scripts.configs import config
 import customtkinter as ctk
 
-DESTINATION_PATH = config['destination_path'] + 'SafeArchive/'
 
-def backup(App):
+def backup(App, DESTINATION_PATH):
     """
     Zip (backup) source path files to destination path:
         * Compression method: ZIP_DEFLATED
@@ -33,7 +32,7 @@ def backup(App):
     if get_drive_usage_percentage() <= 90:
         # Set expiry date for old backups (type: integer)
         if config['backup_expiry_date'] != "Forever (default)":
-            backup_expiry_date()
+            backup_expiry_date(DESTINATION_PATH)
 
         # Open the zipfile in write mode, create zip file with current date in its name
         with zipfile.ZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True, compresslevel=9) as zipObj:
@@ -58,28 +57,28 @@ def backup(App):
             if get_cloud_usage_percentage() >= 90:
                 notify_cloud_space_limitation()  # Check if cloud storage usage is above or equal to 90%
             else:
-                backup_to_cloud(DESTINATION_PATH[:-1], parent_folder_id=cloud_utils.gdrive_folder['id'])  # Upload the local folder and its content
+                backup_to_cloud(DESTINATION_PATH[:-1], DESTINATION_PATH, parent_folder_id=cloud_utils.gdrive_folder['id'])  # Upload the local folder and its content
 
-        notify_backup_completion()
+        notify_backup_completion(DESTINATION_PATH)
     else:
         notify_drive_space_limitation()
 
 
-def start_progress_bar(App):
+def start_progress_bar(App, DESTINATION_PATH):
     """Start/Stop progress bar & call backup() function"""
     App.backup_progressbar.start()
     App.backup_button.configure(state="disabled")  # Change backup button state to disabled
-    backup(App)
+    backup(App, DESTINATION_PATH)
     App.backup_button.configure(state="normal")  # Change backup button state back to normal
     App.backup_progressbar.stop()
 
 
-def run_backup(App):
+def run_backup(App, DESTINATION_PATH):
     """Start thread when backup is about to take action"""
-    threading.Thread(target=start_progress_bar, args=(App,), daemon=True).start()
+    threading.Thread(target=start_progress_bar, args=(App, DESTINATION_PATH), daemon=True).start()
 
 
-def restore_backup(App):
+def restore_backup(App, DESTINATION_PATH):
     """
     Create a toplevel widget containing a listbox inside a frame
     Show last backups inside the listbox
