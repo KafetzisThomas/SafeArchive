@@ -36,18 +36,23 @@ def backup(App, DESTINATION_PATH):
 
         # Open the zipfile in write mode, create zip file with current date in its name
         with zipfile.ZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True, compresslevel=9) as zipObj:
-            for item in config['source_path']:  # Iterate over each path in the source list
-                source_item_label = ctk.CTkLabel(master=App, text=item, height=20, font=('Helvetica', 12))
+            # Iterate over each path in the source list
+            for item in config['source_path']:
+                source_item_label = ctk.CTkLabel(
+                    master=App, text=item, height=20, font=('Helvetica', 12))
                 source_item_label.place(x=15, y=430)
 
-                for root, dirs, files in os.walk(item):  # Iterate over the files and folders in the path
+                # Iterate over the files and folders in the path
+                for root, dirs, files in os.walk(item):
                     for dirname in dirs:
                         dirpath = os.path.join(root, dirname)
-                        zipObj.write(dirpath)  # Write the folder to the zip archive
+                        # Write the folder to the zip archive
+                        zipObj.write(dirpath)
 
                     for filename in files:
                         filepath = os.path.join(root, filename)
-                        zipObj.write(filepath)  # Write the file to the zip archive
+                        # Write the file to the zip archive
+                        zipObj.write(filepath)
 
                 source_item_label.place_forget()
 
@@ -57,7 +62,9 @@ def backup(App, DESTINATION_PATH):
             if get_cloud_usage_percentage() >= 90:
                 notify_cloud_space_limitation()  # Check if cloud storage usage is above or equal to 90%
             else:
-                backup_to_cloud(DESTINATION_PATH[:-1], DESTINATION_PATH, parent_folder_id=cloud_utils.gdrive_folder['id'])  # Upload the local folder and its content
+                # Upload the local folder and its content
+                backup_to_cloud(
+                    DESTINATION_PATH[:-1], DESTINATION_PATH, parent_folder_id=cloud_utils.gdrive_folder['id'])
 
         notify_backup_completion(DESTINATION_PATH)
     else:
@@ -67,15 +74,18 @@ def backup(App, DESTINATION_PATH):
 def start_progress_bar(App, DESTINATION_PATH):
     """Start/Stop progress bar & call backup() function"""
     App.backup_progressbar.start()
-    App.backup_button.configure(state="disabled")  # Change backup button state to disabled
+    # Change backup button state to disabled
+    App.backup_button.configure(state="disabled")
     backup(App, DESTINATION_PATH)
-    App.backup_button.configure(state="normal")  # Change backup button state back to normal
+    # Change backup button state back to normal
+    App.backup_button.configure(state="normal")
     App.backup_progressbar.stop()
 
 
 def run_backup(App, DESTINATION_PATH):
     """Start thread when backup is about to take action"""
-    threading.Thread(target=start_progress_bar, args=(App, DESTINATION_PATH), daemon=True).start()
+    threading.Thread(target=start_progress_bar, args=(
+        App, DESTINATION_PATH), daemon=True).start()
 
 
 def restore_backup(App, DESTINATION_PATH):
@@ -92,46 +102,50 @@ def restore_backup(App, DESTINATION_PATH):
     restore_window.resizable(False, False)  # Disable minimize/maximize buttons
     restore_window.configure(background="#242424")  # Set background color
 
-    frame = ctk.CTkFrame(master=restore_window, corner_radius=10, height=180, width=425)
+    frame = ctk.CTkFrame(master=restore_window,
+                         corner_radius=10, height=180, width=425)
     frame.place(x=8, y=8)
 
     listbox = tk.Listbox(
-      master=frame,
-      height=9,
-      width=47,
-      background="#343638",
-      foreground="white",
-      activestyle='dotbox',
-      font='Helvetica'
+        master=frame,
+        height=9,
+        width=47,
+        background="#343638",
+        foreground="white",
+        activestyle='dotbox',
+        font='Helvetica'
     )
 
     listbox.pack()
 
-
     for index, zip_file in enumerate(os.listdir(DESTINATION_PATH)):
-      filename, _,filetype = zip_file.partition('.')
-      
-      if filetype == 'zip':  
-        listbox.insert(index, filename)
+        filename, _, filetype = zip_file.partition('.')
+
+        if filetype == 'zip':
+            listbox.insert(index, filename)
 
     def selected_item():
-      """
-      Extract (restore) selected zip file (backup)
-      Move zip file content to it's original location
-      """
-      App.restore_button.configure(state="disabled")  # Change backup button state to disabled
+        """
+        Extract (restore) selected zip file (backup)
+        Move zip file content to it's original location
+        """
+        App.restore_button.configure(
+            state="disabled")  # Change backup button state to disabled
 
-      for item in listbox.curselection():
-        # Open the zipfile in read mode, extract its content
-        with zipfile.ZipFile(f'{DESTINATION_PATH}{listbox.get(item)}.zip') as zipObj:
-          zipObj.extractall(config['destination_path'])
+        for item in listbox.curselection():
+            # Open the zipfile in read mode, extract its content
+            with zipfile.ZipFile(f'{DESTINATION_PATH}{listbox.get(item)}.zip') as zipObj:
+                zipObj.extractall(config['destination_path'])
 
-      notify_restore_completion()
-      App.restore_button.configure(state="normal")  # Change backup button state back to normal
+        notify_restore_completion()
+        # Change backup button state back to normal
+        App.restore_button.configure(state="normal")
 
     def run_restore():
-      """Start thread when restoration is processing"""
-      threading.Thread(target=selected_item, daemon=True).start()  # Create restore process thread
+        """Start thread when restoration is processing"""
+        threading.Thread(target=selected_item, daemon=True).start(
+        )  # Create restore process thread
 
-    App.restore_button = ctk.CTkButton(master=restore_window, text="Restore backup", command=run_restore)
+    App.restore_button = ctk.CTkButton(
+        master=restore_window, text="Restore backup", command=run_restore)
     App.restore_button.place(x=150, y=197)

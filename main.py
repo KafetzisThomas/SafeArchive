@@ -40,127 +40,152 @@ import customtkinter as ctk
 # Set the destination directory path (type: string)
 DESTINATION_PATH = config['destination_path'] + 'SafeArchive/'
 
+
 class App(ctk.CTk):
-  def __init__(self):
-    super().__init__()
+    def __init__(self):
+        super().__init__()
 
-    ctk.set_appearance_mode("dark")
-    ctk.set_default_color_theme("blue")
+        ctk.set_appearance_mode("dark")
+        ctk.set_default_color_theme("blue")
 
-    self.title(f"SafeArchive {version}")  # Set window title
-    self.resizable(False, False)  # Disable minimize/maximize buttons
-    self.geometry("500x500")  # Set window size
-    self.iconbitmap("assets/icon.ico")  # Set window title icon
+        self.title(f"SafeArchive {version}")  # Set window title
+        self.resizable(False, False)  # Disable minimize/maximize buttons
+        self.geometry("500x500")  # Set window size
+        self.iconbitmap("assets/icon.ico")  # Set window title icon
 
-    try:
-      if not os.path.exists(DESTINATION_PATH):  # Create the destination directory path if it doesn't exist
-        os.makedirs(DESTINATION_PATH)
-    except FileNotFoundError:
-      notify_drive_reconnection()
-      sys.exit()
-    except PermissionError:
-      print(f"No permissions given to make directory: '{DESTINATION_PATH}'.",
-            "Change it in settings.json or run with elevated priveleges")
-      sys.exit(77)
+        try:
+            # Create the destination directory path if it doesn't exist
+            if not os.path.exists(DESTINATION_PATH):
+                os.makedirs(DESTINATION_PATH)
+        except FileNotFoundError:
+            notify_drive_reconnection()
+            sys.exit()
+        except PermissionError:
+            print(f"No permissions given to make directory: '{DESTINATION_PATH}'.",
+                  "Change it in settings.json or run with elevated priveleges")
+            sys.exit(77)
 
-    backup_options_label = ctk.CTkLabel(master=self, text="Drive Properties ━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
-    backup_options_label.place(x=15, y=15)
+        backup_options_label = ctk.CTkLabel(
+            master=self, text="Drive Properties ━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
+        backup_options_label.place(x=15, y=15)
 
-    device_label = ctk.CTkLabel(master=self, text="Device", font=('Helvetica', 12))
-    device_label.place(x=15, y=45)
+        device_label = ctk.CTkLabel(
+            master=self, text="Device", font=('Helvetica', 12))
+        device_label.place(x=15, y=45)
 
-    drives = psutil.disk_partitions()
-    drive_options = [drive.device.replace('\\', '/') for drive in drives]
-    
-    device_combobox_var = ctk.StringVar(value=DESTINATION_PATH.replace('SafeArchive/', ''))  # Set initial value
+        drives = psutil.disk_partitions()
+        drive_options = [drive.device.replace('\\', '/') for drive in drives]
 
-    drives_combobox = ctk.CTkComboBox(master=self, width=470, values=drive_options, command=drivesCombobox, variable=device_combobox_var)
-    drives_combobox.place(x=15, y=70)
+        device_combobox_var = ctk.StringVar(
+            value=DESTINATION_PATH.replace('SafeArchive/', ''))  # Set initial value
 
-    size_of_backup_label = ctk.CTkLabel(master=self, text=f"Size of backup: {humanize.naturalsize(get_backup_size(DESTINATION_PATH))}", font=('Helvetica', 12))
-    size_of_backup_label.place(x=15, y=100)
+        drives_combobox = ctk.CTkComboBox(
+            master=self, width=470, values=drive_options, command=drivesCombobox, variable=device_combobox_var)
+        drives_combobox.place(x=15, y=70)
 
-    total_drive_space_label = ctk.CTkLabel(master=self, text=f"Free space on ({DESTINATION_PATH.replace('SafeArchive/', '')}): {storage_media_free_space()} GB", font=('Helvetica', 12))
-    total_drive_space_label.place(x=15, y=120)
+        size_of_backup_label = ctk.CTkLabel(
+            master=self, text=f"Size of backup: {humanize.naturalsize(get_backup_size(DESTINATION_PATH))}", font=('Helvetica', 12))
+        size_of_backup_label.place(x=15, y=100)
 
-    last_backup_label = ctk.CTkLabel(master=self, text=f"Last backup: {last_backup(DESTINATION_PATH)}", font=('Helvetica', 12))
-    last_backup_label.place(x=15, y=140)
+        total_drive_space_label = ctk.CTkLabel(
+            master=self, text=f"Free space on ({DESTINATION_PATH.replace('SafeArchive/', '')}): {storage_media_free_space()} GB", font=('Helvetica', 12))
+        total_drive_space_label.place(x=15, y=120)
 
-    additional_settings_label = ctk.CTkLabel(master=self, text="Backup Options ━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
-    additional_settings_label.place(x=15, y=170)
+        last_backup_label = ctk.CTkLabel(
+            master=self, text=f"Last backup: {last_backup(DESTINATION_PATH)}", font=('Helvetica', 12))
+        last_backup_label.place(x=15, y=140)
 
-    keep_my_backups_label = ctk.CTkLabel(master=self, text="Keep my backups", font=('Helvetica', 12))
-    keep_my_backups_label.place(x=15, y=200)
-    
-    backup_expiry_date_combobox_var = ctk.StringVar(value=config['backup_expiry_date'])  # Set initial value
-    backup_expiry_date_options = ["1 month", "3 months", "6 months", "9 months", "1 year", "Forever (default)"]
-    
-    backup_expiry_date_combobox = ctk.CTkComboBox(
-      master=self,
-      width=150,
-      values=backup_expiry_date_options,
-      command=backupExpiryDateCombobox,
-      variable=backup_expiry_date_combobox_var
-    )
+        additional_settings_label = ctk.CTkLabel(
+            master=self, text="Backup Options ━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
+        additional_settings_label.place(x=15, y=170)
 
-    backup_expiry_date_combobox.place(x=15, y=225)
-    
-    cloud_switch_var = ctk.StringVar(value="on" if config['backup_to_cloud'] else "off")  # Set initial value
-    
-    switch = ctk.CTkSwitch(
-      master=self,
-      text="Back up to Cloud",
-      command=lambda: cloudSwitch(cloud_switch_var),
-      variable=cloud_switch_var,
-      onvalue="on",
-      offvalue="off"
-    )
+        keep_my_backups_label = ctk.CTkLabel(
+            master=self, text="Keep my backups", font=('Helvetica', 12))
+        keep_my_backups_label.place(x=15, y=200)
 
-    switch.place(x=340, y=225)
+        backup_expiry_date_combobox_var = ctk.StringVar(
+            value=config['backup_expiry_date'])  # Set initial value
+        backup_expiry_date_options = [
+            "1 month", "3 months", "6 months", "9 months", "1 year", "Forever (default)"]
 
-    backup_these_folders_label = ctk.CTkLabel(master=self, text="Backup these folders", font=('Helvetica', 12))
-    backup_these_folders_label.place(x=15, y=255)
+        backup_expiry_date_combobox = ctk.CTkComboBox(
+            master=self,
+            width=150,
+            values=backup_expiry_date_options,
+            command=backupExpiryDateCombobox,
+            variable=backup_expiry_date_combobox_var
+        )
 
-    listbox_frame = ctk.CTkFrame(master=self, corner_radius=10)
-    listbox_frame.place(x=10, y=280)
+        backup_expiry_date_combobox.place(x=15, y=225)
 
-    source_listbox = tk.Listbox(
-      master=listbox_frame,
-      height=4,
-      width=52,
-      background="#343638",
-      foreground="white",
-      activestyle='dotbox',
-      font='Helvetica'
-    )
+        cloud_switch_var = ctk.StringVar(
+            value="on" if config['backup_to_cloud'] else "off")  # Set initial value
 
-    source_listbox.pack(padx=7, pady=7)
-    update_listbox(source_listbox)
+        switch = ctk.CTkSwitch(
+            master=self,
+            text="Back up to Cloud",
+            command=lambda: cloudSwitch(cloud_switch_var),
+            variable=cloud_switch_var,
+            onvalue="on",
+            offvalue="off"
+        )
 
-    plus_button = ctk.CTkButton(master=self, text="+", width=20, height=10, command=lambda: add_item(source_listbox))
-    plus_button.place(x=220, y=250)
+        switch.place(x=340, y=225)
 
-    minus_button = ctk.CTkButton(master=self, text="-", width=20, height=10, command=lambda: remove_item(source_listbox))
-    minus_button.place(x=250, y=250)
+        backup_these_folders_label = ctk.CTkLabel(
+            master=self, text="Backup these folders", font=('Helvetica', 12))
+        backup_these_folders_label.place(x=15, y=255)
 
-    status_label = ctk.CTkLabel(master=self, text="Status ━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
-    status_label.place(x=15, y=375)
+        listbox_frame = ctk.CTkFrame(master=self, corner_radius=10)
+        listbox_frame.place(x=10, y=280)
 
-    self.backup_progressbar = ctk.CTkProgressBar(master=self, width=475, height=15, corner_radius=0, orientation='horizontal', mode='indeterminate')
-    self.backup_progressbar.place(x=15, y=415)
+        source_listbox = tk.Listbox(
+            master=listbox_frame,
+            height=4,
+            width=52,
+            background="#343638",
+            foreground="white",
+            activestyle='dotbox',
+            font='Helvetica'
+        )
 
-    restore_image = ctk.CTkImage(Image.open("assets/restore.png"), size=(25, 25))
-    self.restore_button = ctk.CTkButton(master=self, text="", fg_color="#242424", image=restore_image, width=5, height=5, command=lambda: restore_backup(DESTINATION_PATH=DESTINATION_PATH, App=self))
-    self.restore_button.place(x=15, y=450)
+        source_listbox.pack(padx=7, pady=7)
+        update_listbox(source_listbox)
 
-    self.backup_button = ctk.CTkButton(master=self, text="BACKUP", command=lambda: run_backup(DESTINATION_PATH=DESTINATION_PATH, App=self))
-    self.backup_button.place(x=200, y=450)
+        plus_button = ctk.CTkButton(
+            master=self, text="+", width=20, height=10, command=lambda: add_item(source_listbox))
+        plus_button.place(x=220, y=250)
 
-    close_button = ctk.CTkButton(master=self, text="CLOSE", command=self.destroy)
-    close_button.place(x=350, y=450)
+        minus_button = ctk.CTkButton(
+            master=self, text="-", width=20, height=10, command=lambda: remove_item(source_listbox))
+        minus_button.place(x=250, y=250)
 
-    self.protocol('WM_DELETE_WINDOW', lambda: hide_window(DESTINATION_PATH=DESTINATION_PATH, App=self))
+        status_label = ctk.CTkLabel(
+            master=self, text="Status ━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
+        status_label.place(x=15, y=375)
+
+        self.backup_progressbar = ctk.CTkProgressBar(
+            master=self, width=475, height=15, corner_radius=0, orientation='horizontal', mode='indeterminate')
+        self.backup_progressbar.place(x=15, y=415)
+
+        restore_image = ctk.CTkImage(Image.open(
+            "assets/restore.png"), size=(25, 25))
+        self.restore_button = ctk.CTkButton(master=self, text="", fg_color="#242424", image=restore_image,
+                                            width=5, height=5, command=lambda: restore_backup(DESTINATION_PATH=DESTINATION_PATH, App=self))
+        self.restore_button.place(x=15, y=450)
+
+        self.backup_button = ctk.CTkButton(master=self, text="BACKUP", command=lambda: run_backup(
+            DESTINATION_PATH=DESTINATION_PATH, App=self))
+        self.backup_button.place(x=200, y=450)
+
+        close_button = ctk.CTkButton(
+            master=self, text="CLOSE", command=self.destroy)
+        close_button.place(x=350, y=450)
+
+        self.protocol('WM_DELETE_WINDOW', lambda: hide_window(
+            DESTINATION_PATH=DESTINATION_PATH, App=self))
+
 
 if __name__ == "__main__":
-  app = App()
-  app.mainloop()
+    app = App()
+    app.mainloop()
