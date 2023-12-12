@@ -1,5 +1,5 @@
 customtkinter==5.1.2
-PyDrive2==1.15.1
+PyDrive2==1.16.2
 humanize==4.6.0
 pystray==0.19.4
 psutil==5.9.4
