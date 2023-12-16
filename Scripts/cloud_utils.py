@@ -72,31 +72,34 @@ def backup_to_cloud(folderpath, DESTINATION_PATH, parent_folder_id=None):
       * Update existing files with new content
     """
     foldername = os.path.basename(folderpath)
-    folder_metadata = {'title': foldername,
-                       'mimeType': 'application/vnd.google-apps.folder'}
 
     if parent_folder_id:
-        folder_metadata['parents'] = [{'id': parent_folder_id}]
+        folder_metadata = {'title': foldername, 'parents': [{'id': parent_folder_id}]}
+    else:
+        folder_metadata = {'title': foldername, 'mimeType': 'application/vnd.google-apps.folder'}
 
-    file_list = drive.ListFile(
-        {'q': f"title='{foldername}' and mimeType='application/vnd.google-apps.folder' and trashed=false"}).GetList()
+    gdrive_folder = None
+    for file in drive.ListFile({'q': f"title='{foldername}' and mimeType='application/vnd.google-apps.folder' and trashed=false"}).GetList():
+        gdrive_folder = file
+
+    if not gdrive_folder:
+        gdrive_folder = drive.CreateFile(folder_metadata)
+        gdrive_folder.Upload()
 
     for filename in os.listdir(folderpath):
         filepath = os.path.join(folderpath, filename)
 
-        file_list = drive.ListFile(
-            {'q': f"title='{filename}' and '{gdrive_folder['id']}' in parents and trashed=false"}).GetList()
+        gdrive_file = None
+        for file in drive.ListFile({'q': f"title='{filename}' and '{gdrive_folder['id']}' in parents and trashed=false"}).GetList():
+            gdrive_file = file
 
-        if file_list:
+        if gdrive_file:
             # The file already exists, so just update it
-            gdrive_file = file_list[0]
             gdrive_file.SetContentFile(filepath)
             gdrive_file.Upload()
-
         else:
             # The file doesn't exist, so create a new one
-            gdrive_file = drive.CreateFile(
-                {'title': filename, 'parents': [{'id': gdrive_folder['id']}]})
+            gdrive_file = drive.CreateFile({'title': filename, 'parents': [{'id': gdrive_folder['id']}]})
             gdrive_file.SetContentFile(filepath)
             gdrive_file.Upload()
 
