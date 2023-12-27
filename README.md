@@ -68,13 +68,19 @@ Allows you to backup your essential local files (+cloud support) quickly and sch
     <br>
     <img
         alt = 'Software Startup (Drive Properties, Backup Options)' 
-        src = 'https://user-images.githubusercontent.com/105563667/236015929-cf0020ad-4cab-425a-8a87-26e6668d2d65.png'>
+        src = 'https://github.com/KafetzisThomas/SafeArchive/assets/105563667/3361483c-876c-4e08-911f-413233739bec'>
     <br>
     <h2>Restore Selected Backup</h2>
     <br>
     <img
         alt = 'Restore Selected Backup' 
-        src = 'https://user-images.githubusercontent.com/105563667/236017273-263abe17-26de-4c22-ba2d-f6be8d3dad18.png'>
+        src = 'https://github.com/KafetzisThomas/SafeArchive/assets/105563667/cee02400-6b7d-482d-a871-4c7e0ba3853a'>
+    <br>
+    <h2>Settings Window</h2>
+    <br>
+    <img
+        alt = 'Settings Window'
+        src = 'https://github.com/KafetzisThomas/SafeArchive/assets/105563667/2c1a016c-8b80-42e9-a10e-50c933627f87'>
     <br>
     <h2>System Tray Icon<br>(Taskbar Icon)</h2>
     <br>
