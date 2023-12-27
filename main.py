@@ -72,7 +72,7 @@ class App(ctk.CTk):
             if not os.path.exists(DESTINATION_PATH):
                 os.makedirs(DESTINATION_PATH)
         except FileNotFoundError:
-            notify_drive_reconnection(config['notification'])
+            notify_drive_reconnection(config['notifications'])
             sys.exit()
         except PermissionError:
             print(f"No permissions given to make directory: '{DESTINATION_PATH}'.",
