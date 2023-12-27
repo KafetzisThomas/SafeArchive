@@ -65,7 +65,7 @@ def last_backup(DESTINATION_PATH):
 
         # Check if the file is older than three months
         if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=30)):
-            notify_drive_reconnection()
+            notify_drive_reconnection(config['notification'])
 
         if filetype != 'zip':
             filename = "No backup"

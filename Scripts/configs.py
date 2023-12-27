@@ -49,6 +49,9 @@ config = ConfigDict({
     ],
     'destination_path': os.path.abspath(os.sep).replace("\\", "/"),
     'backup_to_cloud': False,
+    'notifications': True,
+    'appearance_mode': "dark",
+    'color_theme': "blue",
     'backup_expiry_date': "Forever (default)"
 }, SETTINGS_PATH)
 

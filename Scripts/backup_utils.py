@@ -60,15 +60,15 @@ def backup(App, DESTINATION_PATH):
         if config['backup_to_cloud']:
             initialize()
             if get_cloud_usage_percentage() >= 90:
-                notify_cloud_space_limitation()  # Check if cloud storage usage is above or equal to 90%
+                notify_cloud_space_limitation(config['notifications'])  # Check if cloud storage usage is above or equal to 90%
             else:
                 # Upload the local folder and its content
                 backup_to_cloud(
                     DESTINATION_PATH[:-1], DESTINATION_PATH, parent_folder_id=cloud_utils.gdrive_folder['id'])
 
-        notify_backup_completion(DESTINATION_PATH)
+        notify_backup_completion(DESTINATION_PATH, config['notifications'])
     else:
-        notify_drive_space_limitation()
+        notify_drive_space_limitation(config['notification'])
 
 
 def start_progress_bar(App, DESTINATION_PATH):
@@ -106,12 +106,21 @@ def restore_backup(App, DESTINATION_PATH):
                          corner_radius=10, height=180, width=425)
     frame.place(x=8, y=8)
 
+    if config['appearance_mode'] == "dark":
+        restore_window.configure(background="#343638")
+        background="#343638"
+        foreground="white"
+    else:
+        restore_window.configure(background="#ebebeb")
+        background="#ebebeb"
+        foreground="black"
+
     listbox = tk.Listbox(
         master=frame,
         height=9,
         width=47,
-        background="#343638",
-        foreground="white",
+        background=background,
+        foreground=foreground,
         activestyle='dotbox',
         font='Helvetica'
     )
@@ -137,7 +146,7 @@ def restore_backup(App, DESTINATION_PATH):
             with zipfile.ZipFile(f'{DESTINATION_PATH}{listbox.get(item)}.zip') as zipObj:
                 zipObj.extractall(config['destination_path'])
 
-        notify_restore_completion()
+        notify_restore_completion(config['notification'])
         # Change backup button state back to normal
         App.restore_button.configure(state="normal")
 

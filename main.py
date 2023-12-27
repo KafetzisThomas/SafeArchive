@@ -23,10 +23,11 @@ from Scripts.file_utils import add_item
 from Scripts.backup_utils import run_backup
 from Scripts.backup_utils import restore_backup
 from Scripts.system_tray import hide_window
-from Scripts.widgets import drivesCombobox
-from Scripts.widgets import cloudSwitch
-from Scripts.widgets import backupExpiryDateCombobox
+from Scripts.widgets import DrivesCombobox
+from Scripts.widgets import CloudSwitch
+from Scripts.widgets import BackupExpiryDateCombobox
 from Scripts.notification_handlers import notify_drive_reconnection
+from Scripts.settings import settings
 from Scripts.configs import config
 config.load() # Load the JSON file into memory
 
@@ -45,8 +46,21 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        ctk.set_appearance_mode("dark")
-        ctk.set_default_color_theme("blue")
+        ctk.set_appearance_mode(config['appearance_mode'])
+        ctk.set_default_color_theme(config['color_theme'])
+
+        if config['appearance_mode'] == "dark":
+            background="#343638"
+            foreground="white"
+            image1 = "assets/restore.png"
+            image2 = "assets/gear.png"
+            fg_color = "#242424"
+        else:
+            background="#ebebeb"
+            foreground="black"
+            image1 = "assets/restore2.png"
+            image2 = "assets/gear2.png"
+            fg_color = "#ebebeb"
 
         self.title(f"SafeArchive {version}")  # Set window title
         self.resizable(False, False)  # Disable minimize/maximize buttons
@@ -58,7 +72,7 @@ class App(ctk.CTk):
             if not os.path.exists(DESTINATION_PATH):
                 os.makedirs(DESTINATION_PATH)
         except FileNotFoundError:
-            notify_drive_reconnection()
+            notify_drive_reconnection(config['notification'])
             sys.exit()
         except PermissionError:
             print(f"No permissions given to make directory: '{DESTINATION_PATH}'.",
@@ -80,7 +94,7 @@ class App(ctk.CTk):
             value=DESTINATION_PATH.replace('SafeArchive/', ''))  # Set initial value
 
         drives_combobox = ctk.CTkComboBox(
-            master=self, width=470, values=drive_options, command=drivesCombobox, variable=device_combobox_var)
+            master=self, width=470, values=drive_options, command=DrivesCombobox, variable=device_combobox_var)
         drives_combobox.place(x=15, y=70)
 
         size_of_backup_label = ctk.CTkLabel(
@@ -112,7 +126,7 @@ class App(ctk.CTk):
             master=self,
             width=150,
             values=backup_expiry_date_options,
-            command=backupExpiryDateCombobox,
+            command=BackupExpiryDateCombobox,
             variable=backup_expiry_date_combobox_var
         )
 
@@ -124,7 +138,7 @@ class App(ctk.CTk):
         switch = ctk.CTkSwitch(
             master=self,
             text="Back up to Cloud",
-            command=lambda: cloudSwitch(cloud_switch_var),
+            command=lambda: CloudSwitch(cloud_switch_var),
             variable=cloud_switch_var,
             onvalue="on",
             offvalue="off"
@@ -143,8 +157,8 @@ class App(ctk.CTk):
             master=listbox_frame,
             height=4,
             width=52,
-            background="#343638",
-            foreground="white",
+            background=background,
+            foreground=foreground,
             activestyle='dotbox',
             font='Helvetica'
         )
@@ -168,11 +182,15 @@ class App(ctk.CTk):
             master=self, width=475, height=15, corner_radius=0, orientation='horizontal', mode='indeterminate')
         self.backup_progressbar.place(x=15, y=415)
 
-        restore_image = ctk.CTkImage(Image.open(
-            "assets/restore.png"), size=(25, 25))
-        self.restore_button = ctk.CTkButton(master=self, text="", fg_color="#242424", image=restore_image,
+        restore_image = ctk.CTkImage(Image.open(image1), size=(25, 25))
+        self.restore_button = ctk.CTkButton(master=self, text="", fg_color=fg_color, image=restore_image,
                                             width=5, height=5, command=lambda: restore_backup(DESTINATION_PATH=DESTINATION_PATH, App=self))
-        self.restore_button.place(x=15, y=450)
+        self.restore_button.place(x=50, y=450)
+
+        settings_image = ctk.CTkImage(Image.open(image2), size=(25, 25))
+        self.settings_button = ctk.CTkButton(master=self, text="", fg_color=fg_color, image=settings_image,
+                                            width=5, height=5, command=lambda: settings(App=self))
+        self.settings_button.place(x=15, y=450)
 
         self.backup_button = ctk.CTkButton(master=self, text="BACKUP", command=lambda: run_backup(
             DESTINATION_PATH=DESTINATION_PATH, App=self))
