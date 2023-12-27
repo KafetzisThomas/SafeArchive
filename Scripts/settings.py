@@ -16,7 +16,8 @@ def settings(App):
     settings_window.resizable(False, False)  # Disable minimize/maximize buttons
     settings_window.configure(background="#242424")  # Set background color
 
-    frame = ctk.CTkFrame(master=settings_window, corner_radius=10, height=170, width=385)
+    frame = ctk.CTkFrame(master=settings_window,
+                         corner_radius=10, height=170, width=385)
     frame.place(x=8, y=8)
 
     # Set background color
@@ -25,16 +26,20 @@ def settings(App):
     else:
         settings_window.configure(background="#ebebeb")
 
-    settings_label = ctk.CTkLabel(master=frame, text="Settings", font=('Helvetica', 22))
+    settings_label = ctk.CTkLabel(
+        master=frame, text="Settings", font=('Helvetica', 22))
     settings_label.place(x=150, y=10)
 
-    line_label = ctk.CTkLabel(master=frame, text="━━━━━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
+    line_label = ctk.CTkLabel(
+        master=frame, text="━━━━━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
     line_label.place(x=0, y=35)
 
-    appearance_mode_label = ctk.CTkLabel(master=frame, text="Appearance Mode:", font=('Helvetica', 15))
+    appearance_mode_label = ctk.CTkLabel(
+        master=frame, text="Appearance Mode:", font=('Helvetica', 15))
     appearance_mode_label.place(x=70, y=60)
 
-    appearance_mode_combobox_var = ctk.StringVar(value=config['appearance_mode'])  # Set initial value
+    appearance_mode_combobox_var = ctk.StringVar(
+        value=config['appearance_mode'])  # Set initial value
     appearance_mode_options = ["system", "dark", "light"]
 
     appearance_mode_combobox = ctk.CTkComboBox(
@@ -47,10 +52,12 @@ def settings(App):
 
     appearance_mode_combobox.place(x=210, y=60)
 
-    color_theme_label = ctk.CTkLabel(master=frame, text="Color Theme:", font=('Helvetica', 15))
+    color_theme_label = ctk.CTkLabel(
+        master=frame, text="Color Theme:", font=('Helvetica', 15))
     color_theme_label.place(x=70, y=90)
 
-    color_theme_combobox_var = ctk.StringVar(value=config['color_theme'])  # Set initial value
+    color_theme_combobox_var = ctk.StringVar(
+        value=config['color_theme'])  # Set initial value
     color_theme_options = ["blue", "green", "dark-blue"]
 
     color_theme_combobox = ctk.CTkComboBox(
@@ -63,7 +70,8 @@ def settings(App):
 
     color_theme_combobox.place(x=210, y=90)
 
-    notifications_switch_var = ctk.StringVar(value="on" if config['notifications'] else "off")  # Set initial value
+    notifications_switch_var = ctk.StringVar(
+        value="on" if config['notifications'] else "off")  # Set initial value
 
     switch = ctk.CTkSwitch(
         master=frame,
@@ -81,5 +89,6 @@ def settings(App):
     def apply_button():
         settings_window.destroy()
 
-    apply_button = ctk.CTkButton(master=settings_window, text="Apply", command=apply_button)
+    apply_button = ctk.CTkButton(
+        master=settings_window, text="Apply", command=apply_button)
     apply_button.place(x=130, y=187)

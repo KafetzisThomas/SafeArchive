@@ -60,7 +60,8 @@ def backup(App, DESTINATION_PATH):
         if config['backup_to_cloud']:
             initialize()
             if get_cloud_usage_percentage() >= 90:
-                notify_cloud_space_limitation(config['notifications'])  # Check if cloud storage usage is above or equal to 90%
+                # Check if cloud storage usage is above or equal to 90%
+                notify_cloud_space_limitation(config['notifications'])
             else:
                 # Upload the local folder and its content
                 backup_to_cloud(
@@ -108,12 +109,12 @@ def restore_backup(App, DESTINATION_PATH):
 
     if config['appearance_mode'] == "dark":
         restore_window.configure(background="#343638")
-        background="#343638"
-        foreground="white"
+        background = "#343638"
+        foreground = "white"
     else:
         restore_window.configure(background="#ebebeb")
-        background="#ebebeb"
-        foreground="black"
+        background = "#ebebeb"
+        foreground = "black"
 
     listbox = tk.Listbox(
         master=frame,

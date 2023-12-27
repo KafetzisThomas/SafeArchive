@@ -50,14 +50,14 @@ class App(ctk.CTk):
         ctk.set_default_color_theme(config['color_theme'])
 
         if config['appearance_mode'] == "dark":
-            background="#343638"
-            foreground="white"
+            background = "#343638"
+            foreground = "white"
             image1 = "assets/restore.png"
             image2 = "assets/gear.png"
             fg_color = "#242424"
         else:
-            background="#ebebeb"
-            foreground="black"
+            background = "#ebebeb"
+            foreground = "black"
             image1 = "assets/restore2.png"
             image2 = "assets/gear2.png"
             fg_color = "#ebebeb"
@@ -189,7 +189,7 @@ class App(ctk.CTk):
 
         settings_image = ctk.CTkImage(Image.open(image2), size=(25, 25))
         self.settings_button = ctk.CTkButton(master=self, text="", fg_color=fg_color, image=settings_image,
-                                            width=5, height=5, command=lambda: settings(App=self))
+                                             width=5, height=5, command=lambda: settings(App=self))
         self.settings_button.place(x=15, y=450)
 
         self.backup_button = ctk.CTkButton(master=self, text="BACKUP", command=lambda: run_backup(
