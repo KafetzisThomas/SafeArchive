@@ -123,7 +123,8 @@ def restore_backup(App, DESTINATION_PATH):
         background=background,
         foreground=foreground,
         activestyle='dotbox',
-        font='Helvetica'
+        font='Helvetica, 13',
+        justify="center"
     )
 
     listbox.pack()
@@ -158,4 +159,4 @@ def restore_backup(App, DESTINATION_PATH):
 
     App.restore_button = ctk.CTkButton(
         master=restore_window, text="Restore backup", command=run_restore)
-    App.restore_button.place(x=150, y=197)
+    App.restore_button.place(x=155, y=200)
