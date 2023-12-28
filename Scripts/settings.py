@@ -3,7 +3,7 @@
 
 import tkinter as tk
 import customtkinter as ctk
-from Scripts.widgets import NotificationSwitch, AppearanceModeCombobox, ColorThemeCombobox
+from Scripts.widgets import NotificationSwitch, AppearanceModeCombobox, ColorThemeCombobox, CloudProviderCombobox
 from Scripts.configs import config
 
 
@@ -11,13 +11,13 @@ def settings(App):
     """Create a toplevel widget containing a frame with settings"""
     settings_window = tk.Toplevel(App)  # Open new window (settings_window)
     settings_window.title("Settings")  # Set window title
-    settings_window.geometry("400x225")  # Set window size
+    settings_window.geometry("410x245")  # Set window size
     settings_window.iconbitmap("assets/icon.ico")  # Set window title icon
     settings_window.resizable(False, False)  # Disable minimize/maximize buttons
     settings_window.configure(background="#242424")  # Set background color
 
     frame = ctk.CTkFrame(master=settings_window,
-                         corner_radius=10, height=170, width=385)
+                         corner_radius=10, height=190, width=395)
     frame.place(x=8, y=8)
 
     # Set background color
@@ -28,7 +28,7 @@ def settings(App):
 
     settings_label = ctk.CTkLabel(
         master=frame, text="Settings", font=('Helvetica', 22))
-    settings_label.place(x=150, y=10)
+    settings_label.place(x=160, y=10)
 
     line_label = ctk.CTkLabel(
         master=frame, text="━━━━━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
@@ -36,7 +36,7 @@ def settings(App):
 
     appearance_mode_label = ctk.CTkLabel(
         master=frame, text="Appearance Mode:", font=('Helvetica', 15))
-    appearance_mode_label.place(x=70, y=60)
+    appearance_mode_label.place(x=80, y=60)
 
     appearance_mode_combobox_var = ctk.StringVar(
         value=config['appearance_mode'])  # Set initial value
@@ -50,11 +50,11 @@ def settings(App):
         variable=appearance_mode_combobox_var
     )
 
-    appearance_mode_combobox.place(x=210, y=60)
+    appearance_mode_combobox.place(x=220, y=60)
 
     color_theme_label = ctk.CTkLabel(
         master=frame, text="Color Theme:", font=('Helvetica', 15))
-    color_theme_label.place(x=70, y=90)
+    color_theme_label.place(x=80, y=90)
 
     color_theme_combobox_var = ctk.StringVar(
         value=config['color_theme'])  # Set initial value
@@ -68,7 +68,25 @@ def settings(App):
         variable=color_theme_combobox_var
     )
 
-    color_theme_combobox.place(x=210, y=90)
+    color_theme_combobox.place(x=220, y=90)
+
+    cloud_provider_label = ctk.CTkLabel(
+        master=frame, text="Cloud Provider:", font=('Helvetica', 15))
+    cloud_provider_label.place(x=80, y=120)
+
+    cloud_provider_combobox_var = ctk.StringVar(
+        value=config['cloud_provider'])  # Set initial value
+    cloud_provider_options = ["Google Drive", "FTP"]
+
+    cloud_provider_combobox = ctk.CTkComboBox(
+        master=frame,
+        width=90,
+        values=cloud_provider_options,
+        command=CloudProviderCombobox,
+        variable=cloud_provider_combobox_var
+    )
+
+    cloud_provider_combobox.place(x=220, y=120)
 
     notifications_switch_var = ctk.StringVar(
         value="on" if config['notifications'] else "off")  # Set initial value
@@ -83,7 +101,7 @@ def settings(App):
         offvalue="off"
     )
 
-    switch.place(x=70, y=130)
+    switch.place(x=80, y=155)
 
     # Close the window (settings_window)
     def apply_button():
@@ -91,4 +109,4 @@ def settings(App):
 
     apply_button = ctk.CTkButton(
         master=settings_window, text="Apply", command=apply_button)
-    apply_button.place(x=130, y=187)
+    apply_button.place(x=140, y=207)

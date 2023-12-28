@@ -33,6 +33,11 @@ def ColorThemeCombobox(choice):
     config['color_theme'] = choice
 
 
+def CloudProviderCombobox(choice):
+    """Update the value of the key in the dictionary"""
+    config['cloud_provider'] = choice
+
+
 def NotificationSwitch(notifications_switch_var):
     """
     Get switch position (True/False)

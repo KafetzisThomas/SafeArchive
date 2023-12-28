@@ -6,7 +6,7 @@ import zipfile
 import threading
 from datetime import date
 import tkinter as tk
-from Scripts.cloud_utils import GoogleDriveCloud
+from Scripts.cloud_utils import GoogleDriveCloud, FTP
 from Scripts.notification_handlers import notify_backup_completion
 from Scripts.notification_handlers import notify_cloud_space_limitation
 from Scripts.notification_handlers import notify_restore_completion
@@ -17,6 +17,7 @@ from Scripts.configs import config
 import customtkinter as ctk
 
 google_drive = GoogleDriveCloud()
+ftp = FTP()
 
 def backup(App, DESTINATION_PATH):
     """
@@ -56,14 +57,18 @@ def backup(App, DESTINATION_PATH):
 
         # Choose if you want local backups to be uploaded to cloud (type: boolean)
         if config['backup_to_cloud']:
-            google_drive.initialize()
-            if google_drive.get_cloud_usage_percentage() >= 90:
-                # Check if cloud storage usage is above or equal to 90%
-                notify_cloud_space_limitation(config['notifications'])
+            if config['cloud_provider'] == "Google Drive":
+                google_drive.initialize()
+                if google_drive.get_cloud_usage_percentage() >= 90:
+                    # Check if cloud storage usage is above or equal to 90%
+                    notify_cloud_space_limitation(config['notifications'])
+                else:
+                    # Upload the local folder and its content
+                    google_drive.backup_to_google_drive(
+                        DESTINATION_PATH[:-1], DESTINATION_PATH, parent_folder_id=google_drive.gdrive_folder['id'])
             else:
                 # Upload the local folder and its content
-                google_drive.backup_to_google_drive(
-                    DESTINATION_PATH[:-1], DESTINATION_PATH, parent_folder_id=google_drive.gdrive_folder['id'])
+                ftp.backup_to_ftp_server(DESTINATION_PATH)
 
         notify_backup_completion(DESTINATION_PATH, config['notifications'])
     else:

@@ -52,7 +52,11 @@ config = ConfigDict({
     'notifications': True,
     'appearance_mode': "dark",
     'color_theme': "blue",
-    'backup_expiry_date': "Forever (default)"
+    'backup_expiry_date': "Forever (default)",
+    'cloud_provider': "Google Drive",
+    'HOSTNAME': "",
+    'USERNAME': "",
+    'PASSWORD': ""
 }, SETTINGS_PATH)
 
 if not os.path.exists(config.path):
