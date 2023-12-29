@@ -58,7 +58,7 @@ def settings(App):
 
     color_theme_combobox_var = ctk.StringVar(
         value=config['color_theme'])  # Set initial value
-    color_theme_options = ["blue", "green", "dark-blue"]
+    color_theme_options = ["blue", "green"]
 
     color_theme_combobox = ctk.CTkComboBox(
         master=frame,

@@ -63,6 +63,12 @@ class App(ctk.CTk):
             image2 = "assets/gear2.png"
             fg_color = "#ebebeb"
 
+        def get_listbox_selection_background():
+            if config['color_theme'] == "blue":
+                return "#1f6aa5"
+            else:
+                return "#2fa572"
+
         self.title(f"SafeArchive {version}")  # Set window title
         self.resizable(False, False)  # Disable minimize/maximize buttons
         self.geometry("500x500")  # Set window size
@@ -151,28 +157,29 @@ class App(ctk.CTk):
             master=self, text="Backup these folders", font=('Helvetica', 12))
         backup_these_folders_label.place(x=15, y=255)
 
-        listbox_frame = ctk.CTkFrame(master=self, corner_radius=10)
-        listbox_frame.place(x=10, y=280)
+        frame = ctk.CTkFrame(master=self, corner_radius=10)
+        frame.place(x=10, y=280)
 
-        source_listbox = tk.Listbox(
-            master=listbox_frame,
+        listbox = tk.Listbox(
+            master=frame,
             height=4,
             width=52,
             background=background,
             foreground=foreground,
             activestyle='dotbox',
-            font='Helvetica'
+            font='Helvetica',
+            selectbackground=get_listbox_selection_background()
         )
 
-        source_listbox.pack(padx=7, pady=7)
-        update_listbox(source_listbox)
+        listbox.pack(padx=7, pady=7)
+        update_listbox(listbox)
 
         plus_button = ctk.CTkButton(
-            master=self, text="+", width=20, height=10, command=lambda: add_item(source_listbox))
+            master=self, text="+", width=20, height=10, command=lambda: add_item(listbox))
         plus_button.place(x=220, y=250)
 
         minus_button = ctk.CTkButton(
-            master=self, text="-", width=20, height=10, command=lambda: remove_item(source_listbox))
+            master=self, text="-", width=20, height=10, command=lambda: remove_item(listbox))
         minus_button.place(x=250, y=250)
 
         status_label = ctk.CTkLabel(

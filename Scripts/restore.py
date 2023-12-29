@@ -47,7 +47,7 @@ class RestoreBackup:
             activestyle='dotbox',
             font='Helvetica, 13',
             justify="center",
-            selectbackground=config['color_theme']
+            selectbackground=self.get_listbox_selection_background()
         )
         self.listbox.pack()
 
@@ -56,6 +56,12 @@ class RestoreBackup:
 
     def get_listbox_foreground(self):
         return "white" if config['appearance_mode'] == "dark" else "black"
+
+    def get_listbox_selection_background(self):
+        if config['color_theme'] == "blue":
+            return "#1f6aa5"
+        else:
+            return "#2fa572"
 
     def populate_listbox(self):
         """Populate listbox with the zip file names from the DESTINATION_PATH directory"""
