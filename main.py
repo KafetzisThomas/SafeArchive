@@ -21,7 +21,7 @@ from Scripts.file_utils import update_listbox
 from Scripts.file_utils import remove_item
 from Scripts.file_utils import add_item
 from Scripts.backup_utils import run_backup
-from Scripts.backup_utils import restore_backup
+from Scripts.restore import RestoreBackup
 from Scripts.system_tray import hide_window
 from Scripts.widgets import DrivesCombobox
 from Scripts.widgets import CloudSwitch
@@ -46,6 +46,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
+        restore_backup = RestoreBackup(self, DESTINATION_PATH)
         ctk.set_appearance_mode(config['appearance_mode'])
         ctk.set_default_color_theme(config['color_theme'])
 
@@ -184,7 +185,7 @@ class App(ctk.CTk):
 
         restore_image = ctk.CTkImage(Image.open(image1), size=(25, 25))
         self.restore_button = ctk.CTkButton(master=self, text="", fg_color=fg_color, image=restore_image,
-                                            width=5, height=5, command=lambda: restore_backup(DESTINATION_PATH=DESTINATION_PATH, App=self))
+                                            width=5, height=5, command=lambda: restore_backup.restore_backup())
         self.restore_button.place(x=50, y=450)
 
         settings_image = ctk.CTkImage(Image.open(image2), size=(25, 25))

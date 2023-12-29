@@ -72,7 +72,7 @@ def backup(App, DESTINATION_PATH):
 
         notify_backup_completion(DESTINATION_PATH, config['notifications'])
     else:
-        notify_drive_space_limitation(config['notification'])
+        notify_drive_space_limitation(config['notifications'])
 
 
 def start_progress_bar(App, DESTINATION_PATH):
@@ -90,76 +90,3 @@ def run_backup(App, DESTINATION_PATH):
     """Start thread when backup is about to take action"""
     threading.Thread(target=start_progress_bar, args=(
         App, DESTINATION_PATH), daemon=True).start()
-
-
-def restore_backup(App, DESTINATION_PATH):
-    """
-    Create a toplevel widget containing a listbox inside a frame
-    Show last backups inside the listbox
-    Restore last backup files by selecting a specific one
-    """
-
-    restore_window = tk.Toplevel(App)  # Open new window (restore_window)
-    restore_window.title("Select backup to restore")  # Set window title
-    restore_window.geometry("440x240")  # Set window size
-    restore_window.iconbitmap("assets/icon.ico")  # Set window title icon
-    restore_window.resizable(False, False)  # Disable minimize/maximize buttons
-    restore_window.configure(background="#242424")  # Set background color
-
-    frame = ctk.CTkFrame(master=restore_window,
-                         corner_radius=10, height=180, width=425)
-    frame.place(x=8, y=8)
-
-    if config['appearance_mode'] == "dark":
-        restore_window.configure(background="#343638")
-        background = "#343638"
-        foreground = "white"
-    else:
-        restore_window.configure(background="#ebebeb")
-        background = "#ebebeb"
-        foreground = "black"
-
-    listbox = tk.Listbox(
-        master=frame,
-        height=9,
-        width=47,
-        background=background,
-        foreground=foreground,
-        activestyle='dotbox',
-        font='Helvetica, 13',
-        justify="center"
-    )
-
-    listbox.pack()
-
-    for index, zip_file in enumerate(os.listdir(DESTINATION_PATH)):
-        filename, _, filetype = zip_file.partition('.')
-
-        if filetype == 'zip':
-            listbox.insert(index, filename)
-
-    def selected_item():
-        """
-        Extract (restore) selected zip file (backup)
-        Move zip file content to it's original location
-        """
-        App.restore_button.configure(
-            state="disabled")  # Change backup button state to disabled
-
-        for item in listbox.curselection():
-            # Open the zipfile in read mode, extract its content
-            with zipfile.ZipFile(f'{DESTINATION_PATH}{listbox.get(item)}.zip') as zipObj:
-                zipObj.extractall(config['destination_path'])
-
-        notify_restore_completion(config['notification'])
-        # Change backup button state back to normal
-        App.restore_button.configure(state="normal")
-
-    def run_restore():
-        """Start thread when restoration is processing"""
-        threading.Thread(target=selected_item, daemon=True).start(
-        )  # Create restore process thread
-
-    App.restore_button = ctk.CTkButton(
-        master=restore_window, text="Restore backup", command=run_restore)
-    App.restore_button.place(x=155, y=200)
