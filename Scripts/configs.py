@@ -20,43 +20,56 @@ class ConfigDict(dict):
         self.path = Path(path)
 
     def __setitem__(self, key, value):
-        """Triggers whenever value is set"""
+        """Triggers whenever a value is set"""
         super().__setitem__(key, value)
         self.save()
 
     def __delitem__(self, key):
-        """Triggers whenever value is deleted"""
+        """Triggers whenever a value is deleted"""
         super().__delitem__(key)
         self.save()
 
     def save(self):
-        """Saves config file to given path"""
+        """Saves the config file to the given path"""
         with open(self.path, 'w') as file:
             json.dump(self, file, indent=2)
 
     def load(self):
-        """Loads config file from given path"""
+        """Loads the config file from the given path"""
         with open(self.path, 'r') as file:
             self.update(json.load(file))
 
 
 SETTINGS_PATH = 'settings.json'
 config = ConfigDict({
-    'source_path': [
-        str(Path('~/Desktop').expanduser()),
-        str(Path('~/Documents').expanduser()),
-        str(Path('~/Downloads').expanduser()),
+    "_comments": {
+        "source_path": "List of source paths (local folders) for backups (type: list with strings)",
+        "destination_path": "Destination path (storage media) for backups (type: string)",
+        "backup_to_cloud": "Flag indicating whether to backup to the cloud (specify: cloud_provider) (type: boolean)",                    
+        "notifications": "Enable or disable notifications (type: boolean)",
+        "appearance_mode": "Appearance mode for the application (type: string)",
+        "color_theme": "Color theme for the application (type: string)",
+        "backup_expiry_date": "Expiry date for the backups in the storage media (type: string)",
+        "cloud_provider": "Cloud provider for backups (Google Drive / FTP) (type: string)",
+        "HOSTNAME": "Hostname for FTP configuration (type: string)",
+        "USERNAME": "Username for FTP configuration (type: string)",
+        "PASSWORD": "Password for FTP configuration (type: string)"
+  },
+    "source_path": [
+        str(Path('~/Desktop').expanduser()).replace("\\", "/") + "/",
+        str(Path('~/Documents').expanduser()).replace("\\", "/") + "/",
+        str(Path('~/Downloads').expanduser()).replace("\\", "/") + "/",
     ],
-    'destination_path': os.path.abspath(os.sep).replace("\\", "/"),
-    'backup_to_cloud': False,
-    'notifications': True,
-    'appearance_mode': "dark",
-    'color_theme': "blue",
-    'backup_expiry_date': "Forever (default)",
-    'cloud_provider': "Google Drive",
-    'HOSTNAME': "",
-    'USERNAME': "",
-    'PASSWORD': ""
+    "destination_path": os.path.abspath(os.sep).replace("\\", "/"),
+    "backup_to_cloud": False,
+    "notifications": True,
+    "appearance_mode": "dark",
+    "color_theme": "blue",
+    "backup_expiry_date": "Forever (default)",
+    "cloud_provider": "Google Drive",
+    "HOSTNAME": "",
+    "USERNAME": "",
+    "PASSWORD": ""
 }, SETTINGS_PATH)
 
 if not os.path.exists(config.path):
