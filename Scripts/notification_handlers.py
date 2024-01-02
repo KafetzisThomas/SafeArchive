@@ -62,3 +62,13 @@ def notify_cloud_space_limitation(notifications):
             app_icon="assets/icon.ico",
             timeout=10
         )
+
+def notify_client_secrets_file_missing(notifications):
+    if notifications:
+        notification.notify(
+            title="Error: File 'client_secrets.json' is missing.",
+            app_name="SafeArchive",
+            message="File not found in the program directory. Please refer to the documentation for instructions on how to get it.",
+            app_icon="assets/icon.ico",
+            timeout=10
+        )

@@ -10,9 +10,12 @@ https://github.com/KafetzisThomas/SafeArchive/wiki/Obtaining-API-Key
 """
 
 import os
+import sys
 import ftplib
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
+from pydrive2.settings import InvalidConfigError
+from Scripts.notification_handlers import notify_client_secrets_file_missing
 from Scripts.configs import config
 config.load()  # Load the JSON file into memory
 
@@ -22,9 +25,13 @@ class GoogleDriveCloud:
     def initialize(self):
         """Authenticate request and initialize Google Drive"""
 
-        gauth = GoogleAuth()
-        gauth.LocalWebserverAuth()
-        self.drive = GoogleDrive(gauth)
+        try:
+            gauth = GoogleAuth()
+            gauth.LocalWebserverAuth()
+            self.drive = GoogleDrive(gauth)
+        except InvalidConfigError:
+            notify_client_secrets_file_missing(config['notifications'])
+            sys.exit()
 
         # Check if the folder already exists in Google Drive
         folder_query = ("title='SafeArchive' and mimeType='application/vnd.google-apps.folder' and trashed=false")
