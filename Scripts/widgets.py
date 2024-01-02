@@ -33,9 +33,9 @@ def ColorThemeCombobox(choice):
     config['color_theme'] = choice
 
 
-def CloudProviderCombobox(choice):
+def StorageProviderCombobox(choice):
     """Update the value of the key in the dictionary"""
-    config['cloud_provider'] = choice
+    config['storage_provider'] = choice
 
 
 def NotificationSwitch(notifications_switch_var):

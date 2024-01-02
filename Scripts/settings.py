@@ -3,7 +3,7 @@
 
 import tkinter as tk
 import customtkinter as ctk
-from Scripts.widgets import NotificationSwitch, AppearanceModeCombobox, ColorThemeCombobox, CloudProviderCombobox
+from Scripts.widgets import NotificationSwitch, AppearanceModeCombobox, ColorThemeCombobox, StorageProviderCombobox
 from Scripts.configs import config
 
 
@@ -70,23 +70,23 @@ def settings(App):
 
     color_theme_combobox.place(x=220, y=90)
 
-    cloud_provider_label = ctk.CTkLabel(
-        master=frame, text="Cloud Provider:", font=('Helvetica', 15))
-    cloud_provider_label.place(x=80, y=120)
+    storage_provider_label = ctk.CTkLabel(
+        master=frame, text="Storage Provider:", font=('Helvetica', 15))
+    storage_provider_label.place(x=80, y=120)
 
-    cloud_provider_combobox_var = ctk.StringVar(
-        value=config['cloud_provider'])  # Set initial value
-    cloud_provider_options = ["Google Drive", "FTP"]
+    storage_provider_combobox_var = ctk.StringVar(
+        value=config['storage_provider'])  # Set initial value
+    storage_provider_options = ["Google Drive", "FTP"]
 
-    cloud_provider_combobox = ctk.CTkComboBox(
+    storage_provider_combobox = ctk.CTkComboBox(
         master=frame,
         width=90,
-        values=cloud_provider_options,
-        command=CloudProviderCombobox,
-        variable=cloud_provider_combobox_var
+        values=storage_provider_options,
+        command=StorageProviderCombobox,
+        variable=storage_provider_combobox_var
     )
 
-    cloud_provider_combobox.place(x=220, y=120)
+    storage_provider_combobox.place(x=220, y=120)
 
     notifications_switch_var = ctk.StringVar(
         value="on" if config['notifications'] else "off")  # Set initial value

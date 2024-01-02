@@ -45,12 +45,12 @@ config = ConfigDict({
     "_comments": {
         "source_path": "List of source paths (local folders) for backups (type: list with strings)",
         "destination_path": "Destination path (storage media) for backups (type: string)",
-        "backup_to_cloud": "Flag indicating whether to backup to the cloud (specify: cloud_provider) (type: boolean)",                    
+        "backup_to_cloud": "Flag indicating whether to backup to the cloud (specify: storage_provider) (type: boolean)",                    
         "notifications": "Enable or disable notifications (type: boolean)",
         "appearance_mode": "Appearance mode for the application (type: string)",
         "color_theme": "Color theme for the application (type: string)",
         "backup_expiry_date": "Expiry date for the backups in the storage media (type: string)",
-        "cloud_provider": "Cloud provider for backups (Google Drive / FTP) (type: string)",
+        "storage_provider": "Storage provider for backups (Google Drive / FTP) (type: string)",
         "HOSTNAME": "Hostname for FTP configuration (type: string)",
         "USERNAME": "Username for FTP configuration (type: string)",
         "PASSWORD": "Password for FTP configuration (type: string)"
@@ -66,7 +66,7 @@ config = ConfigDict({
     "appearance_mode": "dark",
     "color_theme": "blue",
     "backup_expiry_date": "Forever (default)",
-    "cloud_provider": "Google Drive",
+    "storage_provider": "Google Drive",
     "HOSTNAME": "",
     "USERNAME": "",
     "PASSWORD": ""

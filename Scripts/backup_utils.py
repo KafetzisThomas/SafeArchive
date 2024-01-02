@@ -5,11 +5,9 @@ import os
 import zipfile
 import threading
 from datetime import date
-import tkinter as tk
 from Scripts.cloud_utils import GoogleDriveCloud, FTP
 from Scripts.notification_handlers import notify_backup_completion
 from Scripts.notification_handlers import notify_cloud_space_limitation
-from Scripts.notification_handlers import notify_restore_completion
 from Scripts.notification_handlers import notify_drive_space_limitation
 from Scripts.file_utils import get_drive_usage_percentage
 from Scripts.file_utils import backup_expiry_date
@@ -57,7 +55,7 @@ def backup(App, DESTINATION_PATH):
 
         # Choose if you want local backups to be uploaded to cloud (type: boolean)
         if config['backup_to_cloud']:
-            if config['cloud_provider'] == "Google Drive":
+            if config['storage_provider'] == "Google Drive":
                 google_drive.initialize()
                 if google_drive.get_cloud_usage_percentage() >= 90:
                     # Check if cloud storage usage is above or equal to 90%
