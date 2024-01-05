@@ -26,6 +26,47 @@ colorama.init(autoreset=True)
 clear_command = "cls" if platform.system() == "Windows" else "clear"
 os.system(clear_command)  # Clear console
 
+# Configuring from CLI
+try:
+  if sys.argv[1] == "conf" or sys.argv[1] == "--conf" or sys.argv[1] == "-c":
+    print(f"{B.GREEN} -- CONFIGURATION -- {B.RESET}")
+    #information
+    folder_to_backup = input(f"{B.RED}! YOU NEED TO INPUT THE WHOLE PATH !{B.RESET}\nPlease enter the folder to backup: ")
+    backup_destination = input("Please enter the destination folder: ")
+    cloud_backup = input("do you want to backup to cloud?(y/N): ")
+    backup_expire = input("if you want to set the expiry date of backups, enter here(leave None if you don't want): ")
+    
+    # Cloud backup
+    if cloud_backup.lower() == "y":
+      # rewriting the value for *efficiency* 
+      cloud_backup = True
+    else:
+      cloud_backup = False
+    
+    # Expiry date
+    if not backup_expire:
+      backup_expire = None
+
+    SETTINGS_PATH = 'settings.json'
+    config = conf.ConfigDict({
+      'source_path': [folder_to_backup],
+      'destination_path': backup_destination,
+      'backup_to_cloud': cloud_backup,
+      'backup_expiry_date': backup_expire
+    }, SETTINGS_PATH)
+    check = input(f"\nthis is the configuration:\n source_path: {folder_to_backup}\n destination_path: {backup_destination}\n backup_to_cloud: {cloud_backup}\n backup_expiry_date: {backup_expire}\n is this right?(Y/n): ")
+    if check.lower() == "n":
+      print(f"{F.YELLOW}aborting..{F.RESET}")
+      exit()
+
+    config.save()
+    print(f"{F.GREEN}done!{F.RESET}")
+
+except KeyboardInterrupt:
+  print(f"{F.RED}User abort!{F.RESET}")
+except:
+  print("No CLI input, continuing...")
+
 # Run check on python version, must be 3.6 or higher because of f strings
 if sys.version_info[0] < 3 or sys.version_info[1] < 6:
   print("Error Code U-2: This program requires running python 3.6 or higher! You are running" + str(sys.version_info[0]) + "." + str(sys.version_info[1]))
