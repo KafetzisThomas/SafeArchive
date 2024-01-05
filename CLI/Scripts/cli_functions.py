@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 """
-This file contains the functionality of the program.
+This file contains the core functionality of the program.
 """
 
 import Scripts.cli_configs as conf
@@ -84,20 +84,33 @@ def backup():
   Initialize & Upload local backups to cloud if JSON value is True
   """
   # Check if storage media usage is below or equal to 90%
+  print("[!] backup init")
   if get_drive_usage_percentage() <= 90:
+    print("[+] driver usage is below 90%")
     # Set expiry date for old backups (type: integer)
+    print("[!] setting expiry date..")
     if conf.config["backup_expiry_date"]: backup_expiry_date()
     # Open the zipfile in write mode, create zip file with current date in its name
+    print("[!] Opening zipfile in write mode")
     with zipfile.ZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True, compresslevel=9) as zipObj:
+      print("[!] iterating..")
+      i = 0
       for item in conf.config['source_path']:  # Iterate over each path in the source list
+        print(f"[{i}] iterating over {item}")
+        l=0
         for root, dirs, files in os.walk(item):  # Iterate over the files and folders in the path
+          print(f"[{l}] iterating over files and folders in {item}")
           for dirname in dirs:
             dirpath = os.path.join(root, dirname)
+            print(f"[+] Writing {dirname} to zip")
             zipObj.write(dirpath)  # Write the folder to the zip archive
 
           for filename in files:
             filepath = os.path.join(root, filename)
+            print(f"[+] Writing {filename} to zip")
             zipObj.write(filepath)  # Write the file to the zip archive
+          l+=1
+        i+=1
 
     # Choose if you want local backups to sync in cloud (type: boolean)
     if conf.config["backup_to_cloud"]:
