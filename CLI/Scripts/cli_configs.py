@@ -12,7 +12,7 @@ from pathlib import Path
 
 class ConfigDict(dict):
     """Set configs"""
-    __slots__=["path"]
+    __slots__ = ["path"]
 
     def __init__(self, config: dict, path: str):
         self.update(config)
@@ -36,7 +36,7 @@ config = ConfigDict({
         "destination_path": "Destination path (storage media) for backups (type: string)",
         "backup_to_cloud": "Flag indicating whether to backup to the cloud (specify: storage_provider) (type: boolean)",
         "backup_expiry_date": "Expiry date for the backups in the storage media (type: string)"
-  },
+    },
     "source_path": None,
     "destination_path": None,
     "backup_to_cloud": None,
