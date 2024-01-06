@@ -37,9 +37,9 @@ config = ConfigDict({
         "backup_to_cloud": "Flag indicating whether to backup to the cloud (specify: storage_provider) (type: boolean)",
         "backup_expiry_date": "Expiry date for the backups in the storage media (type: string)"
   },
-    "source_path": ["", ],
-    "destination_path": "",
-    "backup_to_cloud": False,
+    "source_path": None,
+    "destination_path": None,
+    "backup_to_cloud": None,
     "backup_expiry_date": None
 }, SETTINGS_PATH)
 

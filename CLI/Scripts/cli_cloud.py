@@ -10,88 +10,101 @@ https://github.com/KafetzisThomas/SafeArchive/wiki/Obtaining-API-Key
 """
 
 import os
+import sys
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
-import Scripts.cli_configs as conf
-conf.config.load() # Load the JSON file into memory
+from pydrive2.settings import InvalidConfigError
+from Scripts.cli_configs import config
+config.load()  # Load the JSON file into memory
 
-# Get value from the JSON file
-DESTINATION_PATH = conf.config['destination_path'] + 'SafeArchive/'
 
-def initialize():
-  """Authenticate request & store authorization credentials"""
-  global drive, gdrive_folder
+class GoogleDriveCloud:
 
-  gauth = GoogleAuth()  # Create a GoogleAuth instance
+    def initialize(self):
+        """Authenticate request & store authorization credentials"""
 
-  gauth.LoadCredentialsFile('credentials.txt')  # Load the stored OAuth2 credential
+        try:
+            gauth = GoogleAuth()
+            gauth.LocalWebserverAuth()
+            self.drive = GoogleDrive(gauth)
+        except InvalidConfigError:
+            print("Error: File 'client_secrets.json' is missing.\nFile not found in the program directory. Please refer to the documentation for instructions on how to get it.")
+            sys.exit()
 
-  # Check if stored credential is valid
-  if not gauth.credentials:
-    gauth.LocalWebserverAuth()  # If not, authenticate with LocalWebserverAuth()
-  elif gauth.access_token_expired:
-    gauth.Refresh()  # If expired, refresh the token
-  else:
-    gauth.Authorize()  # If valid, use credential to authenticate with GoogleDrive
+        # Check if the folder already exists in Google Drive
+        folder_query = ("title='SafeArchive' and mimeType='application/vnd.google-apps.folder' and trashed=false")
+        file_list = self.drive.ListFile({'q': folder_query}).GetList()
 
-  gauth.SaveCredentialsFile('credentials.txt')  # Save credentials to file
+        if file_list:
+            # The folder already exists, so just update the existing files
+            self.gdrive_folder = file_list[0]
+        else:
+            # The folder doesn't exist, so create a new one
+            self.gdrive_folder = self.drive.CreateFile(
+                {'title': 'SafeArchive', 'mimeType': 'application/vnd.google-apps.folder'})
+            self.gdrive_folder.Upload()
 
-  drive = GoogleDrive(gauth)  # Create a GoogleDrive instance to interact with Google Drive
+    def get_cloud_usage_percentage(self):
+        """Return cloud usage percentage"""
+        account_details = self.drive.GetAbout()  # Get account details
 
-  # Check if the folder already exists in Google Drive
-  file_list = drive.ListFile({'q': f"title='SafeArchive' and mimeType='application/vnd.google-apps.folder' and trashed=false"}).GetList()
+        # Calculate storage usage percentage
+        used_storage = int(account_details['quotaBytesUsed'])
+        total_storage = int(account_details['quotaBytesTotal'])
+        storage_usage_percentage = (used_storage / total_storage) * 100
+        return storage_usage_percentage
 
-  if file_list:
-    gdrive_folder = file_list[0]  # The folder already exists, so just update the existing files
+    def get_or_create_folder(self, foldername, parent_folder_id=None):
+        """Get or create folder in Google Drive"""
+        
+        folder_query = (f"title='{foldername}' and mimeType='application/vnd.google-apps.folder' and trashed=false")
+        folder_list = self.drive.ListFile({'q': folder_query}).GetList()
 
-  else:
-    # The folder doesn't exist, so create a new one
-    gdrive_folder = drive.CreateFile({'title': 'SafeArchive', 'mimeType': 'application/vnd.google-apps.folder'})
-    gdrive_folder.Upload()
+        if folder_list:
+            return folder_list[0]
+        else:
+            folder_metadata = {'title': foldername}
+            if parent_folder_id:
+                folder_metadata['parents'] = [{'id': parent_folder_id}]
 
-def get_cloud_usage_percentage():
-  """Return cloud usage percentage"""
-  account_details = drive.GetAbout()  # Get account details
+            new_folder = self.drive.CreateFile(folder_metadata)
+            new_folder.Upload()
+            return new_folder
 
-  # Calculate storage usage percentage
-  used_storage = int(account_details['quotaBytesUsed'])
-  total_storage = int(account_details['quotaBytesTotal'])
-  storage_usage_percentage = (used_storage / total_storage) * 100
-  return storage_usage_percentage
+    def backup_to_google_drive(self, folderpath, DESTINATION_PATH, parent_folder_id=None):
+        """Upload local backup files to Google Drive"""
 
-def backup_to_cloud(folderpath, parent_folder_id=None):
-  """
-  Upload local backup files to cloud (google drive)
-    * Delete files that have been locally removed
-    * Upload files that have been added locally
-    * Update existing files with new content
-  """
-  foldername = os.path.basename(folderpath)
-  folder_metadata = {'title': foldername, 'mimeType': 'application/vnd.google-apps.folder'}
+        foldername = os.path.basename(folderpath)
+        self.gdrive_folder = self.get_or_create_folder(foldername, parent_folder_id)
 
-  if parent_folder_id:
-    folder_metadata['parents'] = [{'id': parent_folder_id}]
+        for filename in os.listdir(folderpath):
+            filepath = os.path.join(folderpath, filename)
+            gdrive_file = self.get_or_create_file(filename, filepath)
 
-  file_list = drive.ListFile({'q': f"title='{foldername}' and mimeType='application/vnd.google-apps.folder' and trashed=false"}).GetList()
+            # Update existing files or upload new ones
+            gdrive_file.SetContentFile(filepath)
+            gdrive_file.Upload()
 
-  for filename in os.listdir(folderpath):
-    filepath = os.path.join(folderpath, filename)
+        # Delete files in Google Drive that don't exist in the local folder anymore
+        self.delete_files_not_in_local_folder(DESTINATION_PATH[:-1])
 
-    file_list = drive.ListFile({'q': f"title='{filename}' and '{gdrive_folder['id']}' in parents and trashed=false"}).GetList()
+    def get_or_create_file(self, filename, folderpath):
+        """Get or create file in Google Drive"""
 
-    if file_list:
-      # The file already exists, so just update it
-      gdrive_file = file_list[0]
-      gdrive_file.SetContentFile(filepath)
-      gdrive_file.Upload()
-    
-    else:
-      # The file doesn't exist, so create a new one
-      gdrive_file = drive.CreateFile({'title': filename, 'parents': [{'id': gdrive_folder['id']}]})
-      gdrive_file.SetContentFile(filepath)
-      gdrive_file.Upload()
+        file_query = (f"title='{filename}' and '{self.gdrive_folder['id']}' in parents and trashed=false")
+        file_list = self.drive.ListFile({'q': file_query}).GetList()
 
-  # Delete files in Google Drive that don't exist in the local folder anymore
-  for file in drive.ListFile({'q': f"'{gdrive_folder['id']}' in parents and trashed=false"}).GetList():
-    if not os.path.exists(os.path.join(DESTINATION_PATH[:-1], file['title'])):
-      file.Trash()
+        if file_list:
+            return file_list[0]
+        else:
+            new_file = self.drive.CreateFile({'title': filename, 'parents': [{'id': self.gdrive_folder['id']}]})
+            return new_file
+
+    def delete_files_not_in_local_folder(self, local_folder_path):
+        """Delete files in Google Drive that don't exist in the local folder"""
+        drive_files = self.drive.ListFile({'q': f"'{self.gdrive_folder['id']}' in parents and trashed=false"}).GetList()
+
+        for file in drive_files:
+            local_file_path = os.path.join(local_folder_path, file['title'])
+            if not os.path.exists(local_file_path):
+                file.Trash()

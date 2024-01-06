@@ -7,17 +7,24 @@ Supportive Platforms: Windows, Mac, Linux
 """
 
 # Import built-in modules
-import os, sys, time, platform
+import os
+import sys
+import time
+import platform
 
 # Import module files
-try: import Scripts.cli_functions as func
-except TypeError: pass
-
-import Scripts.cli_configs as conf
-conf.config.load() # Load the JSON file into memory
+from Scripts.cli_functions import get_backup_size
+from Scripts.cli_functions import storage_media_free_space
+from Scripts.cli_functions import last_backup
+from Scripts.cli_functions import backup
+from Scripts.cli_functions import restore_backup
+from Scripts.cli_functions import edit_configs
+from Scripts.cli_configs import config
+config.load() # Load the JSON file into memory
 
 # Import other (third-party) modules
-import humanize, colorama
+import humanize
+import colorama
 from art import text2art
 from colorama import Fore as F, Back as B
 colorama.init(autoreset=True)
@@ -26,53 +33,19 @@ colorama.init(autoreset=True)
 clear_command = "cls" if platform.system() == "Windows" else "clear"
 os.system(clear_command)  # Clear console
 
-# Configuring from CLI
-try:
-  if sys.argv[1] == "conf" or sys.argv[1] == "--conf" or sys.argv[1] == "-c":
-    print(f"{B.GREEN} -- CONFIGURATION -- {B.RESET}")
-    #information
-    folder_to_backup = input(f"{B.RED}! YOU NEED TO INPUT THE WHOLE PATH !{B.RESET}\nPlease enter the folder to backup: ")
-    backup_destination = input("Please enter the destination folder: ")
-    cloud_backup = input("do you want to backup to cloud?(y/N): ")
-    backup_expire = input("if you want to set the expiry date of backups, enter here(leave None if you don't want): ")
-    
-    # Cloud backup
-    if cloud_backup.lower() == "y":
-      # rewriting the value for *efficiency* 
-      cloud_backup = True
-    else:
-      cloud_backup = False
-    
-    # Expiry date
-    if not backup_expire:
-      backup_expire = None
-
-    SETTINGS_PATH = 'settings.json'
-    config = conf.ConfigDict({
-      'source_path': [folder_to_backup],
-      'destination_path': backup_destination,
-      'backup_to_cloud': cloud_backup,
-      'backup_expiry_date': backup_expire
-    }, SETTINGS_PATH)
-    check = input(f"\nthis is the configuration:\n source_path: {folder_to_backup}\n destination_path: {backup_destination}\n backup_to_cloud: {cloud_backup}\n backup_expiry_date: {backup_expire}\n is this right?(Y/n): ")
-    if check.lower() == "n":
-      print(f"{F.YELLOW}aborting..{F.RESET}")
-      exit()
-
-    config.save()
-    print(f"{F.GREEN}done!{F.RESET}")
-
-except KeyboardInterrupt:
-  print(f"{F.RED}User abort!{F.RESET}")
-except:
-  print("No CLI input, continuing...")
-
 # Run check on python version, must be 3.6 or higher because of f strings
 if sys.version_info[0] < 3 or sys.version_info[1] < 6:
   print("Error Code U-2: This program requires running python 3.6 or higher! You are running" + str(sys.version_info[0]) + "." + str(sys.version_info[1]))
   sys.exit()
 
-if(conf.config["source_path"] is None) or (conf.config["destination_path"] is None):
+try:
+  if sys.argv[1] == "conf" or sys.argv[1] == "--conf" or sys.argv[1] == "-c":
+    edit_configs()
+    sys.exit()
+except IndexError:
+  pass
+
+if(config["source_path"] is None) or (config["destination_path"] is None):
   print(f"{B.RED}{F.WHITE} NOTE {B.RESET}{F.RESET} Please specify your preferences in {F.LIGHTYELLOW_EX}settings.json{F.RESET} file...")
   print("\nREQUIRED:")
   print("'source_path': [path/to/, path/to/, ...] --> string inside list")
@@ -83,7 +56,7 @@ if(conf.config["source_path"] is None) or (conf.config["destination_path"] is No
   sys.exit()
 
 # Set the destination directory path (type: string)
-DESTINATION_PATH = conf.config["destination_path"] + "SafeArchive/"  # Get value from the JSON file
+DESTINATION_PATH = config["destination_path"] + "SafeArchive/"  # Get value from the JSON file
 
 try:
   if not os.path.exists(DESTINATION_PATH):  # Create the destination directory path if it doesn't exist
@@ -98,9 +71,9 @@ except PermissionError:
 print(text2art("SafeArchive-CLI"))
 print(f"> Author: {F.LIGHTYELLOW_EX}KafetzisThomas")
 print("-------------------------")
-print(f"\n~ Last Backup: {B.LIGHTBLUE_EX}{F.WHITE} {func.last_backup()} {B.RESET}{F.RESET}")
-print(f"~ Free space on ({DESTINATION_PATH.replace('SafeArchive/', '')}): {func.storage_media_free_space()} GB")
-print(f"~ Size of backup: {humanize.naturalsize(func.get_backup_size())}")
+print(f"\n~ Last Backup: {B.LIGHTBLUE_EX}{F.WHITE} {last_backup(DESTINATION_PATH)} {B.RESET}{F.RESET}")
+print(f"~ Free space on ({DESTINATION_PATH.replace('SafeArchive/', '')}): {storage_media_free_space()} GB")
+print(f"~ Size of backup: {humanize.naturalsize(get_backup_size(DESTINATION_PATH))}")
 print(f"\n1. {F.LIGHTMAGENTA_EX}Backup{F.RESET} Now"
       f" - Zip source path files to {F.LIGHTCYAN_EX}destination{F.RESET} path")
 print(f"2. Restore {F.LIGHTGREEN_EX}previous{F.RESET} backup"
@@ -118,7 +91,7 @@ if choice == 1:
   print("/ Backing up your data...")
   try:
     start = time.time()
-    func.backup()
+    backup(DESTINATION_PATH)
     end = time.time()
     time_elapsed = end - start
 
@@ -128,7 +101,7 @@ if choice == 1:
     print(f"{F.LIGHTRED_EX}* Backup process cancelled.")
     sys.exit()
 elif choice == 2:
-  func.restore_backup()
+  restore_backup(DESTINATION_PATH)
   print(f"{F.LIGHTYELLOW_EX}* Files restored successfully.")
 else:
   print(f"{F.LIGHTRED_EX}* Undefined choice.")
