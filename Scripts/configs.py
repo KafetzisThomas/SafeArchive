@@ -8,6 +8,7 @@ It also automatically triggers the saving of the configuration file whenever a s
 
 import os
 import json
+import platform
 from pathlib import Path
 
 
@@ -55,12 +56,13 @@ config = ConfigDict({
         "USERNAME": "Username for FTP configuration (type: string)",
         "PASSWORD": "Password for FTP configuration (type: string)"
   },
+    "platform": platform.system(),
     "source_path": [
         str(Path('~/Desktop').expanduser()).replace("\\", "/") + "/",
         str(Path('~/Documents').expanduser()).replace("\\", "/") + "/",
         str(Path('~/Downloads').expanduser()).replace("\\", "/") + "/",
     ],
-    "destination_path": os.path.abspath(os.sep).replace("\\", "/"),
+    "destination_path": os.path.abspath(os.sep).replace("\\", "/") if platform.system() == "Windows" else os.path.join(os.path.expanduser("~"), ""),
     "backup_to_cloud": False,
     "notifications": True,
     "appearance_mode": "dark",

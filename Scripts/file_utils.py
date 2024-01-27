@@ -4,10 +4,24 @@
 import os
 import psutil
 import datetime
+import platform
 from Scripts.notification_handlers import notify_drive_reconnection
 from tkinter import filedialog
 from Scripts.configs import config
 
+
+def get_available_drives():
+    drives = psutil.disk_partitions()
+    external_drives = []
+
+    if platform.system() == "Windows":
+        for drive in drives:
+            external_drives.append(drive.device.replace('\\', '/'))
+    else:
+        for drive in drives:
+            if drive.mountpoint.startswith('/media/') or drive.mountpoint.startswith('/run/media/'):
+                external_drives.append(f"{drive.mountpoint}/")
+    return external_drives
 
 def get_backup_size(DESTINATION_PATH):
     """Walk through all files in the destination path & return total size"""
@@ -123,11 +137,12 @@ def remove_item(listbox):
 
 def add_item(listbox):
     """Add a source path to the listbox & JSON file"""
-    source_path_file_explorer = filedialog.askdirectory(
-        title='Backup these folders') + '/'
-    if (source_path_file_explorer != '/') and (source_path_file_explorer not in config['source_path']):
-        config['source_path'].append(source_path_file_explorer)
-        config.save()  # This needs to be done because the saver may not be triggered by the sublist appending
+    try:
+        source_path_file_explorer = filedialog.askdirectory(title='Backup these folders') + '/'
+        if (source_path_file_explorer != '/') and (source_path_file_explorer not in config['source_path']):
+            config['source_path'].append(source_path_file_explorer)
+            config.save()  # This needs to be done because the saver may not be triggered by the sublist appending
 
-        listbox.insert(
-            len(config['source_path']) - 1, source_path_file_explorer)
+            listbox.insert(len(config['source_path']) - 1, source_path_file_explorer)
+    except TypeError:
+        pass

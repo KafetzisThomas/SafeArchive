@@ -14,6 +14,7 @@ import sys
 import tkinter as tk
 
 # Import module files
+from Scripts.file_utils import get_available_drives
 from Scripts.file_utils import get_backup_size
 from Scripts.file_utils import storage_media_free_space
 from Scripts.file_utils import last_backup
@@ -22,7 +23,6 @@ from Scripts.file_utils import remove_item
 from Scripts.file_utils import add_item
 from Scripts.backup_utils import run_backup
 from Scripts.restore import RestoreBackup
-from Scripts.system_tray import hide_window
 from Scripts.widgets import DrivesCombobox
 from Scripts.widgets import CloudSwitch
 from Scripts.widgets import BackupExpiryDateCombobox
@@ -72,7 +72,7 @@ class App(ctk.CTk):
         self.title(f"SafeArchive {version}")  # Set window title
         self.resizable(False, False)  # Disable minimize/maximize buttons
         self.geometry("500x500")  # Set window size
-        self.iconbitmap("assets/icon.ico")  # Set window title icon
+        self.iconbitmap("assets/icon.ico") if config['platform'] == "Windows" else None  # Set window title icon
 
         try:
             # Create the destination directory path if it doesn't exist
@@ -87,21 +87,18 @@ class App(ctk.CTk):
             sys.exit(77)
 
         backup_options_label = ctk.CTkLabel(
-            master=self, text="Drive Properties ━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
+            master=self, text="Drive Properties ━━━━━━━━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
         backup_options_label.place(x=15, y=15)
 
-        device_label = ctk.CTkLabel(
-            master=self, text="Device", font=('Helvetica', 12))
-        device_label.place(x=15, y=45)
+        drive_label = ctk.CTkLabel(
+            master=self, text="Drive", font=('Helvetica', 12))
+        drive_label.place(x=15, y=45)
 
-        drives = psutil.disk_partitions()
-        drive_options = [drive.device.replace('\\', '/') for drive in drives]
-
-        device_combobox_var = ctk.StringVar(
+        drive_combobox_var = ctk.StringVar(
             value=DESTINATION_PATH.replace('SafeArchive/', ''))  # Set initial value
 
         drives_combobox = ctk.CTkComboBox(
-            master=self, width=470, values=drive_options, command=DrivesCombobox, variable=device_combobox_var)
+            master=self, width=470, values=get_available_drives(), command=DrivesCombobox, variable=drive_combobox_var)
         drives_combobox.place(x=15, y=70)
 
         size_of_backup_label = ctk.CTkLabel(
@@ -117,7 +114,7 @@ class App(ctk.CTk):
         last_backup_label.place(x=15, y=140)
 
         additional_settings_label = ctk.CTkLabel(
-            master=self, text="Backup Options ━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
+            master=self, text="Backup Options ━━━━━━━━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
         additional_settings_label.place(x=15, y=170)
 
         keep_my_backups_label = ctk.CTkLabel(
@@ -183,7 +180,7 @@ class App(ctk.CTk):
         minus_button.place(x=250, y=250)
 
         status_label = ctk.CTkLabel(
-            master=self, text="Status ━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
+            master=self, text="Status ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
         status_label.place(x=15, y=375)
 
         self.backup_progressbar = ctk.CTkProgressBar(
@@ -208,8 +205,10 @@ class App(ctk.CTk):
             master=self, text="CLOSE", command=self.destroy)
         close_button.place(x=350, y=450)
 
-        self.protocol('WM_DELETE_WINDOW', lambda: hide_window(
-            DESTINATION_PATH=DESTINATION_PATH, App=self))
+        if config['platform'] == "Windows":
+            from Scripts.system_tray import hide_window
+            self.protocol('WM_DELETE_WINDOW', lambda: hide_window(
+                DESTINATION_PATH=DESTINATION_PATH, App=self))
 
 
 if __name__ == "__main__":
