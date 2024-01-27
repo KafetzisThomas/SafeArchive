@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
+from pathlib import Path
 from plyer import notification
+
+# Get absolute path of app icon file
+app_icon = str(Path("assets").joinpath("icon.ico").resolve())
 
 
 def notify_backup_completion(DESTINATION_PATH, notifications):
@@ -11,7 +15,7 @@ def notify_backup_completion(DESTINATION_PATH, notifications):
             title="Backup Completed",
             app_name="SafeArchive",
             message=f"SafeArchive has finished the backup to '{DESTINATION_PATH.replace('SafeArchive/', '')}'.",
-            app_icon="assets/icon.ico",
+            app_icon=app_icon,
             timeout=10
         )
 
@@ -23,7 +27,7 @@ def notify_restore_completion(notifications):
             title="Files Restored Sucessfully",
             app_name="SafeArchive",
             message=f"SafeArchive has finished the restore.",
-            app_icon="assets/icon.ico",
+            app_icon=app_icon,
             timeout=10
         )
 
@@ -35,7 +39,7 @@ def notify_drive_reconnection(notifications):
             title="Reconnect your drive",
             app_name="SafeArchive",
             message="Your SafeArchive Drive was disconnected for too long. Reconnect it to keep saving copies of your files.",
-            app_icon="assets/icon.ico",
+            app_icon=app_icon,
             timeout=10
         )
 
@@ -47,7 +51,7 @@ def notify_drive_space_limitation(notifications):
             title="Warning: Your Drive storage is running out.",
             app_name="SafeArchive",
             message="Your Drive storage is almost full. To make sure your files can sync, clean up space.",
-            app_icon="assets/icon.ico",
+            app_icon=app_icon,
             timeout=10
         )
 
@@ -59,7 +63,7 @@ def notify_cloud_space_limitation(notifications):
             title="Warning: Your Google Drive storage is running out.",
             app_name="SafeArchive",
             message="Your Google Drive storage is almost full. To make sure your files can sync, clean up space.",
-            app_icon="assets/icon.ico",
+            app_icon=app_icon,
             timeout=10
         )
 
@@ -69,6 +73,6 @@ def notify_client_secrets_file_missing(notifications):
             title="Error: File 'client_secrets.json' is missing.",
             app_name="SafeArchive",
             message="File not found in the program directory. Please refer to the documentation for instructions on how to get it.",
-            app_icon="assets/icon.ico",
+            app_icon=app_icon,
             timeout=10
         )
