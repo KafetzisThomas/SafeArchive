@@ -33,7 +33,6 @@ config.load() # Load the JSON file into memory
 
 # Import other (third-party) modules
 import humanize
-import psutil
 from PIL import Image
 import customtkinter as ctk
 
