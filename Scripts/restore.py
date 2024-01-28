@@ -38,10 +38,11 @@ class RestoreBackup:
     def create_listbox(self):
         frame = ctk.CTkFrame(master=self.restore_window)
         frame.place(x=8, y=8)
+        height, width = (9, 43) if config['platform'] == "Windows" else (7, 39)
         self.listbox = tk.Listbox(
             master=frame,
-            height=7,
-            width=39,
+            height=height,
+            width=width,
             background=self.get_listbox_background(),
             foreground=self.get_listbox_foreground(),
             activestyle='dotbox',

@@ -27,10 +27,12 @@ from Scripts.widgets import DrivesCombobox
 from Scripts.widgets import CloudSwitch
 from Scripts.widgets import BackupExpiryDateCombobox
 from Scripts.notification_handlers import notify_drive_reconnection
-from Scripts.system_tray import hide_window
 from Scripts.settings import settings
 from Scripts.configs import config
 config.load() # Load the JSON file into memory
+
+if config['platform'] == "Windows":
+    from Scripts.system_tray import hide_window
 
 # Import other (third-party) modules
 import humanize
@@ -86,9 +88,11 @@ class App(ctk.CTk):
                   "Change it in settings.json or run with elevated priveleges")
             sys.exit(77)
 
-        backup_options_label = ctk.CTkLabel(
-            master=self, text="Drive Properties ━━━━━━━━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
-        backup_options_label.place(x=15, y=15)
+        
+        drive_properties_text = "Drive Properties ━━━━━━━━━━━━━━━━" if config['platform'] == "Windows" else "Drive Properties ━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        drive_properties_label = ctk.CTkLabel(
+            master=self, text=drive_properties_text, font=('Helvetica', 20))
+        drive_properties_label.place(x=15, y=15)
 
         drive_label = ctk.CTkLabel(
             master=self, text="Drive", font=('Helvetica', 12))
@@ -113,9 +117,10 @@ class App(ctk.CTk):
             master=self, text=f"Last backup: {last_backup(DESTINATION_PATH)}", font=('Helvetica', 12))
         last_backup_label.place(x=15, y=140)
 
-        additional_settings_label = ctk.CTkLabel(
-            master=self, text="Backup Options ━━━━━━━━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
-        additional_settings_label.place(x=15, y=170)
+        backup_options_text = "Backup Options ━━━━━━━━━━━━━━━━" if config['platform'] == "Windows" else "Backup Options ━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        backup_options_label = ctk.CTkLabel(
+            master=self, text=backup_options_text, font=('Helvetica', 20))
+        backup_options_label.place(x=15, y=170)
 
         keep_my_backups_label = ctk.CTkLabel(
             master=self, text="Keep my backups", font=('Helvetica', 12))
@@ -179,8 +184,9 @@ class App(ctk.CTk):
             master=self, text="-", width=20, height=10, command=lambda: remove_item(listbox))
         minus_button.place(x=250, y=250)
 
+        status_text = "Status ━━━━━━━━━━━━━━━━━━━━" if config['platform'] == "Windows" else "Status ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         status_label = ctk.CTkLabel(
-            master=self, text="Status ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
+            master=self, text=status_text, font=('Helvetica', 20))
         status_label.place(x=15, y=375)
 
         self.backup_progressbar = ctk.CTkProgressBar(
