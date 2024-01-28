@@ -27,6 +27,7 @@ from Scripts.widgets import DrivesCombobox
 from Scripts.widgets import CloudSwitch
 from Scripts.widgets import BackupExpiryDateCombobox
 from Scripts.notification_handlers import notify_drive_reconnection
+from Scripts.system_tray import hide_window
 from Scripts.settings import settings
 from Scripts.configs import config
 config.load() # Load the JSON file into memory
@@ -204,10 +205,8 @@ class App(ctk.CTk):
             master=self, text="CLOSE", command=self.destroy)
         close_button.place(x=350, y=450)
 
-        if config['platform'] == "Windows":
-            from Scripts.system_tray import hide_window
-            self.protocol('WM_DELETE_WINDOW', lambda: hide_window(
-                DESTINATION_PATH=DESTINATION_PATH, App=self))
+        self.protocol('WM_DELETE_WINDOW', lambda: hide_window(
+            DESTINATION_PATH=DESTINATION_PATH, App=self))
 
 
 if __name__ == "__main__":
