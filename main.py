@@ -28,7 +28,7 @@ from Scripts.widgets import CloudSwitch
 from Scripts.widgets import BackupExpiryDateCombobox
 from Scripts.notification_handlers import notify_drive_reconnection
 from Scripts.settings import settings
-from Scripts.about import about
+from Scripts.about import About
 from Scripts.configs import config
 config.load() # Load the JSON file into memory
 
@@ -46,6 +46,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
+        about = About(self, version)
         restore_backup = RestoreBackup(self, DESTINATION_PATH)
         ctk.set_appearance_mode(config['appearance_mode'])
         ctk.set_default_color_theme(config['color_theme'])
@@ -195,7 +196,7 @@ class App(ctk.CTk):
 
         about_image = ctk.CTkImage(Image.open(image1), size=(25, 25))
         self.about_button = ctk.CTkButton(master=self, text="", fg_color=fg_color, image=about_image,
-                                             width=5, height=5, command=lambda: about(App=self, version=version))
+                                             width=5, height=5, command=lambda: about.about())
         self.about_button.place(x=15, y=450)
 
         settings_image = ctk.CTkImage(Image.open(image2), size=(25, 25))
