@@ -32,9 +32,6 @@ from Scripts.about import about
 from Scripts.configs import config
 config.load() # Load the JSON file into memory
 
-if config['platform'] == "Windows":
-    from Scripts.system_tray import hide_window
-
 # Import other (third-party) modules
 import humanize
 from PIL import Image
@@ -219,8 +216,10 @@ class App(ctk.CTk):
             master=self, text="CLOSE", command=self.destroy)
         close_button.place(x=350, y=450)
 
-        self.protocol('WM_DELETE_WINDOW', lambda: hide_window(
-            DESTINATION_PATH=DESTINATION_PATH, App=self))
+        if config['platform'] == "Windows":
+            from Scripts.system_tray import hide_window
+            self.protocol('WM_DELETE_WINDOW', lambda: hide_window(
+                DESTINATION_PATH=DESTINATION_PATH, App=self))
 
 
 if __name__ == "__main__":
