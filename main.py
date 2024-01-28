@@ -28,6 +28,7 @@ from Scripts.widgets import CloudSwitch
 from Scripts.widgets import BackupExpiryDateCombobox
 from Scripts.notification_handlers import notify_drive_reconnection
 from Scripts.settings import settings
+from Scripts.about import about
 from Scripts.configs import config
 config.load() # Load the JSON file into memory
 
@@ -55,14 +56,16 @@ class App(ctk.CTk):
         if config['appearance_mode'] == "dark":
             background = "#343638"
             foreground = "white"
-            image1 = "assets/restore.png"
+            image1 = "assets/info.png"
             image2 = "assets/gear.png"
+            image3 = "assets/restore.png"
             fg_color = "#242424"
         else:
             background = "#ebebeb"
             foreground = "black"
-            image1 = "assets/restore2.png"
+            image1 = "assets/info2.png"
             image2 = "assets/gear2.png"
+            image3 = "assets/restore2.png"
             fg_color = "#ebebeb"
 
         def get_listbox_selection_background():
@@ -193,15 +196,20 @@ class App(ctk.CTk):
             master=self, width=475, height=15, corner_radius=0, orientation='horizontal', mode='indeterminate')
         self.backup_progressbar.place(x=15, y=415)
 
-        restore_image = ctk.CTkImage(Image.open(image1), size=(25, 25))
-        self.restore_button = ctk.CTkButton(master=self, text="", fg_color=fg_color, image=restore_image,
-                                            width=5, height=5, command=lambda: restore_backup.restore_backup())
-        self.restore_button.place(x=50, y=450)
+        about_image = ctk.CTkImage(Image.open(image1), size=(25, 25))
+        self.about_button = ctk.CTkButton(master=self, text="", fg_color=fg_color, image=about_image,
+                                             width=5, height=5, command=lambda: about(App=self, version=version))
+        self.about_button.place(x=15, y=450)
 
         settings_image = ctk.CTkImage(Image.open(image2), size=(25, 25))
         self.settings_button = ctk.CTkButton(master=self, text="", fg_color=fg_color, image=settings_image,
                                              width=5, height=5, command=lambda: settings(App=self))
-        self.settings_button.place(x=15, y=450)
+        self.settings_button.place(x=50, y=450)
+        
+        restore_image = ctk.CTkImage(Image.open(image3), size=(25, 25))
+        self.restore_button = ctk.CTkButton(master=self, text="", fg_color=fg_color, image=restore_image,
+                                            width=5, height=5, command=lambda: restore_backup.restore_backup())
+        self.restore_button.place(x=85, y=450)
 
         self.backup_button = ctk.CTkButton(master=self, text="BACKUP", command=lambda: run_backup(
             DESTINATION_PATH=DESTINATION_PATH, App=self))
