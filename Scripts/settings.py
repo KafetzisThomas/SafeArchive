@@ -12,7 +12,7 @@ def settings(App):
     settings_window = tk.Toplevel(App)  # Open new window (settings_window)
     settings_window.title("Settings")  # Set window title
     settings_window.geometry("410x245")  # Set window size
-    settings_window.iconbitmap("assets/icon.ico") if config['platform'] == "Windows" else None  # Set window title icon
+    settings_window.iconbitmap("assets/ICO/gear.ico") if config['platform'] == "Windows" else None  # Set window title icon
     settings_window.resizable(False, False)  # Disable minimize/maximize buttons
     settings_window.configure(background="#242424")  # Set background color
 

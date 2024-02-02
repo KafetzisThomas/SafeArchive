@@ -30,7 +30,7 @@ def quit_window(App, icon):
 def hide_window(App, DESTINATION_PATH):
     """Hide window & show system taskbar"""
     App.withdraw()
-    image = Image.open("assets/icon.ico")
+    image = Image.open("assets/ICO/icon.ico")
     menu = item('Backup Now', lambda icon: backup_from_taskbar(App, icon, DESTINATION_PATH)), item(
         'Open', lambda icon: show_window(App, icon)), item('Exit', lambda icon: quit_window(App, icon))
     App.icon = pystray.Icon("name", image, "SafeArchive", menu)

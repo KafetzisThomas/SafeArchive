@@ -3,7 +3,7 @@
 
 <h1 align = 'center'>
     <img 
-        src = '/assets/icon.ico' 
+        src = '/assets/ICO/icon.ico' 
         height = '100' 
         width = '100' 
         alt = 'Icon' 

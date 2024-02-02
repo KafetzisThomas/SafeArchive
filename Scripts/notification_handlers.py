@@ -5,7 +5,7 @@ from pathlib import Path
 from plyer import notification
 
 # Get absolute path of app icon file
-app_icon = str(Path("assets").joinpath("icon.ico").resolve())
+app_icon = str(Path("assets/ICO").joinpath("icon.ico").resolve())
 
 
 def notify_backup_completion(DESTINATION_PATH, notifications):

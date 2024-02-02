@@ -54,16 +54,16 @@ class App(ctk.CTk):
         if config['appearance_mode'] == "dark":
             background = "#343638"
             foreground = "white"
-            image1 = "assets/info.png"
-            image2 = "assets/gear.png"
-            image3 = "assets/restore.png"
+            image1 = "assets/PNG/info.png"
+            image2 = "assets/PNG/gear.png"
+            image3 = "assets/PNG/restore.png"
             fg_color = "#242424"
         else:
             background = "#ebebeb"
             foreground = "black"
-            image1 = "assets/info2.png"
-            image2 = "assets/gear2.png"
-            image3 = "assets/restore2.png"
+            image1 = "assets/PNG/info2.png"
+            image2 = "assets/PNG/gear2.png"
+            image3 = "assets/PNG/restore2.png"
             fg_color = "#ebebeb"
 
         def get_listbox_selection_background():
@@ -75,7 +75,7 @@ class App(ctk.CTk):
         self.title(f"SafeArchive {version}")  # Set window title
         self.resizable(False, False)  # Disable minimize/maximize buttons
         self.geometry("500x500")  # Set window size
-        self.iconbitmap("assets/icon.ico") if config['platform'] == "Windows" else None  # Set window title icon
+        self.iconbitmap("assets/ICO/icon.ico") if config['platform'] == "Windows" else None  # Set window title icon
 
         try:
             # Create the destination directory path if it doesn't exist

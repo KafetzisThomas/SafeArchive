@@ -33,7 +33,7 @@ class About:
         self.about_window = tk.Toplevel(self.App)  # Open new window (about_window)
         self.about_window.title("About SafeArchive")  # Set window title
         self.about_window.geometry("410x245")  # Set window size
-        self.about_window.iconbitmap("assets/icon.ico") if config['platform'] == "Windows" else None  # Set window title icon
+        self.about_window.iconbitmap("assets/ICO/info.ico") if config['platform'] == "Windows" else None  # Set window title icon
         self.about_window.resizable(False, False)  # Disable minimize/maximize buttons
         self.about_window.configure(background="#242424")  
         self.about_window.configure(background=self.get_window_background())  # Set background color
@@ -53,7 +53,7 @@ class About:
         return "#2b2b2b" if config['appearance_mode'] == "dark" else "#dbdbdb"
 
     def display_icon(self):
-        icon_image = ctk.CTkImage(Image.open("assets/icon.ico"), size=(80, 80))
+        icon_image = ctk.CTkImage(Image.open("assets/ICO/icon.ico"), size=(80, 80))
         icon_button = ctk.CTkButton(master=self.frame, text="", fg_color=self.get_fg_color(), image=icon_image, width=5, height=5)
         icon_button.place(x=150, y=0)
         icon_button.configure(state="disabled")  # Change icon button state to disabled

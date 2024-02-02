@@ -31,7 +31,7 @@ class RestoreBackup:
         self.restore_window = tk.Toplevel(self.App)  # Open new window (restore_window)
         self.restore_window.title("Select backup to restore")  # Set window title
         self.restore_window.geometry("410x245")  # Set window size
-        self.restore_window.iconbitmap("assets/icon.ico") if config['platform'] == "Windows" else None  # Set window title icon
+        self.restore_window.iconbitmap("assets/ICO/restore.ico") if config['platform'] == "Windows" else None  # Set window title icon
         self.restore_window.resizable(False, False)  # Disable minimize/maximize buttons
         self.restore_window.configure(background=self.get_listbox_background())  # Set background color
 
