@@ -35,12 +35,10 @@ class About:
         self.about_window.geometry("410x245")  # Set window size
         self.about_window.iconbitmap("assets/ICO/info.ico") if config['platform'] == "Windows" else None  # Set window title icon
         self.about_window.resizable(False, False)  # Disable minimize/maximize buttons
-        self.about_window.configure(background="#242424")  
         self.about_window.configure(background=self.get_window_background())  # Set background color
 
     def create_frame(self):
-        self.frame = ctk.CTkFrame(master=self.about_window,
-                                  corner_radius=10, height=230, width=395)
+        self.frame = ctk.CTkFrame(master=self.about_window, corner_radius=10, height=230, width=395)
         self.frame.place(x=8, y=8)
 
     def get_window_background(self):
