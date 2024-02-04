@@ -27,7 +27,7 @@ from Scripts.widgets import DrivesCombobox
 from Scripts.widgets import CloudSwitch
 from Scripts.widgets import BackupExpiryDateCombobox
 from Scripts.notification_handlers import notify_drive_reconnection
-from Scripts.settings import settings
+from Scripts.settings import Settings
 from Scripts.about import About
 from Scripts.configs import config
 config.load() # Load the JSON file into memory
@@ -36,8 +36,6 @@ config.load() # Load the JSON file into memory
 import humanize
 from PIL import Image
 import customtkinter as ctk
-
-backup = Backup()
 
 # Get value from the JSON file
 # Set the destination directory path (type: string)
@@ -48,7 +46,9 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
+        backup = Backup()
         about = About(self, version)
+        settings = Settings(self)
         restore_backup = RestoreBackup(self, DESTINATION_PATH)
         ctk.set_appearance_mode(config['appearance_mode'])
         ctk.set_default_color_theme(config['color_theme'])
@@ -203,7 +203,7 @@ class App(ctk.CTk):
 
         settings_image = ctk.CTkImage(Image.open(image2), size=(25, 25))
         self.settings_button = ctk.CTkButton(master=self, text="", fg_color=fg_color, image=settings_image,
-                                             width=5, height=5, command=lambda: settings(App=self))
+                                             width=5, height=5, command=lambda: settings.settings())
         self.settings_button.place(x=50, y=450)
         
         restore_image = ctk.CTkImage(Image.open(image3), size=(25, 25))
