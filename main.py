@@ -21,7 +21,7 @@ from Scripts.file_utils import last_backup
 from Scripts.file_utils import update_listbox
 from Scripts.file_utils import remove_item
 from Scripts.file_utils import add_item
-from Scripts.backup_utils import run_backup
+from Scripts.backup_utils import Backup
 from Scripts.restore import RestoreBackup
 from Scripts.widgets import DrivesCombobox
 from Scripts.widgets import CloudSwitch
@@ -36,6 +36,8 @@ config.load() # Load the JSON file into memory
 import humanize
 from PIL import Image
 import customtkinter as ctk
+
+backup = Backup()
 
 # Get value from the JSON file
 # Set the destination directory path (type: string)
@@ -209,7 +211,7 @@ class App(ctk.CTk):
                                             width=5, height=5, command=lambda: restore_backup.restore_backup())
         self.restore_button.place(x=85, y=450)
 
-        self.backup_button = ctk.CTkButton(master=self, text="BACKUP", command=lambda: run_backup(
+        self.backup_button = ctk.CTkButton(master=self, text="BACKUP", command=lambda: backup.perform_backup(
             DESTINATION_PATH=DESTINATION_PATH, App=self))
         self.backup_button.place(x=200, y=450)
 
