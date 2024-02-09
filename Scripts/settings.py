@@ -3,8 +3,9 @@
 
 import tkinter as tk
 import customtkinter as ctk
-from Scripts.widgets import NotificationSwitch, AppearanceModeCombobox, ColorThemeCombobox, StorageProviderCombobox
+from Scripts.widgets import NotificationSwitch, SystemTraySwitch, AppearanceModeCombobox, ColorThemeCombobox, StorageProviderCombobox
 from Scripts.configs import config
+
 
 class Settings:
     """Create a toplevel widget containing a frame with settings"""
@@ -25,20 +26,21 @@ class Settings:
         self.display_storage_provider_label()
         self.create_storage_provider_combobox()
         self.create_notifications_switch()
+        self.create_system_tray_switch()
         self.display_apply_btn()
 
 
     def create_settings_window(self):
         self.settings_window = tk.Toplevel(self.App)  # Open new window (settings_window)
         self.settings_window.title("Settings")  # Set window title
-        self.settings_window.geometry("410x245")  # Set window size
+        self.settings_window.geometry("410x268")  # Set window size
         self.settings_window.iconbitmap("assets/ICO/gear.ico") if config['platform'] == "Windows" else None  # Set window title icon
         self.settings_window.resizable(False, False)  # Disable minimize/maximize buttons
         self.settings_window.configure(background=self.get_window_background())  # Set background color
 
 
     def create_frame(self):
-        self.frame = ctk.CTkFrame(master=self.settings_window, corner_radius=10, height=190, width=395)
+        self.frame = ctk.CTkFrame(master=self.settings_window, corner_radius=10, height=215, width=395)
         self.frame.place(x=8, y=8)
 
 
@@ -58,7 +60,7 @@ class Settings:
 
     def display_appearance_mode_label(self):
         appearance_mode_label = ctk.CTkLabel(master=self.frame, text="Appearance Mode:", font=('Helvetica', 15))
-        appearance_mode_label.place(x=80, y=60)
+        appearance_mode_label.place(x=75, y=60)
 
 
     def create_appearance_mode_combobox(self):
@@ -66,18 +68,18 @@ class Settings:
         appearance_mode_options = ["system", "dark", "light"]
         appearance_mode_combobox = ctk.CTkComboBox(
             master=self.frame,
-            width=90,
+            width=112,
             values=appearance_mode_options,
             command=AppearanceModeCombobox,
             variable=appearance_mode_combobox_var
         )
 
-        appearance_mode_combobox.place(x=220, y=60)
+        appearance_mode_combobox.place(x=215, y=60)
 
 
     def display_color_theme_label(self):
         color_theme_label = ctk.CTkLabel(master=self.frame, text="Color Theme:", font=('Helvetica', 15))
-        color_theme_label.place(x=80, y=90)
+        color_theme_label.place(x=75, y=90)
 
 
     def create_color_theme_combobox(self):
@@ -85,18 +87,18 @@ class Settings:
         color_theme_options = ["blue", "green"]
         color_theme_combobox = ctk.CTkComboBox(
             master=self.frame,
-            width=90,
+            width=112,
             values=color_theme_options,
             command=ColorThemeCombobox,
             variable=color_theme_combobox_var
         )
 
-        color_theme_combobox.place(x=220, y=90)
+        color_theme_combobox.place(x=215, y=90)
 
 
     def display_storage_provider_label(self):
         storage_provider_label = ctk.CTkLabel(master=self.frame, text="Storage Provider:", font=('Helvetica', 15))
-        storage_provider_label.place(x=80, y=120)
+        storage_provider_label.place(x=75, y=120)
 
 
     def create_storage_provider_combobox(self):
@@ -104,13 +106,28 @@ class Settings:
         storage_provider_options = ["Google Drive", "FTP"]
         storage_provider_combobox = ctk.CTkComboBox(
             master=self.frame,
-            width=90,
+            width=112,
             values=storage_provider_options,
             command=StorageProviderCombobox,
             variable=storage_provider_combobox_var
         )
 
-        storage_provider_combobox.place(x=220, y=120)
+        storage_provider_combobox.place(x=215, y=120)
+
+
+    def create_system_tray_switch(self):
+        system_tray_switch_var = ctk.StringVar(value="on" if config['system_tray'] else "off")  # Set initial value
+        system_tray_switch = ctk.CTkSwitch(
+            master=self.frame,
+            text="Display system tray [Windows]",
+            font=('Helvetica', 15),
+            command=lambda: SystemTraySwitch(system_tray_switch_var),
+            variable=system_tray_switch_var,
+            onvalue="on",
+            offvalue="off"
+        )
+
+        system_tray_switch.place(x=75, y=155)
 
 
     def create_notifications_switch(self):
@@ -125,7 +142,7 @@ class Settings:
             offvalue="off"
         )
 
-        notifications_switch.place(x=80, y=155)
+        notifications_switch.place(x=75, y=182)
 
 
     def apply_btn(self):
@@ -135,4 +152,4 @@ class Settings:
 
     def display_apply_btn(self):
         apply_button = ctk.CTkButton(master=self.settings_window, text="Apply", command=self.apply_btn)
-        apply_button.place(x=140, y=207)
+        apply_button.place(x=135, y=230)

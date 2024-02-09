@@ -2,16 +2,16 @@
 # -*- coding: UTF-8 -*-
 
 from pystray import MenuItem as item
-from Scripts.backup_utils import backup
-from Scripts.configs import config
+from Scripts.backup_utils import Backup
 from PIL import Image
 import pystray
 
+backup = Backup()
 
 def backup_from_taskbar(App, icon, DESTINATION_PATH):
     """Backup from taskbar"""
     icon.stop()
-    backup(App, DESTINATION_PATH)
+    backup.zip_files(App, DESTINATION_PATH)
     hide_window(App, DESTINATION_PATH)
 
 

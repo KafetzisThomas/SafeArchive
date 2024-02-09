@@ -45,3 +45,12 @@ def NotificationSwitch(notifications_switch_var):
     """
     switch_position = notifications_switch_var.get()
     config['notifications'] = True if switch_position == "on" else False
+
+
+def SystemTraySwitch(system_tray_switch_var):
+    """
+    Get switch position (True/False)
+    Update the value of the key in the dictionary
+    """
+    switch_position = system_tray_switch_var.get()
+    config['system_tray'] = True if switch_position == "on" else False
