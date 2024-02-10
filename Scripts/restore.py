@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 import os
-import zipfile
+import pyzipper
 import threading
 import tkinter as tk
 from Scripts.notification_handlers import notify_restore_completion
@@ -90,10 +90,21 @@ class RestoreBackup:
         self.disable_restore_button()
         for item in self.listbox.curselection():
             # Open the zipfile in read mode, extract its content
-            with zipfile.ZipFile(f'{self.DESTINATION_PATH}{self.listbox.get(item)}.zip') as zipObj:
-                zipObj.extractall(config['destination_path'])
-        notify_restore_completion(config['notifications'])
+            with pyzipper.AESZipFile(f'{self.DESTINATION_PATH}{self.listbox.get(item)}.zip') as zipObj:
+                try:
+                    if config['encryption']:
+                        zipObj.setpassword(self.get_backup_password())
+                    zipObj.extractall(config['destination_path'])
+                    notify_restore_completion(config['notifications'])
+                except (RuntimeError, TypeError):
+                    pass
         self.enable_restore_button()
+
+
+    def get_backup_password(self):
+        password = ctk.CTkInputDialog(text="Backup Password:", title="Backup Encryption")
+        return bytes(password.get_input(), 'utf-8')
+
 
     def disable_restore_button(self):
         """Change restore button state to disabled"""

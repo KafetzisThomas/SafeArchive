@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 import os
-import zipfile
+import pyzipper
 import threading
 from datetime import date
 from Scripts.cloud_utils import GoogleDriveCloud, FTP
@@ -33,27 +33,41 @@ class Backup:
             if config['backup_expiry_date'] != "Forever (default)":
                 backup_expiry_date(DESTINATION_PATH)
 
-            # Open the zipfile in write mode, create zip file with current date in its name
-            with zipfile.ZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True, compresslevel=9) as zipObj:
-                # Iterate over each path in the source list
-                for item in config['source_path']:
-                    source_item_label = ctk.CTkLabel(master=App, text=item, height=20, font=('Helvetica', 12))
-                    source_item_label.place(x=15, y=430)
+            try:
+                encryption = pyzipper.WZ_AES if config['encryption'] else None
+                password = self.get_backup_password() if config['encryption'] else None
+                # Open the zipfile in write mode, create zip file with current date in its name
+                with pyzipper.AESZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=pyzipper.ZIP_DEFLATED, encryption=encryption) as zipObj:
+                    try:
+                        zipObj.setpassword(password)
+                    except UnboundLocalError:
+                        pass
 
-                    # Iterate over the files and folders in the path
-                    for root, dirs, files in os.walk(item):
-                        for dirname in dirs:
-                            dirpath = os.path.join(root, dirname)
-                            zipObj.write(dirpath)  # Write the folder to the zip archive
+                    # Iterate over each path in the source list
+                    for item in config['source_path']:
+                        source_item_label = ctk.CTkLabel(master=App, text=item, height=20, font=('Helvetica', 12))
+                        source_item_label.place(x=15, y=430)
 
-                        for filename in files:
-                            filepath = os.path.join(root, filename)
-                            zipObj.write(filepath)  # Write the file to the zip archive
+                        # Iterate over the files and folders in the path
+                        for root, dirs, files in os.walk(item):
+                            for dirname in dirs:
+                                dirpath = os.path.join(root, dirname)
+                                zipObj.write(dirpath)  # Write the folder to the zip archive
 
-                    source_item_label.place_forget()
+                            for filename in files:
+                                filepath = os.path.join(root, filename)
+                                zipObj.write(filepath)  # Write the file to the zip archive
+                        source_item_label.place_forget()
 
-            self.upload_to_cloud(DESTINATION_PATH)
-            notify_backup_completion(DESTINATION_PATH, config['notifications'])
+                self.upload_to_cloud(DESTINATION_PATH)
+                notify_backup_completion(DESTINATION_PATH, config['notifications'])
+            except RuntimeError:
+                source_item_label.place_forget()
+                App.backup_button.configure(state="normal")
+                App.backup_progressbar.stop()
+            except TypeError:
+                App.backup_button.configure(state="normal")
+                App.backup_progressbar.stop()
         else:
             notify_drive_space_limitation(config['notifications'])
 
@@ -70,6 +84,11 @@ class Backup:
                     google_drive.backup_to_google_drive(DESTINATION_PATH[:-1], DESTINATION_PATH, parent_folder_id=google_drive.gdrive_folder['id'])
             else:
                 ftp.backup_to_ftp_server(DESTINATION_PATH)
+
+
+    def get_backup_password(self):
+        password = ctk.CTkInputDialog(text="Backup Password:", title="Backup Encryption")
+        return bytes(password.get_input(), 'utf-8')
 
 
     def start_progress_bar(self, App, DESTINATION_PATH):

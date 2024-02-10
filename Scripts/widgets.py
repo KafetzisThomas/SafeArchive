@@ -54,3 +54,12 @@ def SystemTraySwitch(system_tray_switch_var):
     """
     switch_position = system_tray_switch_var.get()
     config['system_tray'] = True if switch_position == "on" else False
+
+
+def EncryptionSwitch(encryption_switch_var):
+    """
+    Get switch position (True/False)
+    Update the value of the key in the dictionary
+    """
+    switch_position = encryption_switch_var.get()
+    config['encryption'] = True if switch_position == "on" else False

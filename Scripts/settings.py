@@ -3,7 +3,7 @@
 
 import tkinter as tk
 import customtkinter as ctk
-from Scripts.widgets import NotificationSwitch, SystemTraySwitch, AppearanceModeCombobox, ColorThemeCombobox, StorageProviderCombobox
+from Scripts.widgets import NotificationSwitch, SystemTraySwitch, EncryptionSwitch, AppearanceModeCombobox, ColorThemeCombobox, StorageProviderCombobox
 from Scripts.configs import config
 
 
@@ -25,22 +25,23 @@ class Settings:
         self.create_color_theme_combobox()
         self.display_storage_provider_label()
         self.create_storage_provider_combobox()
-        self.create_notifications_switch()
         self.create_system_tray_switch()
+        self.create_encryption_switch()
+        self.create_notifications_switch()
         self.display_apply_btn()
 
 
     def create_settings_window(self):
         self.settings_window = tk.Toplevel(self.App)  # Open new window (settings_window)
         self.settings_window.title("Settings")  # Set window title
-        self.settings_window.geometry("410x268")  # Set window size
+        self.settings_window.geometry("430x295")  # Set window size
         self.settings_window.iconbitmap("assets/ICO/gear.ico") if config['platform'] == "Windows" else None  # Set window title icon
         self.settings_window.resizable(False, False)  # Disable minimize/maximize buttons
         self.settings_window.configure(background=self.get_window_background())  # Set background color
 
 
     def create_frame(self):
-        self.frame = ctk.CTkFrame(master=self.settings_window, corner_radius=10, height=215, width=395)
+        self.frame = ctk.CTkFrame(master=self.settings_window, corner_radius=10, height=240, width=415)
         self.frame.place(x=8, y=8)
 
 
@@ -50,17 +51,17 @@ class Settings:
 
     def display_settings_label(self):
         settings_label = ctk.CTkLabel(master=self.frame, text="Settings", font=('Helvetica', 22))
-        settings_label.place(x=160, y=10)
+        settings_label.place(x=170, y=10)
 
 
     def display_line_label(self):
-        line_label = ctk.CTkLabel(master=self.frame, text="━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
+        line_label = ctk.CTkLabel(master=self.frame, text="━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
         line_label.place(x=0, y=35)
 
 
     def display_appearance_mode_label(self):
         appearance_mode_label = ctk.CTkLabel(master=self.frame, text="Appearance Mode:", font=('Helvetica', 15))
-        appearance_mode_label.place(x=75, y=60)
+        appearance_mode_label.place(x=85, y=60)
 
 
     def create_appearance_mode_combobox(self):
@@ -74,12 +75,12 @@ class Settings:
             variable=appearance_mode_combobox_var
         )
 
-        appearance_mode_combobox.place(x=215, y=60)
+        appearance_mode_combobox.place(x=225, y=60)
 
 
     def display_color_theme_label(self):
         color_theme_label = ctk.CTkLabel(master=self.frame, text="Color Theme:", font=('Helvetica', 15))
-        color_theme_label.place(x=75, y=90)
+        color_theme_label.place(x=85, y=90)
 
 
     def create_color_theme_combobox(self):
@@ -93,12 +94,12 @@ class Settings:
             variable=color_theme_combobox_var
         )
 
-        color_theme_combobox.place(x=215, y=90)
+        color_theme_combobox.place(x=225, y=90)
 
 
     def display_storage_provider_label(self):
         storage_provider_label = ctk.CTkLabel(master=self.frame, text="Storage Provider:", font=('Helvetica', 15))
-        storage_provider_label.place(x=75, y=120)
+        storage_provider_label.place(x=85, y=120)
 
 
     def create_storage_provider_combobox(self):
@@ -112,7 +113,7 @@ class Settings:
             variable=storage_provider_combobox_var
         )
 
-        storage_provider_combobox.place(x=215, y=120)
+        storage_provider_combobox.place(x=225, y=120)
 
 
     def create_system_tray_switch(self):
@@ -127,7 +128,22 @@ class Settings:
             offvalue="off"
         )
 
-        system_tray_switch.place(x=75, y=155)
+        system_tray_switch.place(x=85, y=155)
+
+
+    def create_encryption_switch(self):
+        encryption_switch_var = ctk.StringVar(value="on" if config['encryption'] else "off")  # Set initial value
+        encryption_switch = ctk.CTkSwitch(
+            master=self.frame,
+            text="Encrypt Backups",
+            font=('Helvetica', 15),
+            command=lambda: EncryptionSwitch(encryption_switch_var),
+            variable=encryption_switch_var,
+            onvalue="on",
+            offvalue="off"
+        )
+
+        encryption_switch.place(x=85, y=182)
 
 
     def create_notifications_switch(self):
@@ -142,7 +158,7 @@ class Settings:
             offvalue="off"
         )
 
-        notifications_switch.place(x=75, y=182)
+        notifications_switch.place(x=85, y=209)
 
 
     def apply_btn(self):
@@ -152,4 +168,4 @@ class Settings:
 
     def display_apply_btn(self):
         apply_button = ctk.CTkButton(master=self.settings_window, text="Apply", command=self.apply_btn)
-        apply_button.place(x=135, y=230)
+        apply_button.place(x=145, y=255)
