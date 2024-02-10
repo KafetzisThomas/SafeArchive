@@ -27,17 +27,14 @@ class Backup:
             * allowZip64 is set to True (this parameter use the ZIP64 extensions when the zip file is larger than 4gb)
             * Compresslevel is set to 9 (its sometimes really slow when source path files are too large, saves storage space)
         """
-        # Check if drive usage is below or equal to 90%
         if get_drive_usage_percentage() <= 90:
-            # Set expiry date for old backups (type: integer)
             if config['backup_expiry_date'] != "Forever (default)":
                 backup_expiry_date(DESTINATION_PATH)
 
             try:
                 encryption = pyzipper.WZ_AES if config['encryption'] else None
                 password = self.get_backup_password() if config['encryption'] else None
-                # Open the zipfile in write mode, create zip file with current date in its name
-                with pyzipper.AESZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=pyzipper.ZIP_DEFLATED, encryption=encryption) as zipObj:
+                with pyzipper.AESZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=pyzipper.ZIP_DEFLATED, encryption=encryption, allowZip64=True, compresslevel=9) as zipObj:
                     try:
                         zipObj.setpassword(password)
                     except UnboundLocalError:
@@ -52,11 +49,11 @@ class Backup:
                         for root, dirs, files in os.walk(item):
                             for dirname in dirs:
                                 dirpath = os.path.join(root, dirname)
-                                zipObj.write(dirpath)  # Write the folder to the zip archive
+                                zipObj.write(dirpath)
 
                             for filename in files:
                                 filepath = os.path.join(root, filename)
-                                zipObj.write(filepath)  # Write the file to the zip archive
+                                zipObj.write(filepath)
                         source_item_label.place_forget()
 
                 self.upload_to_cloud(DESTINATION_PATH)
@@ -78,7 +75,6 @@ class Backup:
             if config['storage_provider'] == "Google Drive":
                 google_drive.initialize()
                 if google_drive.get_cloud_usage_percentage() >= 90:
-                    # Check if cloud storage usage is above or equal to 90%
                     notify_cloud_space_limitation(config['notifications'])
                 else:
                     google_drive.backup_to_google_drive(DESTINATION_PATH[:-1], DESTINATION_PATH, parent_folder_id=google_drive.gdrive_folder['id'])
@@ -94,10 +90,8 @@ class Backup:
     def start_progress_bar(self, App, DESTINATION_PATH):
         """Start/Stop progress bar & Call zip_files() function"""
         App.backup_progressbar.start()
-        # Change backup button state to disabled
         App.backup_button.configure(state="disabled")
         self.zip_files(App, DESTINATION_PATH)
-        # Change backup button state back to normal
         App.backup_button.configure(state="normal")
         App.backup_progressbar.stop()
 

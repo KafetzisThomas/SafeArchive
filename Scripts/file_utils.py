@@ -23,15 +23,16 @@ def get_available_drives():
                 external_drives.append(f"{drive.mountpoint}/")
     return external_drives
 
+
 def get_backup_size(DESTINATION_PATH):
     """Walk through all files in the destination path & return total size"""
-    total_size = 0  # Initialize total size to 0
+    total_size = 0
 
     for dirpath, _, filenames in os.walk(DESTINATION_PATH):
         for file in filenames:
             filepath = os.path.join(dirpath, file)
 
-            # Add the size of each file to the total size
+            # Add size of each file to total size
             total_size += os.path.getsize(filepath)
     return total_size
 
@@ -39,7 +40,7 @@ def get_backup_size(DESTINATION_PATH):
 def storage_media_free_space():
     """Return storage media free space"""
     disk_usage = psutil.disk_usage(
-        config['destination_path']).free  # Get drive free space
+        config['destination_path']).free
     free_space = round(disk_usage / (1024**3), 2)  # Convert free space to GB
     return free_space
 
@@ -47,7 +48,7 @@ def storage_media_free_space():
 def get_drive_usage_percentage():
     """Return drive usage percentage"""
     drive_usage_percentage = psutil.disk_usage(
-        config['destination_path']).percent  # Get drive usage percentage
+        config['destination_path']).percent
     return drive_usage_percentage
 
 

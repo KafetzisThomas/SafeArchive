@@ -28,12 +28,12 @@ class RestoreBackup:
         self.create_restore_button()
 
     def create_restore_window(self):
-        self.restore_window = tk.Toplevel(self.App)  # Open new window (restore_window)
-        self.restore_window.title("Select backup to restore")  # Set window title
-        self.restore_window.geometry("410x245")  # Set window size
-        self.restore_window.iconbitmap("assets/ICO/restore.ico") if config['platform'] == "Windows" else None  # Set window title icon
+        self.restore_window = tk.Toplevel(self.App)
+        self.restore_window.title("Select backup to restore")
+        self.restore_window.geometry("410x245")
+        self.restore_window.iconbitmap("assets/ICO/restore.ico") if config['platform'] == "Windows" else None
         self.restore_window.resizable(False, False)  # Disable minimize/maximize buttons
-        self.restore_window.configure(background=self.get_listbox_background())  # Set background color
+        self.restore_window.configure(background=self.get_listbox_background())
 
     def create_listbox(self):
         frame = ctk.CTkFrame(master=self.restore_window)
@@ -89,7 +89,6 @@ class RestoreBackup:
 
         self.disable_restore_button()
         for item in self.listbox.curselection():
-            # Open the zipfile in read mode, extract its content
             with pyzipper.AESZipFile(f'{self.DESTINATION_PATH}{self.listbox.get(item)}.zip') as zipObj:
                 try:
                     if config['encryption']:

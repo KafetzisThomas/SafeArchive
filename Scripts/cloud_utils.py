@@ -46,15 +46,17 @@ class GoogleDriveCloud:
                 {'title': 'SafeArchive', 'mimeType': 'application/vnd.google-apps.folder'})
             self.gdrive_folder.Upload()
 
+
     def get_cloud_usage_percentage(self):
         """Return cloud usage percentage"""
-        account_details = self.drive.GetAbout()  # Get account details
+        account_details = self.drive.GetAbout()
 
         # Calculate storage usage percentage
         used_storage = int(account_details['quotaBytesUsed'])
         total_storage = int(account_details['quotaBytesTotal'])
         storage_usage_percentage = (used_storage / total_storage) * 100
         return storage_usage_percentage
+
 
     def get_or_create_folder(self, foldername, parent_folder_id=None):
         """Get or create folder in Google Drive"""
@@ -71,6 +73,7 @@ class GoogleDriveCloud:
             new_folder = self.drive.CreateFile(folder_metadata)
             new_folder.Upload()
             return new_folder
+
 
     def backup_to_google_drive(self, folderpath, DESTINATION_PATH, parent_folder_id=None):
         """Upload local backup files to Google Drive"""
@@ -89,6 +92,7 @@ class GoogleDriveCloud:
         # Delete files in Google Drive that don't exist in the local folder anymore
         self.delete_files_not_in_local_folder(DESTINATION_PATH[:-1])
 
+
     def get_or_create_file(self, filename, folderpath):
         """Get or create file in Google Drive"""
 
@@ -101,6 +105,7 @@ class GoogleDriveCloud:
             new_file = self.drive.CreateFile({'title': filename, 'parents': [{'id': self.gdrive_folder['id']}]})
             return new_file
 
+
     def delete_files_not_in_local_folder(self, local_folder_path):
         """Delete files in Google Drive that don't exist in the local folder"""
         drive_files = self.drive.ListFile({'q': f"'{self.gdrive_folder['id']}' in parents and trashed=false"}).GetList()
@@ -109,6 +114,7 @@ class GoogleDriveCloud:
             local_file_path = os.path.join(local_folder_path, file['title'])
             if not os.path.exists(local_file_path):
                 file.Trash()
+
 
 class FTP:
 
@@ -119,10 +125,12 @@ class FTP:
         self.password = config['PASSWORD']
         self.ftp_server = None
 
+
     def connect(self):
         """Connect to FTP Server"""
         self.ftp_server = ftplib.FTP(self.hostname, self.username, self.password)
         self.ftp_server.encoding = "utf-8"  # force UTF-8 encoding
+
 
     def create_directory(self):
         """Create directory on FTP server"""
@@ -133,8 +141,9 @@ class FTP:
         finally:
             self.ftp_server.cwd('/SafeArchive')
 
+
     def backup_to_ftp_server(self, folderpath):
-        """Upload folder and its files to the FTP server"""
+        """Upload folder and files to the FTP server"""
         self.connect()
         self.create_directory()
 
@@ -147,6 +156,7 @@ class FTP:
         self.delete_files_not_in_local_folder(folderpath)
         self.disconnect()
 
+
     def delete_files_not_in_local_folder(self, folderpath):
         """Delete remote files that are not present locally"""
         remote_files = self.ftp_server.nlst()
@@ -154,6 +164,7 @@ class FTP:
         for file in remote_files:
             if file not in os.listdir(folderpath):
                 self.ftp_server.delete(file)
+
 
     def disconnect(self):
         """Disconnect from FTP Server"""

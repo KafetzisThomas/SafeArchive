@@ -30,12 +30,12 @@ class About:
         self.display_license_link_text()
 
     def create_about_window(self):
-        self.about_window = tk.Toplevel(self.App)  # Open new window (about_window)
-        self.about_window.title("About SafeArchive")  # Set window title
-        self.about_window.geometry("410x245")  # Set window size
-        self.about_window.iconbitmap("assets/ICO/info.ico") if config['platform'] == "Windows" else None  # Set window title icon
+        self.about_window = tk.Toplevel(self.App)
+        self.about_window.title("About SafeArchive")
+        self.about_window.geometry("410x245")
+        self.about_window.iconbitmap("assets/ICO/info.ico") if config['platform'] == "Windows" else None
         self.about_window.resizable(False, False)  # Disable minimize/maximize buttons
-        self.about_window.configure(background=self.get_window_background())  # Set background color
+        self.about_window.configure(background=self.get_window_background())
 
     def create_frame(self):
         self.frame = ctk.CTkFrame(master=self.about_window, corner_radius=10, height=230, width=395)
@@ -54,7 +54,7 @@ class About:
         icon_image = ctk.CTkImage(Image.open("assets/ICO/icon.ico"), size=(80, 80))
         icon_button = ctk.CTkButton(master=self.frame, text="", fg_color=self.get_fg_color(), image=icon_image, width=5, height=5)
         icon_button.place(x=150, y=0)
-        icon_button.configure(state="disabled")  # Change icon button state to disabled
+        icon_button.configure(state="disabled")
 
     def display_name_label(self):
         name_label = ctk.CTkLabel(

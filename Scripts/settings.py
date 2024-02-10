@@ -32,12 +32,12 @@ class Settings:
 
 
     def create_settings_window(self):
-        self.settings_window = tk.Toplevel(self.App)  # Open new window (settings_window)
-        self.settings_window.title("Settings")  # Set window title
-        self.settings_window.geometry("430x295")  # Set window size
-        self.settings_window.iconbitmap("assets/ICO/gear.ico") if config['platform'] == "Windows" else None  # Set window title icon
+        self.settings_window = tk.Toplevel(self.App)
+        self.settings_window.title("Settings")
+        self.settings_window.geometry("430x295")
+        self.settings_window.iconbitmap("assets/ICO/gear.ico") if config['platform'] == "Windows" else None
         self.settings_window.resizable(False, False)  # Disable minimize/maximize buttons
-        self.settings_window.configure(background=self.get_window_background())  # Set background color
+        self.settings_window.configure(background=self.get_window_background())
 
 
     def create_frame(self):
@@ -65,7 +65,7 @@ class Settings:
 
 
     def create_appearance_mode_combobox(self):
-        appearance_mode_combobox_var = ctk.StringVar(value=config['appearance_mode'])  # Set initial value
+        appearance_mode_combobox_var = ctk.StringVar(value=config['appearance_mode'])
         appearance_mode_options = ["system", "dark", "light"]
         appearance_mode_combobox = ctk.CTkComboBox(
             master=self.frame,
@@ -84,7 +84,7 @@ class Settings:
 
 
     def create_color_theme_combobox(self):
-        color_theme_combobox_var = ctk.StringVar(value=config['color_theme'])  # Set initial value
+        color_theme_combobox_var = ctk.StringVar(value=config['color_theme'])
         color_theme_options = ["blue", "green"]
         color_theme_combobox = ctk.CTkComboBox(
             master=self.frame,
@@ -103,7 +103,7 @@ class Settings:
 
 
     def create_storage_provider_combobox(self):
-        storage_provider_combobox_var = ctk.StringVar(value=config['storage_provider'])  # Set initial value
+        storage_provider_combobox_var = ctk.StringVar(value=config['storage_provider'])
         storage_provider_options = ["Google Drive", "FTP"]
         storage_provider_combobox = ctk.CTkComboBox(
             master=self.frame,
@@ -117,7 +117,7 @@ class Settings:
 
 
     def create_system_tray_switch(self):
-        system_tray_switch_var = ctk.StringVar(value="on" if config['system_tray'] else "off")  # Set initial value
+        system_tray_switch_var = ctk.StringVar(value="on" if config['system_tray'] else "off")
         system_tray_switch = ctk.CTkSwitch(
             master=self.frame,
             text="Display system tray [Windows]",
@@ -132,7 +132,7 @@ class Settings:
 
 
     def create_encryption_switch(self):
-        encryption_switch_var = ctk.StringVar(value="on" if config['encryption'] else "off")  # Set initial value
+        encryption_switch_var = ctk.StringVar(value="on" if config['encryption'] else "off")
         encryption_switch = ctk.CTkSwitch(
             master=self.frame,
             text="Encrypt Backups",
@@ -147,7 +147,7 @@ class Settings:
 
 
     def create_notifications_switch(self):
-        notifications_switch_var = ctk.StringVar(value="on" if config['notifications'] else "off")  # Set initial value
+        notifications_switch_var = ctk.StringVar(value="on" if config['notifications'] else "off")
         notifications_switch = ctk.CTkSwitch(
             master=self.frame,
             text="Allow all system notifications",

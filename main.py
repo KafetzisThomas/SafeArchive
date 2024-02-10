@@ -74,10 +74,10 @@ class App(ctk.CTk):
             else:
                 return "#2fa572"
 
-        self.title(f"SafeArchive {version}")  # Set window title
+        self.title(f"SafeArchive {version}")
         self.resizable(False, False)  # Disable minimize/maximize buttons
-        self.geometry("500x500")  # Set window size
-        self.iconbitmap("assets/ICO/icon.ico") if config['platform'] == "Windows" else None  # Set window title icon
+        self.geometry("500x500")
+        self.iconbitmap("assets/ICO/icon.ico") if config['platform'] == "Windows" else None
 
         try:
             # Create the destination directory path if it doesn't exist
@@ -102,7 +102,7 @@ class App(ctk.CTk):
         drive_label.place(x=15, y=45)
 
         drive_combobox_var = ctk.StringVar(
-            value=DESTINATION_PATH.replace('SafeArchive/', ''))  # Set initial value
+            value=DESTINATION_PATH.replace('SafeArchive/', ''))
 
         drives_combobox = ctk.CTkComboBox(
             master=self, width=470, values=get_available_drives(), command=DrivesCombobox, variable=drive_combobox_var)
@@ -130,7 +130,7 @@ class App(ctk.CTk):
         keep_my_backups_label.place(x=15, y=200)
 
         backup_expiry_date_combobox_var = ctk.StringVar(
-            value=config['backup_expiry_date'])  # Set initial value
+            value=config['backup_expiry_date'])
         backup_expiry_date_options = [
             "1 month", "3 months", "6 months", "9 months", "1 year", "Forever (default)"]
 
@@ -145,7 +145,7 @@ class App(ctk.CTk):
         backup_expiry_date_combobox.place(x=15, y=225)
 
         cloud_switch_var = ctk.StringVar(
-            value="on" if config['backup_to_cloud'] else "off")  # Set initial value
+            value="on" if config['backup_to_cloud'] else "off")
 
         switch = ctk.CTkSwitch(
             master=self,
