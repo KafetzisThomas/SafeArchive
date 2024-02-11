@@ -28,7 +28,7 @@ Allows you to backup your essential local files (+cloud support) quickly and sch
 **How to Download:** Click the "[Releases](https://github.com/KafetzisThomas/SafeArchive/releases)" link on the right, then on the latest release, under 'Assets' click to download the zip file. (You might have to click "Assets" to view the files for the release)
 
 > * [Server Instructions](https://github.com/KafetzisThomas/SafeArchive/wiki/Server-Instructions)
-> * Windows/Linux installation not necessary if using exe file.
+> * Windows/Linux installation not necessary if using executable file.
 
 **Note:** No matter the settings, the program runs completely locally on your own machine using the API key and Google Cloud project you created yourself, so even as the program's creator I will never have access to your account.
 
@@ -97,9 +97,3 @@ Allows you to backup your essential local files (+cloud support) quickly and sch
 </div>
 
 <br>
-
-## Obtaining API Key
-
-To sync your backups to your cloud account (Google Drive), you will need an "Oauth2" credential to make the GUI switch to work.
-
-* **Instructions can be found on this page: [Obtaining API Key](https://github.com/KafetzisThomas/SafeArchive/wiki/Obtaining-API-Key)**
