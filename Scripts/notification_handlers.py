@@ -73,6 +73,7 @@ def notify_cloud_space_limitation(notifications):
             timeout=10
         )
 
+
 def notify_missing_client_secrets_file(notifications):
     if notifications:
         notification.notify(
@@ -90,6 +91,17 @@ def notify_missing_ftp_credentials(notifications):
             title="SafeArchive: [Error] FTP credentials are missing.",
             app_name="SafeArchive",
             message="FTP not configured. Please edit the configuration file (settings.json) to add your ftp credentials.",
+            app_icon=error_icon,
+            timeout=10
+        )
+
+
+def notify_permission_denied(DESTINATION_PATH, notifications):
+    if notifications:
+        notification.notify(
+            title="SafeArchive: [Error] Permission Denied.",
+            app_name="SafeArchive",
+            message=f"No permissions given to make directory: '{DESTINATION_PATH}'. Change it in settings.json or run with elevated priveleges",
             app_icon=error_icon,
             timeout=10
         )

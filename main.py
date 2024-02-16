@@ -9,26 +9,16 @@
 version = "1.4.0"
 
 # Import built-in modules
-import os
-import sys
 import tkinter as tk
 
 # Import module files
-from Scripts.file_utils import get_available_drives
-from Scripts.file_utils import get_backup_size
-from Scripts.file_utils import storage_media_free_space
-from Scripts.file_utils import last_backup
-from Scripts.file_utils import update_listbox
-from Scripts.file_utils import remove_item
-from Scripts.file_utils import add_item
+from Scripts.file_utils import get_available_drives, get_backup_size, storage_media_free_space, last_backup, update_listbox, remove_item, add_item, create_destination_directory_path
+from Scripts.widgets import DrivesCombobox, CloudSwitch, BackupExpiryDateCombobox
 from Scripts.backup_utils import Backup
 from Scripts.restore import RestoreBackup
-from Scripts.widgets import DrivesCombobox
-from Scripts.widgets import CloudSwitch
-from Scripts.widgets import BackupExpiryDateCombobox
-from Scripts.notification_handlers import notify_drive_reconnection
 from Scripts.settings import Settings
 from Scripts.about import About
+from Scripts.ui import SetupUI
 from Scripts.configs import config
 config.load() # Load the JSON file into memory
 
@@ -37,61 +27,28 @@ import humanize
 from PIL import Image
 import customtkinter as ctk
 
-# Get value from the JSON file
-# Set the destination directory path (type: string)
-DESTINATION_PATH = config['destination_path'] + 'SafeArchive/'
+DESTINATION_PATH = config['destination_path'] + 'SafeArchive/'  # Get value from the JSON file
+create_destination_directory_path(DESTINATION_PATH)
 
 
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
+        ui = SetupUI(DESTINATION_PATH)
         backup = Backup()
         about = About(self, version)
         settings = Settings(self)
         restore_backup = RestoreBackup(self, DESTINATION_PATH)
+
         ctk.set_appearance_mode(config['appearance_mode'])
         ctk.set_default_color_theme(config['color_theme'])
-
-        if config['appearance_mode'] == "dark":
-            background = "#343638"
-            foreground = "white"
-            image1 = "assets/PNG/info.png"
-            image2 = "assets/PNG/gear.png"
-            image3 = "assets/PNG/restore.png"
-            fg_color = "#242424"
-        else:
-            background = "#ebebeb"
-            foreground = "black"
-            image1 = "assets/PNG/info2.png"
-            image2 = "assets/PNG/gear2.png"
-            image3 = "assets/PNG/restore2.png"
-            fg_color = "#ebebeb"
-
-        def get_listbox_selection_background():
-            if config['color_theme'] == "blue":
-                return "#1f6aa5"
-            else:
-                return "#2fa572"
-
         self.title(f"SafeArchive {version}")
         self.resizable(False, False)  # Disable minimize/maximize buttons
         self.geometry("500x500")
         self.iconbitmap("assets/ICO/icon.ico") if config['platform'] == "Windows" else None
 
-        try:
-            # Create the destination directory path if it doesn't exist
-            if not os.path.exists(DESTINATION_PATH):
-                os.makedirs(DESTINATION_PATH)
-        except FileNotFoundError:
-            notify_drive_reconnection(config['notifications'])
-            sys.exit()
-        except PermissionError:
-            print(f"No permissions given to make directory: '{DESTINATION_PATH}'.",
-                  "Change it in settings.json or run with elevated priveleges")
-            sys.exit(77)
 
-        
         drive_properties_text = "Drive Properties ━━━━━━━━━━━━━━━━" if config['platform'] == "Windows" else "Drive Properties ━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         drive_properties_label = ctk.CTkLabel(
             master=self, text=drive_properties_text, font=('Helvetica', 20))
@@ -172,11 +129,11 @@ class App(ctk.CTk):
             master=frame,
             height=4,
             width=52,
-            background=background,
-            foreground=foreground,
+            background=ui.get_background_color(),
+            foreground=ui.get_foreground_color(),
             activestyle='dotbox',
             font='Helvetica',
-            selectbackground=get_listbox_selection_background()
+            selectbackground=ui.get_listbox_selection_background()
         )
 
         listbox.pack(padx=7, pady=7)
@@ -199,18 +156,18 @@ class App(ctk.CTk):
             master=self, width=475, height=15, corner_radius=0, orientation='horizontal', mode='indeterminate')
         self.backup_progressbar.place(x=15, y=415)
 
-        about_image = ctk.CTkImage(Image.open(image1), size=(25, 25))
-        self.about_button = ctk.CTkButton(master=self, text="", fg_color=fg_color, image=about_image,
+        about_image = ctk.CTkImage(Image.open(ui.get_image1()), size=(25, 25))
+        self.about_button = ctk.CTkButton(master=self, text="", fg_color=ui.get_icon_fg_color(), image=about_image,
                                              width=5, height=5, command=lambda: about.about())
         self.about_button.place(x=15, y=450)
 
-        settings_image = ctk.CTkImage(Image.open(image2), size=(25, 25))
-        self.settings_button = ctk.CTkButton(master=self, text="", fg_color=fg_color, image=settings_image,
+        settings_image = ctk.CTkImage(Image.open(ui.get_image2()), size=(25, 25))
+        self.settings_button = ctk.CTkButton(master=self, text="", fg_color=ui.get_icon_fg_color(), image=settings_image,
                                              width=5, height=5, command=lambda: settings.settings())
         self.settings_button.place(x=50, y=450)
         
-        restore_image = ctk.CTkImage(Image.open(image3), size=(25, 25))
-        self.restore_button = ctk.CTkButton(master=self, text="", fg_color=fg_color, image=restore_image,
+        restore_image = ctk.CTkImage(Image.open(ui.get_image3()), size=(25, 25))
+        self.restore_button = ctk.CTkButton(master=self, text="", fg_color=ui.get_icon_fg_color(), image=restore_image,
                                             width=5, height=5, command=lambda: restore_backup.restore_backup())
         self.restore_button.place(x=85, y=450)
 

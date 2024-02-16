@@ -5,9 +5,20 @@ import os
 import psutil
 import datetime
 import platform
-from Scripts.notification_handlers import notify_drive_reconnection
+from Scripts.notification_handlers import notify_drive_reconnection, notify_permission_denied
 from tkinter import filedialog
 from Scripts.configs import config
+
+
+def create_destination_directory_path(DESTINATION_PATH):
+    """Create the destination directory path if it doesn't exist"""
+    try:
+        if not os.path.exists(DESTINATION_PATH):
+            os.makedirs(DESTINATION_PATH)
+    except FileNotFoundError:
+        notify_drive_reconnection(config['notifications'])
+    except PermissionError:
+        notify_permission_denied(DESTINATION_PATH, config['notifications'])
 
 
 def get_available_drives():
