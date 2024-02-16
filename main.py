@@ -97,15 +97,18 @@ class App(ctk.CTk):
             master=self, text=drive_properties_text, font=('Helvetica', 20))
         drive_properties_label.place(x=15, y=15)
 
-        drive_label = ctk.CTkLabel(
-            master=self, text="Drive", font=('Helvetica', 12))
+        drive_label = ctk.CTkLabel(master=self, text="Drive", font=('Helvetica', 12))
         drive_label.place(x=15, y=45)
 
-        drive_combobox_var = ctk.StringVar(
-            value=DESTINATION_PATH.replace('SafeArchive/', ''))
-
+        drive_combobox_var = ctk.StringVar(value=DESTINATION_PATH.replace('SafeArchive/', ''))
         drives_combobox = ctk.CTkComboBox(
-            master=self, width=470, values=get_available_drives(), command=DrivesCombobox, variable=drive_combobox_var)
+            master=self,
+            width=470,
+            values=get_available_drives(),
+            command=DrivesCombobox,
+            variable=drive_combobox_var
+        )
+
         drives_combobox.place(x=15, y=70)
 
         size_of_backup_label = ctk.CTkLabel(

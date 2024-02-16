@@ -11,6 +11,7 @@ restore_completion_icon = str(Path("assets/ICO").joinpath("restore.ico").resolve
 drive_icon = str(Path("assets/ICO").joinpath("drive.ico").resolve())
 cloud_icon = str(Path("assets/ICO").joinpath("cloud.ico").resolve())
 file_missing_icon = str(Path("assets/ICO").joinpath("file_missing.ico").resolve())
+error_icon = str(Path("assets/ICO").joinpath("error.ico").resolve())
 
 
 def notify_backup_completion(DESTINATION_PATH, notifications):
@@ -72,12 +73,23 @@ def notify_cloud_space_limitation(notifications):
             timeout=10
         )
 
-def notify_client_secrets_file_missing(notifications):
+def notify_missing_client_secrets_file(notifications):
     if notifications:
         notification.notify(
             title="SafeArchive: [Error] File 'client_secrets.json' is missing.",
             app_name="SafeArchive",
             message="File not found in the program directory. Please refer to the documentation for instructions on how to get it.",
             app_icon=file_missing_icon,
+            timeout=10
+        )
+
+
+def notify_missing_ftp_credentials(notifications):
+    if notifications:
+        notification.notify(
+            title="SafeArchive: [Error] FTP credentials are missing.",
+            app_name="SafeArchive",
+            message="FTP not configured. Please edit the configuration file (settings.json) to add your ftp credentials.",
+            app_icon=error_icon,
             timeout=10
         )

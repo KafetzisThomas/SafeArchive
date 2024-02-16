@@ -9,6 +9,7 @@ from Scripts.cloud_utils import GoogleDriveCloud, FTP
 from Scripts.notification_handlers import notify_backup_completion
 from Scripts.notification_handlers import notify_cloud_space_limitation
 from Scripts.notification_handlers import notify_drive_space_limitation
+from Scripts.notification_handlers import notify_missing_ftp_credentials
 from Scripts.file_utils import get_drive_usage_percentage
 from Scripts.file_utils import backup_expiry_date
 from Scripts.configs import config
@@ -79,7 +80,10 @@ class Backup:
                 else:
                     google_drive.backup_to_google_drive(DESTINATION_PATH[:-1], DESTINATION_PATH, parent_folder_id=google_drive.gdrive_folder['id'])
             else:
-                ftp.backup_to_ftp_server(DESTINATION_PATH)
+                try:
+                    ftp.backup_to_ftp_server(DESTINATION_PATH)
+                except AttributeError:
+                    notify_missing_ftp_credentials(config['notifications'])
 
 
     def get_backup_password(self):

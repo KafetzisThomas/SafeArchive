@@ -15,7 +15,7 @@ import ftplib
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 from pydrive2.settings import InvalidConfigError
-from Scripts.notification_handlers import notify_client_secrets_file_missing
+from Scripts.notification_handlers import notify_missing_client_secrets_file
 from Scripts.configs import config
 config.load()  # Load the JSON file into memory
 
@@ -30,7 +30,7 @@ class GoogleDriveCloud:
             gauth.LocalWebserverAuth()
             self.drive = GoogleDrive(gauth)
         except InvalidConfigError:
-            notify_client_secrets_file_missing(config['notifications'])
+            notify_missing_client_secrets_file(config['notifications'])
             sys.exit()
 
         # Check if the folder already exists in Google Drive
