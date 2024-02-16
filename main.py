@@ -37,9 +37,6 @@ class App(ctk.CTk):
 
         ui = SetupUI(DESTINATION_PATH)
         backup = Backup()
-        about = About(self, version)
-        settings = Settings(self)
-        restore_backup = RestoreBackup(self, DESTINATION_PATH)
 
         ctk.set_appearance_mode(config['appearance_mode'])
         ctk.set_default_color_theme(config['color_theme'])
@@ -158,17 +155,17 @@ class App(ctk.CTk):
 
         about_image = ctk.CTkImage(Image.open(ui.get_image1()), size=(25, 25))
         self.about_button = ctk.CTkButton(master=self, text="", fg_color=ui.get_icon_fg_color(), image=about_image,
-                                             width=5, height=5, command=lambda: about.about())
+                                             width=5, height=5, command=lambda: About(self, version))
         self.about_button.place(x=15, y=450)
 
         settings_image = ctk.CTkImage(Image.open(ui.get_image2()), size=(25, 25))
         self.settings_button = ctk.CTkButton(master=self, text="", fg_color=ui.get_icon_fg_color(), image=settings_image,
-                                             width=5, height=5, command=lambda: settings.settings())
+                                             width=5, height=5, command=lambda: Settings(self))
         self.settings_button.place(x=50, y=450)
         
         restore_image = ctk.CTkImage(Image.open(ui.get_image3()), size=(25, 25))
         self.restore_button = ctk.CTkButton(master=self, text="", fg_color=ui.get_icon_fg_color(), image=restore_image,
-                                            width=5, height=5, command=lambda: restore_backup.restore_backup())
+                                            width=5, height=5, command=lambda: RestoreBackup(self, DESTINATION_PATH))
         self.restore_button.place(x=85, y=450)
 
         self.backup_button = ctk.CTkButton(master=self, text="BACKUP", command=lambda: backup.perform_backup(

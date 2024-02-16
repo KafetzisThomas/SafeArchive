@@ -12,9 +12,6 @@ class Settings:
 
     def __init__(self, App):
         self.App = App
-
-
-    def settings(self):
         self.create_settings_window()
         self.create_frame()
         self.display_settings_label()

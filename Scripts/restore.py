@@ -20,12 +20,11 @@ class RestoreBackup:
     def __init__(self, App, DESTINATION_PATH):
         self.App = App
         self.DESTINATION_PATH = DESTINATION_PATH
-
-    def restore_backup(self):
         self.create_restore_window()
         self.create_listbox()
         self.populate_listbox()
         self.create_restore_button()
+
 
     def create_restore_window(self):
         self.restore_window = tk.Toplevel(self.App)
@@ -34,6 +33,7 @@ class RestoreBackup:
         self.restore_window.iconbitmap("assets/ICO/restore.ico") if config['platform'] == "Windows" else None
         self.restore_window.resizable(False, False)  # Disable minimize/maximize buttons
         self.restore_window.configure(background=self.get_listbox_background())
+
 
     def create_listbox(self):
         frame = ctk.CTkFrame(master=self.restore_window)
@@ -52,17 +52,21 @@ class RestoreBackup:
         )
         self.listbox.pack()
 
+
     def get_listbox_background(self):
         return "#343638" if config['appearance_mode'] == "dark" else "#ebebeb"
 
+
     def get_listbox_foreground(self):
         return "white" if config['appearance_mode'] == "dark" else "black"
+
 
     def get_listbox_selection_background(self):
         if config['color_theme'] == "blue":
             return "#1f6aa5"
         else:
             return "#2fa572"
+
 
     def populate_listbox(self):
         """Populate listbox with the zip file names from the DESTINATION_PATH directory"""
@@ -72,14 +76,17 @@ class RestoreBackup:
                 self.listbox.insert(index, filename)
         self.listbox.selection_set(0)  # Set the initial selection to the first item
 
+
     def create_restore_button(self):
         self.App.restore_button = ctk.CTkButton(
             master=self.restore_window, text="Restore backup", command=self.run_restore_thread)
         self.App.restore_button.place(x=140, y=205)
 
+
     def run_restore_thread(self):
         """Create restore process thread"""
         threading.Thread(target=self.extract_item, daemon=True).start()
+
 
     def extract_item(self):
         """
@@ -108,6 +115,7 @@ class RestoreBackup:
     def disable_restore_button(self):
         """Change restore button state to disabled"""
         self.App.restore_button.configure(state="disabled")
+
 
     def enable_restore_button(self):
         """Change restore button state back to normal"""
