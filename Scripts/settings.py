@@ -63,7 +63,7 @@ class Settings:
 
     def create_appearance_mode_combobox(self):
         appearance_mode_combobox_var = ctk.StringVar(value=config['appearance_mode'])
-        appearance_mode_options = ["system", "dark", "light"]
+        appearance_mode_options = ["dark", "light"]
         appearance_mode_combobox = ctk.CTkComboBox(
             master=self.frame,
             width=112,
@@ -101,7 +101,7 @@ class Settings:
 
     def create_storage_provider_combobox(self):
         storage_provider_combobox_var = ctk.StringVar(value=config['storage_provider'])
-        storage_provider_options = ["Google Drive", "FTP"]
+        storage_provider_options = ["None", "Google Drive", "FTP"]
         storage_provider_combobox = ctk.CTkComboBox(
             master=self.frame,
             width=112,

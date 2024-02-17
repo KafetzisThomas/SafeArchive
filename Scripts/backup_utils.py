@@ -79,7 +79,7 @@ class Backup:
                     notify_cloud_space_limitation(config['notifications'])
                 else:
                     google_drive.backup_to_google_drive(DESTINATION_PATH[:-1], DESTINATION_PATH, parent_folder_id=google_drive.gdrive_folder['id'])
-            else:
+            elif config['storage_provider'] == "FTP":
                 try:
                     ftp.backup_to_ftp_server(DESTINATION_PATH)
                 except AttributeError:
