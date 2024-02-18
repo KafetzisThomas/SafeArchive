@@ -23,7 +23,7 @@
 
 <br>
 
-Allows you to backup your essential local files (+cloud support) quickly and schedule past backup deletions to optimize storage space.
+Securely backup and manage your files locally and in the cloud [ Windows, macOS, Linux (desktop, server) ]
 
 **How to Download:** Click the "[Releases](https://github.com/KafetzisThomas/SafeArchive/releases)" link on the right, then on the latest release, under 'Assets' click to download the zip file. (You might have to click "Assets" to view the files for the release)
 
@@ -36,23 +36,14 @@ Allows you to backup your essential local files (+cloud support) quickly and sch
 
 ## Features
 
-* Zip (backup) source path files to destination path
-    * Compression method: ZIP_DEFLATED
-    * allowZip64 is set to True (this parameter use the ZIP64 extensions when the zip file is larger than 4gb)
-    * Compresslevel is set to 9 (its sometimes really slow when source path files are too large, saves storage space)
-* Set expiry date for old backups
-* Get backup size
-* Added cloud support (Google Drive, FTP)
-* Separate backup process from the main one (GUI) by creating a new thread to prevent script crash
-* Add system tray icon to hide the main window instead of terminating it when clicking the X button upper-right. Specifically, a taskbar icon appears with options to backup your files from anywhere without opening the GUI window, open the GUI window and exit the script
-* Restore past backups to their original location
-* Added Command-Line Arguments [CLI]
-* Pop up system notification when:
-    * backup process completes
-    * selected backup restored successfully
-    * drive or cloud storage is running out
-    * drive hasn't reconnected for too long
-    * client_secrets file is missing
+* Backup Compression (ZIP_DEFLATED, ZIP64, compression level: 9)
+* Automated Backup Expiry Management
+* Cloud Integration (Google Drive, MEGA, FTP)
+* Multi-threaded Backup Process
+* Command-Line Interface (CLI) Support
+* System Tray Integration
+* System Notifications
+* Backup Restoration
 
 ## Manual Setup
 1. Download or clone the repo and install the requirements using:
