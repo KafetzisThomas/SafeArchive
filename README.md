@@ -43,6 +43,7 @@
 * Backup Encryption
 
 ## Manual Setup
+
 1. Download or clone the repo and install the requirements using:
 
     ```py
@@ -85,3 +86,11 @@
 </div>
 
 <br>
+
+## Getting Help
+
+If you find a bug, please see [CONTRIBUTING.md](https://github.com/KafetzisThomas/SafeArchive/blob/main/CONTRIBUTING.md) for information on how to report it.
+
+## License
+
+SafeArchive is distributed under the GPL-3.0 license, please see [LICENSE](https://github.com/KafetzisThomas/SafeArchive/blob/main/LICENSE) for more information.
