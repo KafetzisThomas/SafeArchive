@@ -12,12 +12,15 @@ https://github.com/KafetzisThomas/SafeArchive/wiki/Obtaining-API-Key
 import os
 import sys
 import ftplib
+from mega import Mega
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 from pydrive2.settings import InvalidConfigError
 from Scripts.notification_handlers import notify_missing_client_secrets_file
 from Scripts.configs import config
 config.load()  # Load the JSON file into memory
+
+mega = Mega()
 
 
 class GoogleDriveCloud:
@@ -50,8 +53,6 @@ class GoogleDriveCloud:
     def get_cloud_usage_percentage(self):
         """Return cloud usage percentage"""
         account_details = self.drive.GetAbout()
-
-        # Calculate storage usage percentage
         used_storage = int(account_details['quotaBytesUsed'])
         total_storage = int(account_details['quotaBytesTotal'])
         storage_usage_percentage = (used_storage / total_storage) * 100
@@ -170,3 +171,40 @@ class FTP:
         """Disconnect from FTP Server"""
         if self.ftp_server:
             self.ftp_server.quit()
+
+
+class MegaCloud:
+
+    def initialize(self):
+        """Login to Mega"""
+        self.m = mega.login(config['mega_email'], config['mega_password'])
+
+
+    def get_used_space_percentage(self):
+        """Return used space percentage"""
+        space = self.m.get_storage_space(kilo=True)
+        total_space = space.get('total')
+        used_space = space.get('used')
+        space_usage_percentage = (used_space / total_space) * 100
+        return space_usage_percentage
+
+
+    def create_directory(self):
+        """Create directory on Mega account"""
+        files = self.m.get_files()
+        if "SafeArchive" not in files:
+            self.m.create_folder('SafeArchive')
+        folder = self.m.find('SafeArchive')
+        return folder
+
+
+    def backup_to_mega(self, DESTINATION_PATH):
+        """Upload folder and files to Mega account"""
+        folder = self.create_directory()
+        for file_name in os.listdir(DESTINATION_PATH):
+            file_path = os.path.join(DESTINATION_PATH, file_name)
+            try:
+                self.m.upload(file_path, folder[0])
+                print(f"Uploaded {file_name} successfully.")
+            except Exception as e:
+                print(f"Error uploading {file_name}: {str(e)}")

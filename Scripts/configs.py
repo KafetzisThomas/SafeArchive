@@ -57,7 +57,9 @@ config = ConfigDict({
         "storage_provider": "Storage provider for backups (Google Drive / FTP) (type: string)",
         "HOSTNAME": "Hostname for FTP configuration (type: string)",
         "USERNAME": "Username for FTP configuration (type: string)",
-        "PASSWORD": "Password for FTP configuration (type: string)"
+        "PASSWORD": "Password for FTP configuration (type: string)",
+        "mega_email": "Email for Mega login (type: string)",
+        "mega_password": "Password for Mega login (type: string)"
   },
     "platform": platform.system(),
     "source_path": [
@@ -76,7 +78,9 @@ config = ConfigDict({
     "storage_provider": "Google Drive",
     "HOSTNAME": "",
     "USERNAME": "",
-    "PASSWORD": ""
+    "PASSWORD": "",
+    "mega_email": "",
+    "mega_password": ""
 }, SETTINGS_PATH)
 
 if not os.path.exists(config.path):

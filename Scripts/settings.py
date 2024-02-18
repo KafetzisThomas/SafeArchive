@@ -101,7 +101,7 @@ class Settings:
 
     def create_storage_provider_combobox(self):
         storage_provider_combobox_var = ctk.StringVar(value=config['storage_provider'])
-        storage_provider_options = ["None", "Google Drive", "FTP"]
+        storage_provider_options = ["None", "Google Drive", "Mega", "FTP"]
         storage_provider_combobox = ctk.CTkComboBox(
             master=self.frame,
             width=112,

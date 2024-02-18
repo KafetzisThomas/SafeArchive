@@ -5,19 +5,15 @@ import os
 import pyzipper
 import threading
 from datetime import date
-from Scripts.cloud_utils import GoogleDriveCloud, FTP
-from Scripts.notification_handlers import notify_backup_completion
-from Scripts.notification_handlers import notify_cloud_space_limitation
-from Scripts.notification_handlers import notify_drive_space_limitation
-from Scripts.notification_handlers import notify_missing_ftp_credentials
-from Scripts.file_utils import get_drive_usage_percentage
-from Scripts.file_utils import backup_expiry_date
+from Scripts.cloud_utils import GoogleDriveCloud, FTP, MegaCloud
+from Scripts.notification_handlers import notify_backup_completion, notify_cloud_space_limitation, notify_drive_space_limitation, notify_missing_ftp_credentials
+from Scripts.file_utils import get_drive_usage_percentage, backup_expiry_date
 from Scripts.configs import config
 import customtkinter as ctk
 
 google_drive = GoogleDriveCloud()
 ftp = FTP()
-
+mega_cloud = MegaCloud()
 
 class Backup:
 
@@ -84,6 +80,12 @@ class Backup:
                     ftp.backup_to_ftp_server(DESTINATION_PATH)
                 except AttributeError:
                     notify_missing_ftp_credentials(config['notifications'])
+            elif config['storage_provider'] == "Mega":
+                mega_cloud.initialize()
+                if mega_cloud.get_used_space_percentage() >= 90:
+                    pass  # TODO: Display notification if True
+                else:
+                    mega_cloud.backup_to_mega(DESTINATION_PATH)
 
 
     def get_backup_password(self):
