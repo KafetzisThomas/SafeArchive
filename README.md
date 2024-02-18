@@ -40,6 +40,7 @@
 * System Tray Integration
 * System Notifications
 * Backup Restoration
+* Backup Encryption
 
 ## Manual Setup
 1. Download or clone the repo and install the requirements using:
