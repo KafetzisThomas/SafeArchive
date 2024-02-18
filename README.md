@@ -34,7 +34,7 @@
 
 * Backup Compression (ZIP_DEFLATED, ZIP64, compression level: 9)
 * Automated Backup Expiry Management
-* Cloud Integration (Google Drive, MEGA, FTP)
+* Cloud Integration (Google Drive, MEGA, Dropbox, FTP)
 * Multi-threaded Backup Process
 * Command-Line Interface (CLI) Support
 * System Tray Integration
