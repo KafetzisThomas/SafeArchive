@@ -121,9 +121,9 @@ class FTP:
 
     def __init__(self):
         """Initialize FTP server connection"""
-        self.hostname = config['HOSTNAME']
-        self.username = config['USERNAME']
-        self.password = config['PASSWORD']
+        self.hostname = config['ftp_hostname']
+        self.username = config['ftp_username']
+        self.password = config['ftp_password']
         self.ftp_server = None
 
 

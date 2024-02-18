@@ -55,9 +55,9 @@ config = ConfigDict({
         "color_theme": "Color theme for the application (type: string)",
         "backup_expiry_date": "Expiry date for the backups in the storage media (type: string)",
         "storage_provider": "Storage provider for backups (Google Drive / FTP) (type: string)",
-        "HOSTNAME": "Hostname for FTP configuration (type: string)",
-        "USERNAME": "Username for FTP configuration (type: string)",
-        "PASSWORD": "Password for FTP configuration (type: string)",
+        "ftp_hostname": "Hostname for FTP configuration (type: string)",
+        "ftp_username": "Username for FTP configuration (type: string)",
+        "ftp_password": "Password for FTP configuration (type: string)",
         "mega_email": "Email for Mega login (type: string)",
         "mega_password": "Password for Mega login (type: string)"
   },
@@ -76,9 +76,9 @@ config = ConfigDict({
     "color_theme": "blue",
     "backup_expiry_date": "Forever (default)",
     "storage_provider": "Google Drive",
-    "HOSTNAME": "",
-    "USERNAME": "",
-    "PASSWORD": "",
+    "ftp_hostname": "",
+    "ftp_username": "",
+    "ftp_password": "",
     "mega_email": "",
     "mega_password": ""
 }, SETTINGS_PATH)
