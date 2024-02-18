@@ -1,29 +1,25 @@
-
-<!---------------------------------[ Header ]---------------------------------->
-
-<h1 align = 'center'>
-    <img 
-        src = '/assets/ICO/icon.ico' 
-        height = '100' 
-        width = '100' 
-        alt = 'Icon' 
-    />
-    <br>
-    SafeArchive
-    <br>
-</h1>
-
-<!---------------------------------[ Badge ]---------------------------------->
-
-<div align = 'center'>
-    <a href = 'https://github.com/KafetzisThomas/SafeArchive/releases'>
+<div align="center">
+    <h1>
+        <img 
+            src="/assets/ICO/icon.ico" 
+            height="100" 
+            width="100" 
+            alt="Icon" 
+        />
+        <div>SafeArchive</div>
+    </h1>
+    <p>Securely backup and manage your files locally and in the cloud (Windows, macOS, Linux - desktop, server)</p>
+    <h3>
+        <a href="https://github.com/KafetzisThomas/SafeArchive">Homepage</a> | 
+        <a href="https://github.com/KafetzisThomas/SafeArchive/wiki">Wiki</a> | 
+        <a href="https://github.com/KafetzisThomas/SafeArchive/graphs/contributors">Contributors</a>
+    </h3>
+    <a href="https://github.com/KafetzisThomas/SafeArchive/releases">
         <img src = 'https://img.shields.io/github/v/release/KafetzisThomas/SafeArchive?include_prereleases&label=Latest%20Release'/>
     </a>
 </div>
 
-<br>
-
-Securely backup and manage your files locally and in the cloud [ Windows, macOS, Linux (desktop, server) ]
+---
 
 **How to Download:** Click the "[Releases](https://github.com/KafetzisThomas/SafeArchive/releases)" link on the right, then on the latest release, under 'Assets' click to download the zip file. (You might have to click "Assets" to view the files for the release)
 
