@@ -12,6 +12,7 @@ https://github.com/KafetzisThomas/SafeArchive/wiki/Obtaining-API-Key
 import os
 import sys
 import ftplib
+import dropbox
 from mega import Mega
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
@@ -208,3 +209,45 @@ class MegaCloud:
                 print(f"Uploaded {file_name} successfully.")
             except Exception as e:
                 print(f"Error uploading {file_name}: {str(e)}")
+
+
+class Dropbox:
+
+    def initialize(self):
+        """Authenticate access token"""
+        self.dbx = dropbox.Dropbox(config['dropbox_access_token'])
+        self.dropbox_folder_path = '/SafeArchive'
+
+
+    def get_used_space_percentage(self):
+        space = self.dbx.users_get_space_usage()
+        used_space = space.used
+        total_space = space.allocation.get_individual().allocated
+        space_usage_percentage = (used_space / total_space) * 100
+        return space_usage_percentage
+
+
+    def create_directory(self):
+        """Create directory on Dropbox account"""
+        try:
+            self.dbx.files_get_metadata(self.dropbox_folder_path)
+        except dropbox.exceptions.ApiError as e:
+            if e.error.is_path() and e.error.get_path().is_not_found():
+                self.dbx.files_create_folder(self.dropbox_folder_path)
+
+
+    def delete_directory(self):
+        """Delete existing directory so files to be overwritten"""
+        self.dbx.files_delete_v2(self.dropbox_folder_path)
+
+
+    def upload_to_dropbox(self, DESTINATION_PATH):
+        """Upload folder and files to Dropbox account"""
+        self.create_directory()
+        self.delete_directory(self.dropbox_folder_path)
+        for root, dirs, files in os.walk(DESTINATION_PATH):
+            for filename in files:
+                local_file_path = os.path.join(root, filename)
+                dropbox_file_path = os.path.join(self.dropbox_folder_path, os.path.relpath(local_file_path, DESTINATION_PATH))
+                with open(local_file_path, 'rb') as f:
+                    self.dbx.files_upload(f.read(), dropbox_file_path, mode=dropbox.files.WriteMode.overwrite)

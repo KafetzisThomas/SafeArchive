@@ -59,7 +59,8 @@ config = ConfigDict({
         "ftp_username": "Username for FTP configuration (type: string)",
         "ftp_password": "Password for FTP configuration (type: string)",
         "mega_email": "Email for Mega login (type: string)",
-        "mega_password": "Password for Mega login (type: string)"
+        "mega_password": "Password for Mega login (type: string)",
+        "dropbox_access_token": "Access Dropbox account using token with individual scopes (type: string)"
   },
     "platform": platform.system(),
     "source_path": [
@@ -80,7 +81,8 @@ config = ConfigDict({
     "ftp_username": "",
     "ftp_password": "",
     "mega_email": "",
-    "mega_password": ""
+    "mega_password": "",
+    "dropbox_access_token": ""
 }, SETTINGS_PATH)
 
 if not os.path.exists(config.path):
