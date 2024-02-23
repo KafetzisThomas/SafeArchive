@@ -13,12 +13,8 @@ import time
 import platform
 
 # Import module files
-from Scripts.cli_functions import get_backup_size
-from Scripts.cli_functions import storage_media_free_space
-from Scripts.cli_functions import last_backup
-from Scripts.cli_functions import backup
-from Scripts.cli_functions import restore_backup
-from Scripts.cli_functions import edit_configs
+from Scripts.cli_functions import get_backup_size, storage_media_free_space, last_backup, restore_backup, edit_configs
+from Scripts.cli_backup_utils import Backup
 from Scripts.cli_configs import config
 config.load()  # Load the JSON file into memory
 
@@ -29,9 +25,11 @@ from art import text2art
 from colorama import Fore as F, Back as B
 colorama.init(autoreset=True)
 
+backup = Backup()
+
 # Check system platform to set correct console clear command
 clear_command = "cls" if platform.system() == "Windows" else "clear"
-os.system(clear_command)  # Clear console
+os.system(clear_command)
 
 try:
     DESTINATION_PATH = config["destination_path"] + "SafeArchive/"  # Get value from the JSON file
@@ -96,7 +94,7 @@ if choice == 1:
     print("/ Backing up your data...")
     try:
         start = time.time()
-        backup(DESTINATION_PATH)
+        backup.perform_backup(DESTINATION_PATH=DESTINATION_PATH)
         end = time.time()
         time_elapsed = end - start
 

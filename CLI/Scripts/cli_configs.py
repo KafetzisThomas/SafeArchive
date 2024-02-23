@@ -7,6 +7,7 @@ This file manages configurations and provides functionality to save and load the
 
 import os
 import json
+import platform
 from pathlib import Path
 
 
@@ -32,15 +33,21 @@ class ConfigDict(dict):
 SETTINGS_PATH = 'settings.json'
 config = ConfigDict({
     "_comments": {
+        "platform": "Get name of operating system ( Windows, Linux, Darwin [for macOS] )",
         "source_path": "List of source paths (local folders) for backups (type: list with strings)",
         "destination_path": "Destination path (storage media) for backups (type: string)",
         "backup_to_cloud": "Flag indicating whether to backup to the cloud (specify: storage_provider) (type: boolean)",
-        "backup_expiry_date": "Expiry date for the backups in the storage media (type: string)"
-    },
+        "encryption": "Enable/Disable encryption on backups (type: boolean)",
+        "backup_expiry_date": "Expiry date for the backups in the storage media (type: string)",
+        "storage_provider": "Storage provider for backups (Google Drive / FTP) (type: string)"
+  },
+    "platform": platform.system(),
     "source_path": None,
     "destination_path": None,
     "backup_to_cloud": None,
-    "backup_expiry_date": None
+    "encryption": None,
+    "backup_expiry_date": None,
+    "storage_provider": None
 }, SETTINGS_PATH)
 
 if not os.path.exists(config.path):
