@@ -15,6 +15,7 @@ import platform
 # Import module files
 #from Scripts.cli_functions import get_backup_size, storage_media_free_space, last_backup, restore_backup, edit_configs
 from Scripts.cli_backup_utils import Backup
+from Scripts.cli_restore import RestoreBackup
 from Scripts.cli_file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path, edit_configs
 from Scripts.cli_configs import config
 config.load()  # Load the JSON file into memory
@@ -27,6 +28,7 @@ from colorama import Fore as F, Back as B
 colorama.init(autoreset=True)
 
 backup = Backup()
+restore_backup = RestoreBackup()
 
 # Check system platform to set correct console clear command
 clear_command = "cls" if platform.system() == "Windows" else "clear"
@@ -96,7 +98,7 @@ if choice == 1:
         print(f"{F.LIGHTRED_EX}* Backup process cancelled.")
         sys.exit()
 elif choice == 2:
-    #restore_backup(DESTINATION_PATH)
+    restore_backup.run_restore_thread(DESTINATION_PATH=DESTINATION_PATH)
     print(f"{F.LIGHTYELLOW_EX}* Files restored successfully.")
 else:
     print(f"{F.LIGHTRED_EX}* Undefined choice.")
