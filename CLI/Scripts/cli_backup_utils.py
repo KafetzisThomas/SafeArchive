@@ -6,8 +6,14 @@ import pyzipper
 import threading
 from datetime import date
 from Scripts.cli_functions import get_drive_usage_percentage, backup_expiry_date
+from Scripts.cli_cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
 from Scripts.cli_configs import config
 from getpass import getpass
+
+google_drive = GoogleDriveCloud()
+ftp = FTP()
+mega_cloud = MegaCloud()
+dropbox = Dropbox()
 
 
 class Backup:
@@ -43,16 +49,16 @@ class Backup:
                             filepath = os.path.join(root, filename)
                             zipObj.write(filepath)
 
-            #self.upload_to_cloud(DESTINATION_PATH)
+            self.upload_to_cloud(DESTINATION_PATH)
             ##notify_backup_completion(DESTINATION_PATH, config['notifications'])##
         else:
             ##notify_drive_space_limitation(config['notifications'])##
             pass
 
 
-    def upload_to_cloud(self):
+    def upload_to_cloud(self, DESTINATION_PATH):
         """Initialize & Upload local backups to cloud if JSON value is True"""
-        """if config['backup_to_cloud']:
+        if config['backup_to_cloud']:
             if config['storage_provider'] == "Google Drive":
                 google_drive.initialize()
                 if google_drive.get_cloud_usage_percentage() >= 90:
@@ -77,8 +83,7 @@ class Backup:
                 if dropbox.get_used_space_percentage() >= 90:
                     pass  # TODO: Display notification if True
                 else:    
-                    dropbox.upload_to_dropbox(DESTINATION_PATH)"""
-        return None
+                    dropbox.upload_to_dropbox(DESTINATION_PATH)
 
 
     def get_backup_password(self):
