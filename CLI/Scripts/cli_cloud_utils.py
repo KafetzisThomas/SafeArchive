@@ -17,7 +17,7 @@ from mega import Mega
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 from pydrive2.settings import InvalidConfigError
-from Scripts.configs import config
+from Scripts.cli_configs import config
 config.load()  # Load the JSON file into memory
 
 mega = Mega()

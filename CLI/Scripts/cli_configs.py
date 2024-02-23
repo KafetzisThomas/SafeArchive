@@ -39,7 +39,13 @@ config = ConfigDict({
         "backup_to_cloud": "Flag indicating whether to backup to the cloud (specify: storage_provider) (type: boolean)",
         "encryption": "Enable/Disable encryption on backups (type: boolean)",
         "backup_expiry_date": "Expiry date for the backups in the storage media (type: string)",
-        "storage_provider": "Storage provider for backups (Google Drive / FTP) (type: string)"
+        "storage_provider": "Storage provider for backups (Google Drive / FTP) (type: string)",
+        "ftp_hostname": "Hostname for FTP configuration (type: string)",
+        "ftp_username": "Username for FTP configuration (type: string)",
+        "ftp_password": "Password for FTP configuration (type: string)",
+        "mega_email": "Email for Mega login (type: string)",
+        "mega_password": "Password for Mega login (type: string)",
+        "dropbox_access_token": "Access Dropbox account using token with individual scopes (type: string)"
   },
     "platform": platform.system(),
     "source_path": None,
@@ -47,7 +53,13 @@ config = ConfigDict({
     "backup_to_cloud": None,
     "encryption": None,
     "backup_expiry_date": None,
-    "storage_provider": None
+    "storage_provider": None,
+    "ftp_hostname": "",
+    "ftp_username": "",
+    "ftp_password": "",
+    "mega_email": "",
+    "mega_password": "",
+    "dropbox_access_token": ""
 }, SETTINGS_PATH)
 
 if not os.path.exists(config.path):
