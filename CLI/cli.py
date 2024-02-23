@@ -13,8 +13,9 @@ import time
 import platform
 
 # Import module files
-from Scripts.cli_functions import get_backup_size, storage_media_free_space, last_backup, restore_backup, edit_configs
+#from Scripts.cli_functions import get_backup_size, storage_media_free_space, last_backup, restore_backup, edit_configs
 from Scripts.cli_backup_utils import Backup
+from Scripts.cli_file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path, edit_configs
 from Scripts.cli_configs import config
 config.load()  # Load the JSON file into memory
 
@@ -59,17 +60,8 @@ if (config["source_path"] is None) or (config["destination_path"] is None):
     print("'backup_expiry_date' --> integer\n")
     sys.exit()
 
-try:
-    # Create the destination directory path if it doesn't exist
-    if not os.path.exists(DESTINATION_PATH):
-        os.makedirs(DESTINATION_PATH)
-except FileNotFoundError:
-    print("Your SafeArchive Drive is currently disconnected. Reconnect it to keep saving copies of your files.")
-except PermissionError:
-    print(f"No permissions given to make directory: '{DESTINATION_PATH}'.",
-          "Change it in settings.json or run with elevated priveleges")
-    sys.exit(77)
 
+create_destination_directory_path(DESTINATION_PATH)
 print(text2art("SafeArchive-CLI"))
 print(f"> Author: {F.LIGHTYELLOW_EX}KafetzisThomas")
 print("-------------------------")
@@ -104,7 +96,7 @@ if choice == 1:
         print(f"{F.LIGHTRED_EX}* Backup process cancelled.")
         sys.exit()
 elif choice == 2:
-    restore_backup(DESTINATION_PATH)
+    #restore_backup(DESTINATION_PATH)
     print(f"{F.LIGHTYELLOW_EX}* Files restored successfully.")
 else:
     print(f"{F.LIGHTRED_EX}* Undefined choice.")
