@@ -2,11 +2,11 @@
 # -*- coding: UTF-8 -*-
 
 """
-This file allows you to sync your files with Google Drive.
-It allows uploading, updating, and deleting files in a specified folder on Google Drive.
-Note: This feature becomes optional in the program. If you want to use it, just turn the cloud switch on.
-Follow instructions to get your Oauth2 credential key:
-https://github.com/KafetzisThomas/SafeArchive/wiki/Obtaining-API-Key
+This file allows you to sync your files with storage providers.
+It allows uploading, updating, and deleting files in a specified folder.
+Note: This feature becomes optional in the program. If you want to use it, just set the JSON value to true.
+For detailed setup instructions:
+https://github.com/KafetzisThomas/SafeArchive/wiki/Sync-Files-to-Cloud
 """
 
 import os
