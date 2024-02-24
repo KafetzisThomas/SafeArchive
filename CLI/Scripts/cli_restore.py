@@ -51,7 +51,7 @@ class RestoreBackup:
                     if config['encryption']:
                         zipObj.setpassword(self.get_backup_password())
                     zipObj.extractall(config['destination_path'])
-                    ##notify_restore_completion(config['notifications'])##
+                    print(f"{F.LIGHTYELLOW_EX}* Files Restored Sucessfully.")
                 except (RuntimeError, TypeError):
                     pass
         else:

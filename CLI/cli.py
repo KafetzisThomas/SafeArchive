@@ -13,7 +13,6 @@ import time
 import platform
 
 # Import module files
-#from Scripts.cli_functions import get_backup_size, storage_media_free_space, last_backup, restore_backup, edit_configs
 from Scripts.cli_backup_utils import Backup
 from Scripts.cli_restore import RestoreBackup
 from Scripts.cli_file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path, edit_configs
@@ -91,14 +90,11 @@ if choice == 1:
         backup.perform_backup(DESTINATION_PATH=DESTINATION_PATH)
         end = time.time()
         time_elapsed = end - start
-
-        print(f"{F.LIGHTYELLOW_EX}* Backup completed successfully.")
-        print(f"\n[Finished in {time_elapsed:.1f}s]")
+        print(f"[Finished in {time_elapsed:.1f}s]")
     except KeyboardInterrupt:
         print(f"{F.LIGHTRED_EX}* Backup process cancelled.")
         sys.exit()
 elif choice == 2:
     restore_backup.run_restore_thread(DESTINATION_PATH=DESTINATION_PATH)
-    print(f"{F.LIGHTYELLOW_EX}* Files restored successfully.")
 else:
     print(f"{F.LIGHTRED_EX}* Undefined choice.")

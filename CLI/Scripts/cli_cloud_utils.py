@@ -13,12 +13,14 @@ import os
 import sys
 import ftplib
 import dropbox
+import colorama
 from mega import Mega
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 from pydrive2.settings import InvalidConfigError
 from Scripts.cli_configs import config
-config.load()  # Load the JSON file into memory
+from colorama import Fore as F, Back as B
+colorama.init(autoreset=True)
 
 mega = Mega()
 
@@ -33,7 +35,7 @@ class GoogleDriveCloud:
             gauth.LocalWebserverAuth()
             self.drive = GoogleDrive(gauth)
         except InvalidConfigError:
-            ##notify_missing_client_secrets_file(config['notifications'])##
+            print(f"{F.LIGHTYELLOW_EX}* [Error] File 'client_secrets.json' is missing.\nFile not found in the program directory.\nPlease refer to the documentation for instructions on how to get it.")
             sys.exit()
 
         # Check if the folder already exists in Google Drive

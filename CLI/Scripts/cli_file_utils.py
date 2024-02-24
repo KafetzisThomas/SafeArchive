@@ -18,11 +18,9 @@ def create_destination_directory_path(DESTINATION_PATH):
         if not os.path.exists(DESTINATION_PATH):
             os.makedirs(DESTINATION_PATH)
     except FileNotFoundError:
-        ##notify_drive_reconnection(config['notifications'])##
-        pass
+        print(f"{F.LIGHTYELLOW_EX}* Your SafeArchive Drive was disconnected for too long. Reconnect it to keep saving copies of your files.")
     except PermissionError:
-        ##notify_permission_denied(DESTINATION_PATH, config['notifications'])##
-        pass
+        print(f"{F.LIGHTYELLOW_EX}* No permissions given to make directory: '{DESTINATION_PATH}'. Change it in settings.json or run with elevated priveleges.")
 
 
 def get_backup_size(DESTINATION_PATH):
@@ -40,16 +38,14 @@ def get_backup_size(DESTINATION_PATH):
 
 def storage_media_free_space():
     """Return storage media free space"""
-    disk_usage = psutil.disk_usage(
-        config['destination_path']).free
+    disk_usage = psutil.disk_usage(config['destination_path']).free
     free_space = round(disk_usage / (1024**3), 2)  # Convert free space to GB
     return free_space
 
 
 def get_drive_usage_percentage():
     """Return drive usage percentage"""
-    drive_usage_percentage = psutil.disk_usage(
-        config['destination_path']).percent
+    drive_usage_percentage = psutil.disk_usage(config['destination_path']).percent
     return drive_usage_percentage
 
 
@@ -65,21 +61,11 @@ def last_backup(DESTINATION_PATH):
         files = [file for file in os.listdir(DESTINATION_PATH) if os.path.isfile(os.path.join(
             DESTINATION_PATH, file))]  # Get a list of all the files in the destination path
         # Sort the list of files based on their modification time
-        files.sort(key=lambda file: get_modification_time(
-            DESTINATION_PATH, file))
+        files.sort(key=lambda file: get_modification_time(DESTINATION_PATH, file))
 
         # The most recently modified file
         most_recently_modified_file = files[-1]
         filename, _, filetype = most_recently_modified_file.partition('.')
-
-        # Get the modification time of the most recently modified file
-        modification_time = datetime.datetime.fromtimestamp(
-            os.path.getmtime(f"{DESTINATION_PATH}{most_recently_modified_file}"))
-
-        # Check if the file is older than three months
-        if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=30)):
-            ##notify_drive_reconnection(config['notifications'])##
-            pass
 
         if filetype != 'zip':
             filename = "No backup"
@@ -123,8 +109,16 @@ def edit_configs():
 
         # Rewrite values for *efficiency*
         cloud_backup = True if cloud_backup.lower() == "y" else False
-        if not backup_expire:
-            backup_expire = None
+        encryption = True if encryption.lower() == "y" else False
+        backup_expire = backup_expire if backup_expire else None
+        storage_provider = storage_provider if storage_provider else None
+        ftp_hostname = ftp_hostname if ftp_hostname else None
+        ftp_username = ftp_username if ftp_username else None
+        ftp_password = ftp_password if ftp_password else None
+        mega_email = mega_email if mega_email else None
+        mega_password = mega_password if mega_password else None
+        dropbox_access_token = dropbox_access_token if dropbox_access_token else None
+
 
         SETTINGS_PATH = 'settings.json'
         config = ConfigDict({
