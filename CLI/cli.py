@@ -17,7 +17,6 @@ from Scripts.cli_backup_utils import Backup
 from Scripts.cli_restore import RestoreBackup
 from Scripts.cli_file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path, edit_configs
 from Scripts.cli_configs import config
-config.load()  # Load the JSON file into memory
 
 # Import other (third-party) modules
 import humanize

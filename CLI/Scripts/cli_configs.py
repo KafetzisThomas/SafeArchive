@@ -7,7 +7,6 @@ This file manages configurations and provides functionality to save and load the
 
 import os
 import json
-import platform
 from pathlib import Path
 
 
@@ -33,7 +32,6 @@ class ConfigDict(dict):
 SETTINGS_PATH = 'settings.json'
 config = ConfigDict({
     "_comments": {
-        "platform": "Get name of operating system ( Windows, Linux, Darwin [for macOS] )",
         "source_path": "List of source paths (local folders) for backups (type: list with strings)",
         "destination_path": "Destination path (storage media) for backups (type: string)",
         "backup_to_cloud": "Flag indicating whether to backup to the cloud (specify: storage_provider) (type: boolean)",
@@ -47,7 +45,6 @@ config = ConfigDict({
         "mega_password": "Password for Mega login (type: string)",
         "dropbox_access_token": "Access Dropbox account using token with individual scopes (type: string)"
   },
-    "platform": platform.system(),
     "source_path": None,
     "destination_path": None,
     "backup_to_cloud": None,

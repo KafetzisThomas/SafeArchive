@@ -46,7 +46,6 @@ class RestoreBackup:
             selected_filename = backups_table[int(selected_id)]
             # Open the zipfile in read mode, extract its content
             with pyzipper.AESZipFile(f'{DESTINATION_PATH}{selected_filename}.zip', mode='r') as zipObj:
-                zipObj.extractall(config['destination_path'])
                 try:
                     if config['encryption']:
                         zipObj.setpassword(self.get_backup_password())
