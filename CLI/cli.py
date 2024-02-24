@@ -58,7 +58,14 @@ if config["source_path"] is None or config["destination_path"] is None:
     print("'destination_path': 'path' --> string")
     print("\nOPTIONAL:")
     print("'backup_to_cloud' --> boolean")
-    print("'backup_expiry_date' --> integer\n")
+    print("'encryption' --> boolean")
+    print("'backup_expiry_date' --> integer")
+    print("'ftp_hostname' --> string")
+    print("'ftp_username' --> string")
+    print("'ftp_password' --> string")
+    print("'mega_email' --> string")
+    print("'mega_password' --> string")
+    print("'dropbox_access_token' --> string\n")
     sys.exit()
 
 
@@ -84,7 +91,6 @@ except KeyboardInterrupt:
     sys.exit()
 
 if choice == 1:
-    print("/ Backing up your data...")
     try:
         start = time.time()
         backup.perform_backup(DESTINATION_PATH=DESTINATION_PATH)
