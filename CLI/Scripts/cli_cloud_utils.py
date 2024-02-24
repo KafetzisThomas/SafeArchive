@@ -19,7 +19,7 @@ from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 from pydrive2.settings import InvalidConfigError
 from Scripts.cli_configs import config
-from colorama import Fore as F, Back as B
+from colorama import Fore as F
 colorama.init(autoreset=True)
 
 mega = Mega()
