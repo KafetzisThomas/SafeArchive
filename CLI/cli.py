@@ -17,6 +17,7 @@ from Scripts.cli_backup_utils import Backup
 from Scripts.cli_restore import RestoreBackup
 from Scripts.cli_file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path, edit_configs
 from Scripts.cli_configs import config
+config.load()
 
 # Import other (third-party) modules
 import humanize
@@ -50,7 +51,7 @@ try:
 except IndexError:
     pass
 
-if (config["source_path"] is None) or (config["destination_path"] is None):
+if config["source_path"] is None or config["destination_path"] is None:
     print(f"{B.RED}{F.WHITE} NOTE {B.RESET}{F.RESET} Please specify your preferences in {F.LIGHTYELLOW_EX}settings.json{F.RESET} file...")
     print("\nREQUIRED:")
     print("'source_path': [path/to/, path/to/, ...] --> string inside list")

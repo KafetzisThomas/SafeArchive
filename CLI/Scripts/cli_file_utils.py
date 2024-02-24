@@ -10,6 +10,7 @@ import colorama
 from Scripts.cli_configs import ConfigDict, config
 from colorama import Fore as F, Back as B
 colorama.init(autoreset=True)
+config.load()
 
 
 def create_destination_directory_path(DESTINATION_PATH):

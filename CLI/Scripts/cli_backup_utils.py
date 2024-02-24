@@ -6,13 +6,14 @@ import pyzipper
 import threading
 import colorama
 from datetime import date
-from Scripts.cli_functions import get_drive_usage_percentage, backup_expiry_date
+from Scripts.cli_file_utils import get_drive_usage_percentage, backup_expiry_date
 from Scripts.cli_cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
 from Scripts.cli_configs import config
 from getpass import getpass
-from colorama import Fore as F, Back as B
+from colorama import Fore as F
 colorama.init(autoreset=True)
 
+config.load()
 google_drive = GoogleDriveCloud()
 ftp = FTP()
 mega_cloud = MegaCloud()

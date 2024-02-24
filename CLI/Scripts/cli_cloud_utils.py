@@ -22,6 +22,7 @@ from Scripts.cli_configs import config
 from colorama import Fore as F
 colorama.init(autoreset=True)
 
+config.load()
 mega = Mega()
 
 
