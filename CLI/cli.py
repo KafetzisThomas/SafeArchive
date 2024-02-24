@@ -13,14 +13,11 @@ import time
 import platform
 
 # Import module files
-from Scripts.cli_functions import get_backup_size
-from Scripts.cli_functions import storage_media_free_space
-from Scripts.cli_functions import last_backup
-from Scripts.cli_functions import backup
-from Scripts.cli_functions import restore_backup
-from Scripts.cli_functions import edit_configs
+from Scripts.cli_backup_utils import Backup
+from Scripts.cli_restore import RestoreBackup
+from Scripts.cli_file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path, edit_configs
 from Scripts.cli_configs import config
-config.load()  # Load the JSON file into memory
+config.load()
 
 # Import other (third-party) modules
 import humanize
@@ -29,9 +26,12 @@ from art import text2art
 from colorama import Fore as F, Back as B
 colorama.init(autoreset=True)
 
+backup = Backup()
+restore_backup = RestoreBackup()
+
 # Check system platform to set correct console clear command
 clear_command = "cls" if platform.system() == "Windows" else "clear"
-os.system(clear_command)  # Clear console
+os.system(clear_command)
 
 try:
     DESTINATION_PATH = config["destination_path"] + "SafeArchive/"  # Get value from the JSON file
@@ -51,27 +51,25 @@ try:
 except IndexError:
     pass
 
-if (config["source_path"] is None) or (config["destination_path"] is None):
+if config["source_path"] is None or config["destination_path"] is None:
     print(f"{B.RED}{F.WHITE} NOTE {B.RESET}{F.RESET} Please specify your preferences in {F.LIGHTYELLOW_EX}settings.json{F.RESET} file...")
     print("\nREQUIRED:")
     print("'source_path': [path/to/, path/to/, ...] --> string inside list")
     print("'destination_path': 'path' --> string")
     print("\nOPTIONAL:")
     print("'backup_to_cloud' --> boolean")
-    print("'backup_expiry_date' --> integer\n")
+    print("'encryption' --> boolean")
+    print("'backup_expiry_date' --> integer")
+    print("'ftp_hostname' --> string")
+    print("'ftp_username' --> string")
+    print("'ftp_password' --> string")
+    print("'mega_email' --> string")
+    print("'mega_password' --> string")
+    print("'dropbox_access_token' --> string\n")
     sys.exit()
 
-try:
-    # Create the destination directory path if it doesn't exist
-    if not os.path.exists(DESTINATION_PATH):
-        os.makedirs(DESTINATION_PATH)
-except FileNotFoundError:
-    print("Your SafeArchive Drive is currently disconnected. Reconnect it to keep saving copies of your files.")
-except PermissionError:
-    print(f"No permissions given to make directory: '{DESTINATION_PATH}'.",
-          "Change it in settings.json or run with elevated priveleges")
-    sys.exit(77)
 
+create_destination_directory_path(DESTINATION_PATH)
 print(text2art("SafeArchive-CLI"))
 print(f"> Author: {F.LIGHTYELLOW_EX}KafetzisThomas")
 print("-------------------------")
@@ -93,20 +91,16 @@ except KeyboardInterrupt:
     sys.exit()
 
 if choice == 1:
-    print("/ Backing up your data...")
     try:
         start = time.time()
-        backup(DESTINATION_PATH)
+        backup.perform_backup(DESTINATION_PATH=DESTINATION_PATH)
         end = time.time()
         time_elapsed = end - start
-
-        print(f"{F.LIGHTYELLOW_EX}* Backup completed successfully.")
-        print(f"\n[Finished in {time_elapsed:.1f}s]")
+        print(f"[Finished in {time_elapsed:.1f}s]")
     except KeyboardInterrupt:
         print(f"{F.LIGHTRED_EX}* Backup process cancelled.")
         sys.exit()
 elif choice == 2:
-    restore_backup(DESTINATION_PATH)
-    print(f"{F.LIGHTYELLOW_EX}* Files restored successfully.")
+    restore_backup.run_restore_thread(DESTINATION_PATH=DESTINATION_PATH)
 else:
     print(f"{F.LIGHTRED_EX}* Undefined choice.")

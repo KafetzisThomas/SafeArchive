@@ -1,5 +1,8 @@
 prettytable==3.7.0
-PyDrive2==1.16.2
+dropbox==11.36.2
+pyzipper==0.3.6
+PyDrive2==1.18.0
+mega.py==1.0.8
 humanize==4.6.0
 colorama==0.4.6
 psutil==5.9.4
