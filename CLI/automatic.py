@@ -39,7 +39,7 @@ backup = Backup()
 
 DESTINATION_PATH = config['destination_path'] + "SafeArchive/"  # Get value from the JSON file
 
-schedule.every(config['backup_interval']).minutes.do(backup.perform_backup, DESTINATION_PATH)
+schedule.every(config['backup_interval']).hours.do(backup.perform_backup, DESTINATION_PATH)
 
 while True:
     schedule.run_pending()
