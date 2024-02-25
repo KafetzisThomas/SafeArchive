@@ -88,7 +88,7 @@ class Backup:
             elif config['storage_provider'] == "Mega":
                 mega_cloud.initialize()
                 if mega_cloud.get_used_space_percentage() >= 90:
-                    pass  # TODO: Display notification if True
+                    print(f"{F.LIGHTYELLOW_EX}* Your Mega storage is almost full.\nTo make sure your files can sync, clean up space.")
                 else:
                     mega_cloud.backup_to_mega(DESTINATION_PATH)
             elif config['storage_provider'] == "Dropbox":

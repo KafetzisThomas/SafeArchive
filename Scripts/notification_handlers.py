@@ -62,13 +62,25 @@ def notify_drive_space_limitation(notifications):
         )
 
 
-def notify_cloud_space_limitation(notifications):
-    """Display notification message when cloud storage is running out"""
+def notify_google_drive_space_limitation(notifications):
+    """Display notification message when Google Drive storage is running out"""
     if notifications:
         notification.notify(
             title="SafeArchive: [Warning] Your Google Drive storage is running out.",
             app_name="SafeArchive",
             message="Your Google Drive storage is almost full. To make sure your files can sync, clean up space.",
+            app_icon=cloud_icon,
+            timeout=10
+        )
+
+
+def notify_mega_space_limitation(notifications):
+    """Display notification message when Mega storage is running out"""
+    if notifications:
+        notification.notify(
+            title="SafeArchive: [Warning] Your Mega storage is running out.",
+            app_name="SafeArchive",
+            message="Your Mega storage is almost full. To make sure your files can sync, clean up space.",
             app_icon=cloud_icon,
             timeout=10
         )
