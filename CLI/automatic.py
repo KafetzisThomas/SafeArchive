@@ -27,6 +27,8 @@ To run backups continuously:
 This script is designed to run 24/7 in the background.
 Please refer to your operating system's documentation for instructions on configuring background execution of scripts.
 Common methods include using task schedulers or systemd services.
+For detailed setup instructions:
+https://github.com/KafetzisThomas/SafeArchive/wiki
 """
 
 import schedule
