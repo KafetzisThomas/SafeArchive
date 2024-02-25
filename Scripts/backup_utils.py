@@ -6,7 +6,7 @@ import pyzipper
 import threading
 from datetime import date
 from Scripts.cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
-from Scripts.notification_handlers import notify_backup_completion, notify_google_drive_space_limitation, notify_drive_space_limitation, notify_missing_ftp_credentials, notify_mega_space_limitation
+from Scripts.notification_handlers import notify_backup_completion, notify_google_drive_space_limitation, notify_drive_space_limitation, notify_missing_ftp_credentials, notify_mega_space_limitation, notify_dropbox_space_limitation
 from Scripts.file_utils import get_drive_usage_percentage, backup_expiry_date
 from Scripts.configs import config
 import customtkinter as ctk
@@ -90,8 +90,8 @@ class Backup:
             elif config['storage_provider'] == "Dropbox":
                 dropbox.initialize()
                 if dropbox.get_used_space_percentage() >= 90:
-                    pass  # TODO: Display notification if True
-                else:    
+                    notify_dropbox_space_limitation(config['notifications'])
+                else:
                     dropbox.upload_to_dropbox(DESTINATION_PATH)
 
 

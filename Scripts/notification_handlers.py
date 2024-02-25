@@ -86,6 +86,18 @@ def notify_mega_space_limitation(notifications):
         )
 
 
+def notify_dropbox_space_limitation(notifications):
+    """Display notification message when Dropbox storage is running out"""
+    if notifications:
+        notification.notify(
+            title="SafeArchive: [Warning] Your Dropbox storage is running out.",
+            app_name="SafeArchive",
+            message="Your Dropbox storage is almost full. To make sure your files can sync, clean up space.",
+            app_icon=cloud_icon,
+            timeout=10
+        )
+
+
 def notify_missing_client_secrets_file(notifications):
     if notifications:
         notification.notify(

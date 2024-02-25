@@ -94,7 +94,7 @@ class Backup:
             elif config['storage_provider'] == "Dropbox":
                 dropbox.initialize()
                 if dropbox.get_used_space_percentage() >= 90:
-                    pass  # TODO: Display notification if True
+                    print(f"{F.LIGHTYELLOW_EX}* Your Dropbox storage is almost full.\nTo make sure your files can sync, clean up space.")
                 else:    
                     dropbox.upload_to_dropbox(DESTINATION_PATH)
 
