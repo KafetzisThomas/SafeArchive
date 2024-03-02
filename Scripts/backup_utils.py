@@ -5,6 +5,7 @@ import os
 import pyzipper
 import threading
 from datetime import date
+from pyzipper import BadZipFile
 from Scripts.cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
 from Scripts.notification_handlers import notify_user
 from Scripts.file_utils import get_drive_usage_percentage, backup_expiry_date
@@ -31,10 +32,10 @@ class Backup:
 
             try:
                 encryption = pyzipper.WZ_AES if config['encryption'] else None
-                password = self.get_backup_password() if config['encryption'] else None
+                self.password = self.get_backup_password() if config['encryption'] else None
                 with pyzipper.AESZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=pyzipper.ZIP_DEFLATED, encryption=encryption, allowZip64=True, compresslevel=9) as zipObj:
                     try:
-                        zipObj.setpassword(password)
+                        zipObj.setpassword(self.password)
                     except UnboundLocalError:
                         pass
 
@@ -54,6 +55,7 @@ class Backup:
                                 zipObj.write(filepath)
                         source_item_label.place_forget()
 
+                self.check_zip_file(DESTINATION_PATH)
                 self.upload_to_cloud(DESTINATION_PATH)
 
                 notify_user(
@@ -75,6 +77,17 @@ class Backup:
                 message='Your Drive storage is almost full. To make sure your files can sync, clean up space.',
                 icon='drive.ico'
             )
+
+
+    def check_zip_file(self, DESTINATION_PATH):
+        """Check if zip file is valid and not corrupted"""
+        filepath = os.path.join(DESTINATION_PATH, last_backup(DESTINATION_PATH))
+        try:
+            with pyzipper.AESZipFile(f"{filepath}.zip") as zf:
+                zf.setpassword(self.password)
+                zf.testzip()
+        except BadZipFile:
+            notify_corrupted_zip_file(config['notifications'])
 
 
     def upload_to_cloud(self, DESTINATION_PATH):
@@ -122,6 +135,7 @@ class Backup:
 
 
     def get_backup_password(self):
+        """Return user-input backup password in bytes (UTF-8)"""
         password = ctk.CTkInputDialog(text="Backup Password:", title="Backup Encryption")
         return bytes(password.get_input(), 'utf-8')
 

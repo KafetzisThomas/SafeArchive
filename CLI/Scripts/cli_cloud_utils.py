@@ -6,7 +6,7 @@ This file allows you to sync your files with storage providers.
 It allows uploading, updating, and deleting files in a specified folder.
 Note: This feature becomes optional in the program. If you want to use it, just set the JSON value to true.
 For detailed setup instructions:
-https://github.com/KafetzisThomas/SafeArchive/wiki/Sync-Files-to-Cloud
+https://github.com/KafetzisThomas/SafeArchive/wiki
 """
 
 import os
