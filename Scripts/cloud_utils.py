@@ -17,7 +17,7 @@ from mega import Mega
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 from pydrive2.settings import InvalidConfigError
-from Scripts.notification_handlers import notify_missing_client_secrets_file
+from Scripts.notification_handlers import notify_user
 from Scripts.configs import config
 config.load()  # Load the JSON file into memory
 
@@ -34,7 +34,11 @@ class GoogleDriveCloud:
             gauth.LocalWebserverAuth()
             self.drive = GoogleDrive(gauth)
         except InvalidConfigError:
-            notify_missing_client_secrets_file(config['notifications'])
+            notify_user(
+                title='SafeArchive: [Error] File \'client_secrets.json\' is missing.',
+                message='File not found in the program directory. Please refer to the documentation for instructions on how to get it.',
+                icon='file_missing.ico'
+            )
             sys.exit()
 
         # Check if the folder already exists in Google Drive

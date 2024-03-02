@@ -5,7 +5,7 @@ import os
 import pyzipper
 import threading
 import tkinter as tk
-from Scripts.notification_handlers import notify_restore_completion
+from Scripts.notification_handlers import notify_user
 from Scripts.configs import config
 import customtkinter as ctk
 
@@ -101,7 +101,13 @@ class RestoreBackup:
                     if config['encryption']:
                         zipObj.setpassword(self.get_backup_password())
                     zipObj.extractall(config['destination_path'])
-                    notify_restore_completion(config['notifications'])
+
+                    notify_user(
+                        title='SafeArchive: Files Restored Sucessfully',
+                        message='SafeArchive has finished the restore.',
+                        icon='restore.ico'
+                    )
+
                 except (RuntimeError, TypeError):
                     pass
         self.enable_restore_button()

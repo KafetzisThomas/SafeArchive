@@ -5,7 +5,7 @@ import os
 import psutil
 import datetime
 import platform
-from Scripts.notification_handlers import notify_drive_reconnection, notify_permission_denied
+from Scripts.notification_handlers import notify_user
 from tkinter import filedialog
 from Scripts.configs import config
 
@@ -16,9 +16,17 @@ def create_destination_directory_path(DESTINATION_PATH):
         if not os.path.exists(DESTINATION_PATH):
             os.makedirs(DESTINATION_PATH)
     except FileNotFoundError:
-        notify_drive_reconnection(config['notifications'])
+        notify_user(
+            title='SafeArchive: Reconnect your drive',
+            message='Your SafeArchive Drive was disconnected for too long. Reconnect it to keep saving copies of your files.',
+            icon='drive.ico'
+        )
     except PermissionError:
-        notify_permission_denied(DESTINATION_PATH, config['notifications'])
+        notify_user(
+            title='SafeArchive: [Error] Permission Denied.',
+            message=f'No permissions given to make directory: \'{DESTINATION_PATH}\'. Change it in settings.json or run with elevated priveleges.',
+            icon='error.ico'
+        )
 
 
 def get_available_drives():
@@ -91,7 +99,11 @@ def last_backup(DESTINATION_PATH):
 
         # Check if the file is older than three months
         if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=30)):
-            notify_drive_reconnection(config['notifications'])
+            notify_user(
+                title='SafeArchive: Reconnect your drive',
+                message='Your SafeArchive Drive was disconnected for too long. Reconnect it to keep saving copies of your files.',
+                icon='drive.ico'
+            )
 
         if filetype != 'zip':
             filename = "No backup"
