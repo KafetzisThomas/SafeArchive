@@ -125,7 +125,18 @@ def notify_permission_denied(DESTINATION_PATH, notifications):
         notification.notify(
             title="SafeArchive: [Error] Permission Denied.",
             app_name="SafeArchive",
-            message=f"No permissions given to make directory: '{DESTINATION_PATH}'. Change it in settings.json or run with elevated priveleges",
+            message=f"No permissions given to make directory: '{DESTINATION_PATH}'. Change it in settings.json or run with elevated priveleges.",
+            app_icon=error_icon,
+            timeout=10
+        )
+
+
+def notify_corrupted_zip_file(notifications):
+    if notifications:
+        notification.notify(
+            title="SafeArchive: [Error] Backup corrupted",
+            app_name="SafeArchive",
+            message="The backup file is corrupted.",
             app_icon=error_icon,
             timeout=10
         )

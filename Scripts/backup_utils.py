@@ -7,7 +7,7 @@ import threading
 from datetime import date
 from pyzipper import BadZipFile
 from Scripts.cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
-from Scripts.notification_handlers import notify_backup_completion, notify_google_drive_space_limitation, notify_drive_space_limitation, notify_missing_ftp_credentials, notify_mega_space_limitation, notify_dropbox_space_limitation
+from Scripts.notification_handlers import notify_backup_completion, notify_google_drive_space_limitation, notify_drive_space_limitation, notify_missing_ftp_credentials, notify_mega_space_limitation, notify_dropbox_space_limitation, notify_corrupted_zip_file
 from Scripts.file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
 from Scripts.configs import config
 import customtkinter as ctk
@@ -75,11 +75,8 @@ class Backup:
             with pyzipper.AESZipFile(f"{filepath}.zip") as zf:
                 zf.setpassword(self.password)
                 zf.testzip()
-            print(f"ok {filepath}")
-            pass  # TODO: Display notification if zip file is good    
         except BadZipFile:
-            print(f"nah {filepath}")
-            pass  # TODO: Display notification if zip file is corrupted
+            notify_corrupted_zip_file(config['notifications'])
 
 
     def upload_to_cloud(self, DESTINATION_PATH):
