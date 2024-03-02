@@ -6,7 +6,8 @@ import pyzipper
 import threading
 import colorama
 from datetime import date
-from Scripts.cli_file_utils import get_drive_usage_percentage, backup_expiry_date
+from pyzipper import BadZipFile
+from Scripts.cli_file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
 from Scripts.cli_cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
 from Scripts.cli_configs import config
 from getpass import getpass
@@ -37,11 +38,11 @@ class Backup:
                 backup_expiry_date(DESTINATION_PATH)
 
             encryption = pyzipper.WZ_AES if config['encryption'] else None
-            password = self.get_backup_password() if config['encryption'] else None
+            self.password = self.get_backup_password() if config['encryption'] else None
             print("[!] Opening zipfile in write mode")
             with pyzipper.AESZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=pyzipper.ZIP_DEFLATED, encryption=encryption, allowZip64=True, compresslevel=9) as zipObj:
                 try:
-                    zipObj.setpassword(password)
+                    zipObj.setpassword(self.password)
                 except UnboundLocalError:
                     pass
 
@@ -65,10 +66,21 @@ class Backup:
                         l += 1
                     i += 1
 
+            self.check_zip_file(DESTINATION_PATH)
             self.upload_to_cloud(DESTINATION_PATH)
             print(f"{F.LIGHTYELLOW_EX}* Backup completed successfully.")
         else:
             print(f"{F.LIGHTYELLOW_EX}* Your Drive storage is almost full.\nTo make sure your files can sync, clean up space.")
+
+
+    def check_zip_file(self, DESTINATION_PATH):
+        filepath = os.path.join(DESTINATION_PATH, last_backup(DESTINATION_PATH))
+        try:
+            with pyzipper.AESZipFile(f"{filepath}.zip") as zf:
+                zf.setpassword(self.password)
+                zf.testzip()
+        except BadZipFile:
+            print(f"{F.LIGHTRED_EX}* The backup file is corrupted.")
 
 
     def upload_to_cloud(self, DESTINATION_PATH):
