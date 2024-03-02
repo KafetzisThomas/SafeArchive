@@ -70,6 +70,7 @@ class Backup:
 
 
     def check_zip_file(self, DESTINATION_PATH):
+        """Check if zip file is valid and not corrupted"""
         filepath = os.path.join(DESTINATION_PATH, last_backup(DESTINATION_PATH))
         try:
             with pyzipper.AESZipFile(f"{filepath}.zip") as zf:
@@ -108,6 +109,7 @@ class Backup:
 
 
     def get_backup_password(self):
+        """Return user-input backup password in bytes (UTF-8)"""
         password = ctk.CTkInputDialog(text="Backup Password:", title="Backup Encryption")
         return bytes(password.get_input(), 'utf-8')
 
