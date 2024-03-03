@@ -44,13 +44,19 @@
 
 ## Manual Setup
 
-1. Download or clone the repo and install the requirements using:
+1. Ensure you have Python 3.10 installed or set up a virtual environment specifically for that version:
+
+    ```py
+    $ python3.10 -m venv "env_name"
+    ```
+
+2. Download or clone the repo and install the requirements using:
 
     ```py
     $ pip install -r requirements.txt
     ```
 
-2. How to Run:
+3. How to Run:
 
     ```py
     $ python3 main.py
