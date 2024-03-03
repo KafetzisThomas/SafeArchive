@@ -4,62 +4,15 @@
 from Scripts.configs import config
 
 
-def DrivesCombobox(choice):
+def Combobox(key, choice):
     """Update the value of the key in the dictionary"""
-    config['destination_path'] = choice
+    config[key] = choice
 
 
-def CloudSwitch(cloud_switch_var):
+def Switch(key, switch_var):
     """
     Get switch position (True/False)
     Update the value of the key in the dictionary
     """
-    switch_position = cloud_switch_var.get()
-    config['backup_to_cloud'] = True if switch_position == "on" else False
-
-
-def BackupExpiryDateCombobox(choice):
-    """Update the value of the key in the dictionary"""
-    config['backup_expiry_date'] = choice
-
-
-def AppearanceModeCombobox(choice):
-    """Update the value of the key in the dictionary"""
-    config['appearance_mode'] = choice
-
-
-def ColorThemeCombobox(choice):
-    """Update the value of the key in the dictionary"""
-    config['color_theme'] = choice
-
-
-def StorageProviderCombobox(choice):
-    """Update the value of the key in the dictionary"""
-    config['storage_provider'] = choice
-
-
-def NotificationSwitch(notifications_switch_var):
-    """
-    Get switch position (True/False)
-    Update the value of the key in the dictionary
-    """
-    switch_position = notifications_switch_var.get()
-    config['notifications'] = True if switch_position == "on" else False
-
-
-def SystemTraySwitch(system_tray_switch_var):
-    """
-    Get switch position (True/False)
-    Update the value of the key in the dictionary
-    """
-    switch_position = system_tray_switch_var.get()
-    config['system_tray'] = True if switch_position == "on" else False
-
-
-def EncryptionSwitch(encryption_switch_var):
-    """
-    Get switch position (True/False)
-    Update the value of the key in the dictionary
-    """
-    switch_position = encryption_switch_var.get()
-    config['encryption'] = True if switch_position == "on" else False
+    switch_position = switch_var.get()
+    config[key] = True if switch_position == "on" else False

@@ -13,7 +13,7 @@ import tkinter as tk
 
 # Import module files
 from Scripts.file_utils import get_available_drives, get_backup_size, storage_media_free_space, last_backup, update_listbox, remove_item, add_item, create_destination_directory_path
-from Scripts.widgets import DrivesCombobox, CloudSwitch, BackupExpiryDateCombobox
+from Scripts.widgets import Combobox, Switch
 from Scripts.backup_utils import Backup
 from Scripts.restore import RestoreBackup
 from Scripts.settings import Settings
@@ -59,7 +59,7 @@ class App(ctk.CTk):
             master=self,
             width=470,
             values=get_available_drives(),
-            command=DrivesCombobox,
+            command=lambda choice: Combobox(key='destination_path', choice=choice),
             variable=drive_combobox_var
         )
 
@@ -95,7 +95,7 @@ class App(ctk.CTk):
             master=self,
             width=150,
             values=backup_expiry_date_options,
-            command=BackupExpiryDateCombobox,
+            command=lambda choice: Combobox(key='backup_expiry_date', choice=choice),
             variable=backup_expiry_date_combobox_var
         )
 
@@ -104,16 +104,16 @@ class App(ctk.CTk):
         cloud_switch_var = ctk.StringVar(
             value="on" if config['backup_to_cloud'] else "off")
 
-        switch = ctk.CTkSwitch(
+        cloud_switch = ctk.CTkSwitch(
             master=self,
             text="Back up to Cloud",
-            command=lambda: CloudSwitch(cloud_switch_var),
+            command=lambda: Switch(key='backup_to_cloud', switch_var=cloud_switch_var),
             variable=cloud_switch_var,
             onvalue="on",
             offvalue="off"
         )
 
-        switch.place(x=340, y=225)
+        cloud_switch.place(x=340, y=225)
 
         backup_these_folders_label = ctk.CTkLabel(
             master=self, text="Backup these folders", font=('Helvetica', 12))

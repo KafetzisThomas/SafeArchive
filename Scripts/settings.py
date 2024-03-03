@@ -3,7 +3,7 @@
 
 import tkinter as tk
 import customtkinter as ctk
-from Scripts.widgets import NotificationSwitch, SystemTraySwitch, EncryptionSwitch, AppearanceModeCombobox, ColorThemeCombobox, StorageProviderCombobox
+from Scripts.widgets import Combobox, Switch
 from Scripts.configs import config
 
 
@@ -68,7 +68,7 @@ class Settings:
             master=self.frame,
             width=112,
             values=appearance_mode_options,
-            command=AppearanceModeCombobox,
+            command=lambda choice: Combobox(key='appearance_mode', choice=choice),
             variable=appearance_mode_combobox_var
         )
 
@@ -87,7 +87,7 @@ class Settings:
             master=self.frame,
             width=112,
             values=color_theme_options,
-            command=ColorThemeCombobox,
+            command=lambda choice: Combobox(key='color_theme', choice=choice),
             variable=color_theme_combobox_var
         )
 
@@ -106,7 +106,7 @@ class Settings:
             master=self.frame,
             width=112,
             values=storage_provider_options,
-            command=StorageProviderCombobox,
+            command=lambda choice: Combobox(key='storage_provider', choice=choice),
             variable=storage_provider_combobox_var
         )
 
@@ -119,7 +119,7 @@ class Settings:
             master=self.frame,
             text="Display system tray [Windows]",
             font=('Helvetica', 15),
-            command=lambda: SystemTraySwitch(system_tray_switch_var),
+            command=lambda: Switch(key='system_tray', switch_var=system_tray_switch_var),
             variable=system_tray_switch_var,
             onvalue="on",
             offvalue="off"
@@ -134,7 +134,7 @@ class Settings:
             master=self.frame,
             text="Encrypt Backups",
             font=('Helvetica', 15),
-            command=lambda: EncryptionSwitch(encryption_switch_var),
+            command=lambda: Switch(key='encryption', switch_var=encryption_switch_var),
             variable=encryption_switch_var,
             onvalue="on",
             offvalue="off"
@@ -149,7 +149,7 @@ class Settings:
             master=self.frame,
             text="Allow all system notifications",
             font=('Helvetica', 15),
-            command=lambda: NotificationSwitch(notifications_switch_var),
+            command=lambda: Switch(key='notifications', switch_var=notifications_switch),
             variable=notifications_switch_var,
             onvalue="on",
             offvalue="off"
