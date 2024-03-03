@@ -17,7 +17,7 @@ from mega import Mega
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 from pydrive2.settings import InvalidConfigError
-from Scripts.notification_handlers import notify_user
+from Scripts.system_notifications import notify_user
 from Scripts.configs import config
 config.load()  # Load the JSON file into memory
 

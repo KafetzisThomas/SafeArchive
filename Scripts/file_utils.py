@@ -5,7 +5,7 @@ import os
 import psutil
 import datetime
 import platform
-from Scripts.notification_handlers import notify_user
+from Scripts.system_notifications import notify_user
 from tkinter import filedialog
 from Scripts.configs import config
 

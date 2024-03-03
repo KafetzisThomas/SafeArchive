@@ -7,7 +7,7 @@ import threading
 from datetime import date
 from pyzipper import BadZipFile
 from Scripts.cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
-from Scripts.notification_handlers import notify_user
+from Scripts.system_notifications import notify_user
 from Scripts.file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
 from Scripts.configs import config
 import customtkinter as ctk
