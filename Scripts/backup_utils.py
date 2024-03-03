@@ -8,7 +8,7 @@ from datetime import date
 from pyzipper import BadZipFile
 from Scripts.cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
 from Scripts.notification_handlers import notify_user
-from Scripts.file_utils import get_drive_usage_percentage, backup_expiry_date
+from Scripts.file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
 from Scripts.configs import config
 import customtkinter as ctk
 
@@ -87,7 +87,11 @@ class Backup:
                 zf.setpassword(self.password)
                 zf.testzip()
         except BadZipFile:
-            notify_corrupted_zip_file(config['notifications'])
+            notify_user(
+                title='SafeArchive: [Error] Backup corrupted.',
+                message='The backup file is corrupted.',
+                icon='error.ico'
+            )
 
 
     def upload_to_cloud(self, DESTINATION_PATH):
