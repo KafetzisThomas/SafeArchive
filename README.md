@@ -32,8 +32,10 @@
 
 ## Features
 
+* Backup files to your drive
 * Backup Compression (ZIP_DEFLATED, ZIP64, compression level: 9)
 * Automated Backup Expiry Management
+* Automatic Backups in the background
 * Cloud Integration (Google Drive, MEGA, Dropbox, FTP)
 * Multi-threaded Backup Process
 * Command-Line Interface (CLI) Support
