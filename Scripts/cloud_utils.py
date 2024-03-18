@@ -32,7 +32,7 @@ class GoogleDriveCloud:
         self.initialize_connection()
         if self.get_cloud_usage_percentage() < 90:
             foldername = os.path.basename(DESTINATION_PATH[:-1])
-            self.gdrive_folder = self.get_or_create_folder(foldername, self.gdrive_folder['id'])
+            self.gdrive_folder = self.get_or_create_folder(foldername)
 
             for filename in os.listdir(DESTINATION_PATH[:-1]):
                 filepath = os.path.join(DESTINATION_PATH[:-1], filename)
@@ -90,7 +90,7 @@ class GoogleDriveCloud:
         return storage_usage_percentage
 
 
-    def get_or_create_folder(self, foldername, parent_folder_id=None):
+    def get_or_create_folder(self, foldername):
         """Get or create folder in Google Drive"""
         folder_query = (f"title='{foldername}' and mimeType='application/vnd.google-apps.folder' and trashed=false")
         folder_list = self.drive.ListFile({'q': folder_query}).GetList()
@@ -99,8 +99,8 @@ class GoogleDriveCloud:
             return folder_list[0]
         else:
             folder_metadata = {'title': foldername}
-            if parent_folder_id:
-                folder_metadata['parents'] = [{'id': parent_folder_id}]
+            if self.gdrive_folder['id']:
+                folder_metadata['parents'] = [{'id': self.gdrive_folder['id']}]
 
             new_folder = self.drive.CreateFile(folder_metadata)
             new_folder.Upload()

@@ -23,7 +23,7 @@ dropbox = Dropbox()
 
 class Backup:
 
-    def zip_files(self, DESTINATION_PATH):
+    def zip_files(self, SOURCE_PATHS, DESTINATION_PATH):
         """
         Zip (backup) source path files to destination path:
             * Compression method: ZIP_DEFLATED
@@ -49,7 +49,7 @@ class Backup:
                 print("[!] iterating..")
                 i, l = 1, 1
                 # Iterate over each path in the source list
-                for item in config['source_path']:
+                for item in SOURCE_PATHS:
                     print(f"[{i}] iterating over {item}")
                     # Iterate over the files and folders in the path
                     for root, dirs, files in os.walk(item):
@@ -88,28 +88,13 @@ class Backup:
         """Initialize & Upload local backups to cloud if JSON value is True"""
         if config['backup_to_cloud']:
             if config['storage_provider'] == "Google Drive":
-                google_drive.initialize()
-                if google_drive.get_cloud_usage_percentage() >= 90:
-                    print(f"{F.LIGHTYELLOW_EX}* Your Google Drive storage is almost full.\nTo make sure your files can sync, clean up space.")
-                else:
-                    google_drive.backup_to_google_drive(DESTINATION_PATH[:-1], DESTINATION_PATH, parent_folder_id=google_drive.gdrive_folder['id'])
+                google_drive.backup_to_google_drive(DESTINATION_PATH)
             elif config['storage_provider'] == "FTP":
-                try:
-                    ftp.backup_to_ftp_server(DESTINATION_PATH)
-                except AttributeError:
-                    print(f"{F.LIGHTYELLOW_EX}* FTP not configured.\nPlease edit the configuration file (settings.json) to add your ftp credentials.")
+                ftp.backup_to_ftp_server(DESTINATION_PATH)
             elif config['storage_provider'] == "Mega":
-                mega_cloud.initialize()
-                if mega_cloud.get_used_space_percentage() >= 90:
-                    print(f"{F.LIGHTYELLOW_EX}* Your Mega storage is almost full.\nTo make sure your files can sync, clean up space.")
-                else:
-                    mega_cloud.backup_to_mega(DESTINATION_PATH)
+                mega_cloud.backup_to_mega(DESTINATION_PATH)
             elif config['storage_provider'] == "Dropbox":
-                dropbox.initialize()
-                if dropbox.get_used_space_percentage() >= 90:
-                    print(f"{F.LIGHTYELLOW_EX}* Your Dropbox storage is almost full.\nTo make sure your files can sync, clean up space.")
-                else:    
-                    dropbox.upload_to_dropbox(DESTINATION_PATH)
+                dropbox.upload_to_dropbox(DESTINATION_PATH)
 
 
     def get_backup_password(self):
@@ -118,6 +103,6 @@ class Backup:
         return bytes(password, 'utf-8')
 
 
-    def perform_backup(self, DESTINATION_PATH):
+    def perform_backup(self, SOURCE_PATHS, DESTINATION_PATH):
         """Start thread when backup is about to take action"""
-        threading.Thread(target=self.zip_files(DESTINATION_PATH), daemon=True).start()
+        threading.Thread(target=self.zip_files(SOURCE_PATHS, DESTINATION_PATH), daemon=True).start()

@@ -51,10 +51,10 @@ try:
 except IndexError:
     pass
 
-if config["source_path"] is None or config["destination_path"] is None:
+if config["source_paths"] is None or config["destination_path"] is None:
     print(f"{B.RED}{F.WHITE} NOTE {B.RESET}{F.RESET} Please specify your preferences in {F.LIGHTYELLOW_EX}settings.json{F.RESET} file...")
     print("\nREQUIRED:")
-    print("'source_path': [path/to/, path/to/, ...] --> string inside list")
+    print("'source_paths': [path/to/, path/to/, ...] --> string inside list")
     print("'destination_path': 'path' --> string")
     print("\nOPTIONAL:")
     print("'backup_to_cloud' --> boolean")
@@ -93,7 +93,7 @@ except KeyboardInterrupt:
 if choice == 1:
     try:
         start = time.time()
-        backup.perform_backup(DESTINATION_PATH=DESTINATION_PATH)
+        backup.perform_backup(SOURCE_PATHS=config['source_paths'], DESTINATION_PATH=DESTINATION_PATH)
         end = time.time()
         time_elapsed = end - start
         print(f"[Finished in {time_elapsed:.1f}s]")

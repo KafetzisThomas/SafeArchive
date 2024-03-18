@@ -124,7 +124,7 @@ def edit_configs():
         SETTINGS_PATH = 'settings.json'
         config = ConfigDict({
             "platform": platform.system(),
-            "source_path": [folder_to_backup],
+            "source_paths": [folder_to_backup],
             "destination_path": backup_destination,
             "backup_to_cloud": cloud_backup,
             "encryption": encryption,
@@ -138,7 +138,7 @@ def edit_configs():
             "dropbox_access_token": dropbox_access_token
         }, SETTINGS_PATH)
 
-        check = input(f"\nThis is the configuration:\n source_path: {folder_to_backup}\n destination_path: {backup_destination}\n backup_to_cloud: {cloud_backup}\n backup_expiry_date: {backup_expire}\n Is this right?(Y/n): ")
+        check = input(f"\nThis is the configuration:\n source_paths: {folder_to_backup}\n destination_path: {backup_destination}\n backup_to_cloud: {cloud_backup}\n backup_expiry_date: {backup_expire}\n Is this right?(Y/n): ")
         if check.lower() == "n":
             print(f"\n{F.YELLOW}Aborting..{F.RESET}")
             sys.exit()
