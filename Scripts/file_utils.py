@@ -139,18 +139,18 @@ def backup_expiry_date(DESTINATION_PATH):
             os.remove(filepath)  # Delete the file
 
 
-def update_listbox(listbox):
+def update_listbox(listbox, SOURCE_PATHS):
     """Insert source paths from JSON file inside a listbox"""
-    for index, item in enumerate(config['source_path']):
+    for index, item in enumerate(SOURCE_PATHS):
         listbox.insert(index, item)
     listbox.selection_set(0)  # Set the initial selection to the first item
 
 
-def remove_item(listbox):
+def remove_item(listbox, SOURCE_PATHS):
     """Remove a source path from listbox & JSON file, by selecting a specific one"""
     selected_items = listbox.curselection()
     for i in reversed(selected_items):
-        del config['source_path'][i]
+        del SOURCE_PATHS[i]
     config.save()
 
     try:
@@ -159,14 +159,14 @@ def remove_item(listbox):
         pass
 
 
-def add_item(listbox):
+def add_item(listbox, SOURCE_PATHS):
     """Add a source path to the listbox & JSON file"""
     try:
         source_path_file_explorer = filedialog.askdirectory(title='Backup these folders') + '/'
-        if (source_path_file_explorer != '/') and (source_path_file_explorer not in config['source_path']):
-            config['source_path'].append(source_path_file_explorer)
+        if (source_path_file_explorer != '/') and (source_path_file_explorer not in SOURCE_PATHS):
+            SOURCE_PATHS.append(source_path_file_explorer)
             config.save()  # This needs to be done because the saver may not be triggered by the sublist appending
 
-            listbox.insert(len(config['source_path']) - 1, source_path_file_explorer)
+            listbox.insert(len(SOURCE_PATHS) - 1, source_path_file_explorer)
     except TypeError:
         pass

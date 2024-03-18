@@ -134,14 +134,14 @@ class App(ctk.CTk):
         )
 
         listbox.pack(padx=7, pady=7)
-        update_listbox(listbox)
+        update_listbox(listbox=listbox, SOURCE_PATHS=config['source_paths'])
 
         plus_button = ctk.CTkButton(
-            master=self, text="+", width=20, height=10, command=lambda: add_item(listbox))
+            master=self, text="+", width=20, height=10, command=lambda: add_item(listbox=listbox, SOURCE_PATHS=config['source_paths']))
         plus_button.place(x=220, y=250)
 
         minus_button = ctk.CTkButton(
-            master=self, text="-", width=20, height=10, command=lambda: remove_item(listbox))
+            master=self, text="-", width=20, height=10, command=lambda: remove_item(listbox=listbox, SOURCE_PATHS=config['source_paths']))
         minus_button.place(x=250, y=250)
 
         status_text = "Status ━━━━━━━━━━━━━━━━━━━━" if config['platform'] == "Windows" else "Status ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -169,7 +169,7 @@ class App(ctk.CTk):
         self.restore_button.place(x=85, y=450)
 
         self.backup_button = ctk.CTkButton(master=self, text="BACKUP", command=lambda: backup.perform_backup(
-            DESTINATION_PATH=DESTINATION_PATH, App=self))
+            SOURCE_PATHS=config['source_paths'], DESTINATION_PATH=DESTINATION_PATH, App=self))
         self.backup_button.place(x=200, y=450)
 
         close_button = ctk.CTkButton(

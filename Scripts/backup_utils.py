@@ -19,7 +19,7 @@ dropbox = Dropbox()
 
 class Backup:
 
-    def zip_files(self, App, DESTINATION_PATH):
+    def zip_files(self, App, SOURCE_PATHS, DESTINATION_PATH):
         """
         Zip (backup) source path files to destination path:
             * Compression method: ZIP_DEFLATED
@@ -40,7 +40,7 @@ class Backup:
                         pass
 
                     # Iterate over each path in the source list
-                    for item in config['source_path']:
+                    for item in SOURCE_PATHS:
                         source_item_label = ctk.CTkLabel(master=App, text=item, height=20, font=('Helvetica', 12))
                         source_item_label.place(x=15, y=430)
 
@@ -144,16 +144,16 @@ class Backup:
         return bytes(password.get_input(), 'utf-8')
 
 
-    def start_progress_bar(self, App, DESTINATION_PATH):
+    def start_progress_bar(self, App, SOURCE_PATHS, DESTINATION_PATH):
         """Start/Stop progress bar & Call zip_files() function"""
         App.backup_progressbar.start()
         App.backup_button.configure(state="disabled")
-        self.zip_files(App, DESTINATION_PATH)
+        self.zip_files(App, SOURCE_PATHS, DESTINATION_PATH)
         App.backup_button.configure(state="normal")
         App.backup_progressbar.stop()
 
 
-    def perform_backup(self, App, DESTINATION_PATH):
+    def perform_backup(self, App, SOURCE_PATHS, DESTINATION_PATH):
         """Start thread when backup is about to take action"""
         threading.Thread(target=self.start_progress_bar, args=(
-            App, DESTINATION_PATH), daemon=True).start()
+            App, SOURCE_PATHS, DESTINATION_PATH), daemon=True).start()

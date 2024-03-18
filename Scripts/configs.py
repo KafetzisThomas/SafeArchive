@@ -45,7 +45,7 @@ SETTINGS_PATH = 'settings.json'
 config = ConfigDict({
     "_comments": {
         "platform": "Get name of operating system ( Windows, Linux, Darwin [for macOS] )",
-        "source_path": "List of source paths (local folders) for backups (type: list with strings)",
+        "source_paths": "List of source paths (local folders) for backups (type: list with strings)",
         "destination_path": "Destination path (storage media) for backups (type: string)",
         "backup_to_cloud": "Flag indicating whether to backup to the cloud (specify: storage_provider) (type: boolean)",                    
         "notifications": "Enable/Disable notifications (type: boolean)",
@@ -64,7 +64,7 @@ config = ConfigDict({
         "dropbox_access_token": "Access Dropbox account using token with individual scopes (type: string)"
   },
     "platform": platform.system(),
-    "source_path": [
+    "source_paths": [
         str(Path('~/Desktop').expanduser()).replace("\\", "/") + "/",
         str(Path('~/Documents').expanduser()).replace("\\", "/") + "/",
         str(Path('~/Downloads').expanduser()).replace("\\", "/") + "/",
