@@ -26,7 +26,33 @@ mega = Mega()
 
 class GoogleDriveCloud:
 
-    def initialize(self):
+    def backup_to_google_drive(self, DESTINATION_PATH):
+        """Upload local backup files to Google Drive"""
+
+        self.initialize_connection()
+        if self.get_cloud_usage_percentage() < 90:
+            foldername = os.path.basename(DESTINATION_PATH[:-1])
+            self.gdrive_folder = self.get_or_create_folder(foldername, self.gdrive_folder['id'])
+
+            for filename in os.listdir(DESTINATION_PATH[:-1]):
+                filepath = os.path.join(DESTINATION_PATH[:-1], filename)
+                gdrive_file = self.get_or_create_file(filename, filepath)
+
+                # Update existing files or upload new ones
+                gdrive_file.SetContentFile(filepath)
+                gdrive_file.Upload()
+
+            # Delete files in Google Drive that don't exist in the local folder anymore
+            self.delete_files_not_in_local_folder(DESTINATION_PATH[:-1])
+        else:
+            notify_user(
+                title='SafeArchive: [Warning] Your Google Drive storage is running out.',
+                message='Your Google Drive storage is almost full. To make sure your files can sync, clean up space.',
+                icon='cloud.ico'
+            )
+
+
+    def initialize_connection(self):
         """Authenticate request and initialize Google Drive"""
 
         try:
@@ -81,25 +107,7 @@ class GoogleDriveCloud:
             return new_folder
 
 
-    def backup_to_google_drive(self, folderpath, DESTINATION_PATH, parent_folder_id=None):
-        """Upload local backup files to Google Drive"""
-
-        foldername = os.path.basename(folderpath)
-        self.gdrive_folder = self.get_or_create_folder(foldername, parent_folder_id)
-
-        for filename in os.listdir(folderpath):
-            filepath = os.path.join(folderpath, filename)
-            gdrive_file = self.get_or_create_file(filename, filepath)
-
-            # Update existing files or upload new ones
-            gdrive_file.SetContentFile(filepath)
-            gdrive_file.Upload()
-
-        # Delete files in Google Drive that don't exist in the local folder anymore
-        self.delete_files_not_in_local_folder(DESTINATION_PATH[:-1])
-
-
-    def get_or_create_file(self, filename, folderpath):
+    def get_or_create_file(self, filename):
         """Get or create file in Google Drive"""
 
         file_query = (f"title='{filename}' and '{self.gdrive_folder['id']}' in parents and trashed=false")
@@ -132,7 +140,30 @@ class FTP:
         self.ftp_server = None
 
 
-    def connect(self):
+    def backup_to_ftp_server(self, folderpath):
+        """Upload folder and files to the FTP server"""
+        try:
+            self.initialize_connection()
+            self.create_directory()
+
+            for file in os.listdir(folderpath):
+                file_path = os.path.join(folderpath, file)
+                if os.path.isfile(file_path):
+                    with open(file_path, 'rb') as f:
+                        self.ftp_server.storbinary(f'STOR {file}', f)
+
+            self.delete_files_not_in_local_folder(folderpath)
+            self.disconnect()
+
+        except AttributeError:
+            notify_user(
+                title='SafeArchive: [Error] FTP credentials are missing.',
+                message='FTP not configured. Please edit the configuration file (settings.json) to add your ftp credentials.',
+                icon='error.ico'
+            )
+
+
+    def initialize_connection(self):
         """Connect to FTP Server"""
         self.ftp_server = ftplib.FTP(self.hostname, self.username, self.password)
         self.ftp_server.encoding = "utf-8"  # force UTF-8 encoding
@@ -146,21 +177,6 @@ class FTP:
             pass
         finally:
             self.ftp_server.cwd('/SafeArchive')
-
-
-    def backup_to_ftp_server(self, folderpath):
-        """Upload folder and files to the FTP server"""
-        self.connect()
-        self.create_directory()
-
-        for file in os.listdir(folderpath):
-            file_path = os.path.join(folderpath, file)
-            if os.path.isfile(file_path):
-                with open(file_path, 'rb') as f:
-                    self.ftp_server.storbinary(f'STOR {file}', f)
-
-        self.delete_files_not_in_local_folder(folderpath)
-        self.disconnect()
 
 
     def delete_files_not_in_local_folder(self, folderpath):
@@ -180,7 +196,27 @@ class FTP:
 
 class MegaCloud:
 
-    def initialize(self):
+    def backup_to_mega(self, DESTINATION_PATH):
+        """Upload folder and files to Mega account"""
+        self.initialize_connection()
+        if self.get_used_space_percentage() < 90:
+            folder = self.create_directory()
+            for file_name in os.listdir(DESTINATION_PATH):
+                file_path = os.path.join(DESTINATION_PATH, file_name)
+                try:
+                    self.m.upload(file_path, folder[0])
+                    print(f"Uploaded {file_name} successfully.")
+                except Exception as e:
+                    print(f"Error uploading {file_name}: {str(e)}")
+        else:
+            notify_user(
+                title='SafeArchive: [Warning] Your Mega storage is running out.',
+                message='Your Mega storage is almost full. To make sure your files can sync, clean up space.',
+                icon='cloud.ico'
+            )
+
+
+    def initialize_connection(self):
         """Login to Mega"""
         self.m = mega.login(config['mega_email'], config['mega_password'])
 
@@ -203,21 +239,29 @@ class MegaCloud:
         return folder
 
 
-    def backup_to_mega(self, DESTINATION_PATH):
-        """Upload folder and files to Mega account"""
-        folder = self.create_directory()
-        for file_name in os.listdir(DESTINATION_PATH):
-            file_path = os.path.join(DESTINATION_PATH, file_name)
-            try:
-                self.m.upload(file_path, folder[0])
-                print(f"Uploaded {file_name} successfully.")
-            except Exception as e:
-                print(f"Error uploading {file_name}: {str(e)}")
-
-
 class Dropbox:
 
-    def initialize(self):
+    def upload_to_dropbox(self, DESTINATION_PATH):
+        """Upload folder and files to Dropbox account"""
+        self.initialize_connection()
+        if self.get_used_space_percentage() < 90:
+            self.create_directory()
+            self.delete_directory(self.dropbox_folder_path)
+            for root, dirs, files in os.walk(DESTINATION_PATH):
+                for filename in files:
+                    local_file_path = os.path.join(root, filename)
+                    dropbox_file_path = os.path.join(self.dropbox_folder_path, os.path.relpath(local_file_path, DESTINATION_PATH))
+                    with open(local_file_path, 'rb') as f:
+                        self.dbx.files_upload(f.read(), dropbox_file_path, mode=dropbox.files.WriteMode.overwrite)
+        else:
+            notify_user(
+                title='SafeArchive: [Warning] Your Dropbox storage is running out.',
+                message='Your Dropbox storage is almost full. To make sure your files can sync, clean up space.',
+                icon='cloud.ico'
+            )
+
+
+    def initialize_connection(self):
         """Authenticate access token"""
         self.dbx = dropbox.Dropbox(config['dropbox_access_token'])
         self.dropbox_folder_path = '/SafeArchive'
@@ -243,15 +287,3 @@ class Dropbox:
     def delete_directory(self):
         """Delete existing directory so files to be overwritten"""
         self.dbx.files_delete_v2(self.dropbox_folder_path)
-
-
-    def upload_to_dropbox(self, DESTINATION_PATH):
-        """Upload folder and files to Dropbox account"""
-        self.create_directory()
-        self.delete_directory(self.dropbox_folder_path)
-        for root, dirs, files in os.walk(DESTINATION_PATH):
-            for filename in files:
-                local_file_path = os.path.join(root, filename)
-                dropbox_file_path = os.path.join(self.dropbox_folder_path, os.path.relpath(local_file_path, DESTINATION_PATH))
-                with open(local_file_path, 'rb') as f:
-                    self.dbx.files_upload(f.read(), dropbox_file_path, mode=dropbox.files.WriteMode.overwrite)

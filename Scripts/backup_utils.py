@@ -98,44 +98,13 @@ class Backup:
         """Initialize & Upload local backups to cloud if JSON value is True"""
         if config['backup_to_cloud']:
             if config['storage_provider'] == "Google Drive":
-                google_drive.initialize()
-                if google_drive.get_cloud_usage_percentage() >= 90:
-                    notify_user(
-                        title='SafeArchive: [Warning] Your Google Drive storage is running out.',
-                        message='Your Google Drive storage is almost full. To make sure your files can sync, clean up space.',
-                        icon='cloud.ico'
-                    )
-                else:
-                    google_drive.backup_to_google_drive(DESTINATION_PATH[:-1], DESTINATION_PATH, parent_folder_id=google_drive.gdrive_folder['id'])
+                google_drive.backup_to_google_drive(DESTINATION_PATH)    
             elif config['storage_provider'] == "FTP":
-                try:
-                    ftp.backup_to_ftp_server(DESTINATION_PATH)
-                except AttributeError:
-                    notify_user(
-                        title='SafeArchive: [Error] FTP credentials are missing.',
-                        message='FTP not configured. Please edit the configuration file (settings.json) to add your ftp credentials.',
-                        icon='error.ico'
-                    )
+                ftp.backup_to_ftp_server(DESTINATION_PATH)
             elif config['storage_provider'] == "Mega":
-                mega_cloud.initialize()
-                if mega_cloud.get_used_space_percentage() >= 90:
-                    notify_user(
-                        title='SafeArchive: [Warning] Your Mega storage is running out.',
-                        message='Your Mega storage is almost full. To make sure your files can sync, clean up space.',
-                        icon='cloud.ico'
-                    )
-                else:
-                    mega_cloud.backup_to_mega(DESTINATION_PATH)
+                mega_cloud.backup_to_mega(DESTINATION_PATH)
             elif config['storage_provider'] == "Dropbox":
-                dropbox.initialize()
-                if dropbox.get_used_space_percentage() >= 90:
-                    notify_user(
-                        title='SafeArchive: [Warning] Your Dropbox storage is running out.',
-                        message='Your Dropbox storage is almost full. To make sure your files can sync, clean up space.',
-                        icon='cloud.ico'
-                    )
-                else:
-                    dropbox.upload_to_dropbox(DESTINATION_PATH)
+                dropbox.upload_to_dropbox(DESTINATION_PATH)
 
 
     def get_backup_password(self):
