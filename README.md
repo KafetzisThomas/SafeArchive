@@ -52,7 +52,7 @@
     $ python3.10 -m venv "env_name"
     ```
 
-2. Download or clone the repo and install the requirements using:
+2. Download or clone the repo, cd into the **GUI** folder and install the requirements using:
 
     ```py
     $ pip install -r requirements.txt
