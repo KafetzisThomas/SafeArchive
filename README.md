@@ -8,10 +8,10 @@
         />
         <div>SafeArchive</div>
     </h1>
-    <p>Securely backup and manage your files locally and in the cloud (Windows, macOS, Linux - desktop, server)</p>
+    <p>Securely backup and manage your files locally and in the cloud.</p>
     <h3>
         <a href="https://github.com/KafetzisThomas/SafeArchive">Homepage</a> | 
-        <a href="https://github.com/KafetzisThomas/SafeArchive/wiki">Wiki</a> | 
+        <a href="https://github.com/KafetzisThomas/SafeArchive/tree/main/docs">Docs</a> | 
         <a href="https://github.com/KafetzisThomas/SafeArchive/graphs/contributors">Contributors</a>
     </h3>
     <a href="https://github.com/KafetzisThomas/SafeArchive/releases">
@@ -21,38 +21,33 @@
 
 ---
 
-**How to Download:** Click the "[Releases](https://github.com/KafetzisThomas/SafeArchive/releases)" link on the right, then on the latest release, under 'Assets' click to download the zip file. (You might have to click "Assets" to view the files for the release)
-
-> * [Server Instructions](https://github.com/KafetzisThomas/SafeArchive/wiki/Server-Instructions)
-> * Windows/Linux installation not necessary if using executable file.
-
-**Note:** No matter the settings, the program runs completely locally on your own machine using the API key and Google Cloud project you created yourself, so even as the program's creator I will never have access to your account.
-
-* For the first run, I recommend you to exit the program after setting your preferences, so changes to be applied.
+**Supported platforms**: `Windows` & `Linux`
 
 ## Features
 
 * Backup files to your drive
 * Backup Compression (ZIP_DEFLATED, ZIP64, compression level: 9)
 * Automated Backup Expiry Management
-* Automatic Backups in the background
-* Cloud Integration (Google Drive, MEGA, Dropbox, FTP)
+* Automatic Backups in the background (beta)
+* Cloud Integration
+    * Google Drive
+    * MEGA
+    * Dropbox
+    * FTP
 * Multi-threaded Backup Process
 * Command-Line Interface (CLI) Support
-* System Tray Integration
-* System Notifications
-* Backup Restoration
-* Backup Encryption
+* System Tray Integration & Notifications
+* Backup Encryption & Restoration
 
-## Manual Setup
+## Setup
 
-1. Ensure you have Python 3.10 installed or set up a virtual environment specifically for that version:
+1. Ensure you have Python `3.10` installed or set up a virtual environment specifically for that version:
 
     ```py
     $ python3.10 -m venv "env_name"
     ```
 
-2. Download or clone the repo, cd into the **GUI** folder and install the requirements using:
+2. Download or clone the repo, cd into the **GUI** or **CLI** folder and install the requirements using:
 
     ```py
     $ pip install -r requirements.txt
@@ -63,6 +58,10 @@
     ```py
     $ python3 main.py
     ```
+
+**Note:** For the first run, I recommend you to exit the program after setting your preferences, so changes to be applied.
+
+> **Tip**: Learn how to [package](https://github.com/KafetzisThomas/SafeArchive/blob/main/docs/package_program.md) it yourself!
 
 ## Screenshots
 
