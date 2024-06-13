@@ -25,19 +25,21 @@
 
 ## Features
 
-* Backup files to your drive
-* Backup Compression (ZIP_DEFLATED, ZIP64, compression level: 9)
-* Automated Backup Expiry Management
-* Automatic Backups in the background (beta)
-* Cloud Integration
+- [X] Backup files to your drive
+- [X] Supported compression methods: `ZIP_DEFLATED`, `ZIP_STORED`, `ZIP_LZMA`, `ZIP_BZIP2`
+- [X] Supported compression level range: **1-9**
+- [X] ZIP64 Support for backup larger than **4 GiB**
+- [X] Automated Backup Expiry Management
+- [ ] Automatic Backups in the background (beta)
+- [X] Cloud Integration
     * Google Drive
     * MEGA
     * Dropbox
     * FTP
-* Multi-threaded Backup Process
-* Command-Line Interface (CLI) Support
-* System Tray Integration & Notifications
-* Backup Encryption & Restoration
+- [X] Multi-threaded Backup Process
+- [X] Command-Line Interface (CLI) Support
+- [X] System Tray Integration & Notifications
+- [X] Backup Encryption & Restoration
 
 ## Setup
 
