@@ -36,14 +36,14 @@ class Settings:
     def create_settings_window(self):
         self.settings_window = tk.Toplevel(self.App)
         self.settings_window.title("Settings")
-        self.settings_window.geometry("650x310")
+        self.settings_window.geometry("615x300")
         self.settings_window.iconbitmap("assets/ICO/gear.ico") if config['platform'] == "Windows" else None
         self.settings_window.resizable(False, False)  # Disable minimize/maximize buttons
         self.settings_window.configure(background=self.get_window_background())
 
 
     def create_frame(self):
-        self.frame = ctk.CTkFrame(master=self.settings_window, corner_radius=10, height=240, width=635)
+        self.frame = ctk.CTkFrame(master=self.settings_window, corner_radius=10, height=240, width=600)
         self.frame.place(x=8, y=8)
 
 
@@ -53,7 +53,7 @@ class Settings:
 
     def display_settings_label(self):
         settings_label = ctk.CTkLabel(master=self.frame, text="Settings", font=('Helvetica', 22))
-        settings_label.place(x=170, y=10)
+        settings_label.place(x=260, y=10)
 
 
     def display_line_label(self):
@@ -63,7 +63,7 @@ class Settings:
 
     def display_appearance_mode_label(self):
         appearance_mode_label = ctk.CTkLabel(master=self.frame, text="Appearance Mode:", font=('Helvetica', 15))
-        appearance_mode_label.place(x=20, y=60)
+        appearance_mode_label.place(x=20, y=62)
 
 
     def create_appearance_mode_combobox(self):
@@ -82,7 +82,7 @@ class Settings:
 
     def display_color_theme_label(self):
         color_theme_label = ctk.CTkLabel(master=self.frame, text="Color Theme:", font=('Helvetica', 15))
-        color_theme_label.place(x=20, y=90)
+        color_theme_label.place(x=20, y=97)
 
 
     def create_color_theme_combobox(self):
@@ -96,12 +96,12 @@ class Settings:
             variable=color_theme_combobox_var
         )
 
-        color_theme_combobox.place(x=160, y=90)
+        color_theme_combobox.place(x=160, y=95)
 
 
     def display_storage_provider_label(self):
         storage_provider_label = ctk.CTkLabel(master=self.frame, text="Storage Provider:", font=('Helvetica', 15))
-        storage_provider_label.place(x=20, y=120)
+        storage_provider_label.place(x=20, y=132)
 
 
     def create_storage_provider_combobox(self):
@@ -115,12 +115,12 @@ class Settings:
             variable=storage_provider_combobox_var
         )
 
-        storage_provider_combobox.place(x=160, y=120)
+        storage_provider_combobox.place(x=160, y=130)
 
 
     def display_compression_method_label(self):
         compression_method_label = ctk.CTkLabel(master=self.frame, text="Compression Method:", font=('Helvetica', 15))
-        compression_method_label.place(x=290, y=60)
+        compression_method_label.place(x=290, y=62)
 
 
     def create_compression_method_combobox(self):
@@ -134,12 +134,12 @@ class Settings:
             variable=compression_method_combobox_var
         )
 
-        compression_method_combobox.place(x=450, y=56)
+        compression_method_combobox.place(x=450, y=60)
 
 
     def display_compression_level_label(self):
         compression_level_label = ctk.CTkLabel(master=self.frame, text="Compression Level:", font=('Helvetica', 15))
-        compression_level_label.place(x=290, y=90)
+        compression_level_label.place(x=290, y=95)
 
 
     def create_compression_level_combobox(self):
@@ -154,7 +154,7 @@ class Settings:
             variable=compression_level_combobox_var
         )
 
-        compression_level_combobox.place(x=450, y=90)
+        compression_level_combobox.place(x=450, y=95)
 
 
     def create_system_tray_switch(self):
@@ -169,7 +169,7 @@ class Settings:
             offvalue="off"
         )
 
-        system_tray_switch.place(x=20, y=155)
+        system_tray_switch.place(x=20, y=170)
 
 
     def create_encryption_switch(self):
@@ -184,7 +184,7 @@ class Settings:
             offvalue="off"
         )
 
-        encryption_switch.place(x=20, y=182)
+        encryption_switch.place(x=290, y=170)
 
 
     def create_notifications_switch(self):
@@ -199,7 +199,7 @@ class Settings:
             offvalue="off"
         )
 
-        notifications_switch.place(x=20, y=209)
+        notifications_switch.place(x=20, y=200)
 
 
     def create_allowZip64_switch(self):
@@ -214,7 +214,7 @@ class Settings:
             offvalue="off"
         )
 
-        allowZip64_switch.place(x=290, y=155)
+        allowZip64_switch.place(x=290, y=200)
 
 
     def apply_btn(self):
@@ -224,4 +224,4 @@ class Settings:
 
     def display_apply_btn(self):
         apply_button = ctk.CTkButton(master=self.settings_window, text="Apply", command=self.apply_btn)
-        apply_button.place(x=145, y=255)
+        apply_button.place(x=230, y=260)
