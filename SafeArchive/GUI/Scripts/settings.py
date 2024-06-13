@@ -27,6 +27,7 @@ class Settings:
         self.create_system_tray_switch()
         self.create_encryption_switch()
         self.create_notifications_switch()
+        self.create_allowZip64_switch()
         self.display_apply_btn()
 
 
@@ -177,6 +178,21 @@ class Settings:
         )
 
         notifications_switch.place(x=20, y=209)
+
+
+    def create_allowZip64_switch(self):
+        allowZip64_switch_var = ctk.StringVar(value="on" if config['allowZip64'] else "off")
+        allowZip64_switch = ctk.CTkSwitch(
+            master=self.frame,
+            text="allowZip64",
+            font=('Helvetica', 15),
+            command=lambda: Switch(key='allowZip64', switch_var=allowZip64_switch_var),
+            variable=allowZip64_switch_var,
+            onvalue="on",
+            offvalue="off"
+        )
+
+        allowZip64_switch.place(x=290, y=155)
 
 
     def apply_btn(self):

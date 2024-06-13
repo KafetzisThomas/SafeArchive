@@ -32,13 +32,14 @@ class Backup:
 
             try:
                 compression_method = self.get_compression_method()
+                allowZip64 = config['allowZip64']
                 if config['encryption'] and (config['compression_method'] == "ZIP_DEFLATED" or config['compression_method'] == "ZIP_STORED"):
                     encryption = pyzipper.WZ_AES
                     self.password = self.get_backup_password()
                 else:
                     encryption = None
                     self.password = None
-                with pyzipper.AESZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=compression_method, encryption=encryption, allowZip64=True, compresslevel=9) as zipObj:
+                with pyzipper.AESZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=compression_method, encryption=encryption, allowZip64=allowZip64, compresslevel=9) as zipObj:
                     try:
                         zipObj.setpassword(self.password)
                     except UnboundLocalError:
