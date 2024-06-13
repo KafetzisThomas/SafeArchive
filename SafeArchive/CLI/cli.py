@@ -18,7 +18,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 # Import module files
 from SafeArchive.Scripts.CLI.backup_utils import Backup
 from SafeArchive.Scripts.CLI.restore import RestoreBackup
-from SafeArchive.Scripts.file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path, edit_configs
+from SafeArchive.Scripts.file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path
+from SafeArchive.Scripts.CLI.file_utils import edit_configs
 from SafeArchive.Scripts.system_notifications import notify_user
 from SafeArchive.Scripts.configs import config
 config.load()

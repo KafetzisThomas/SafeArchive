@@ -17,8 +17,9 @@ import tkinter as tk
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # Import module files
-from SafeArchive.Scripts.file_utils import get_available_drives, get_backup_size, storage_media_free_space, last_backup, update_listbox, remove_item, add_item, create_destination_directory_path
-from SafeArchive.Scripts.GUI.widgets import Combobox, Switch
+from SafeArchive.Scripts.file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path
+from SafeArchive.Scripts.GUI.file_utils import get_available_drives, update_listbox, remove_item, add_item
+from SafeArchive.Scripts.GUI.widgets import Combobox
 from SafeArchive.Scripts.GUI.backup_utils import Backup
 from SafeArchive.Scripts.GUI.restore import RestoreBackup
 from SafeArchive.Scripts.GUI.settings import Settings
