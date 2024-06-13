@@ -24,6 +24,8 @@ class Settings:
         self.create_storage_provider_combobox()
         self.display_compression_method_label()
         self.create_compression_method_combobox()
+        self.display_compression_level_label()
+        self.create_compression_level_combobox()
         self.create_system_tray_switch()
         self.create_encryption_switch()
         self.create_notifications_switch()
@@ -34,14 +36,14 @@ class Settings:
     def create_settings_window(self):
         self.settings_window = tk.Toplevel(self.App)
         self.settings_window.title("Settings")
-        self.settings_window.geometry("600x310")
+        self.settings_window.geometry("650x310")
         self.settings_window.iconbitmap("assets/ICO/gear.ico") if config['platform'] == "Windows" else None
         self.settings_window.resizable(False, False)  # Disable minimize/maximize buttons
         self.settings_window.configure(background=self.get_window_background())
 
 
     def create_frame(self):
-        self.frame = ctk.CTkFrame(master=self.settings_window, corner_radius=10, height=240, width=585)
+        self.frame = ctk.CTkFrame(master=self.settings_window, corner_radius=10, height=240, width=635)
         self.frame.place(x=8, y=8)
 
 
@@ -55,7 +57,7 @@ class Settings:
 
 
     def display_line_label(self):
-        line_label = ctk.CTkLabel(master=self.frame, text="━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
+        line_label = ctk.CTkLabel(master=self.frame, text="━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", font=('Helvetica', 20))
         line_label.place(x=0, y=35)
 
 
@@ -133,6 +135,26 @@ class Settings:
         )
 
         compression_method_combobox.place(x=450, y=56)
+
+
+    def display_compression_level_label(self):
+        compression_level_label = ctk.CTkLabel(master=self.frame, text="Compression Level:", font=('Helvetica', 15))
+        compression_level_label.place(x=290, y=90)
+
+
+    def create_compression_level_combobox(self):
+        compression_level_combobox_var = ctk.StringVar(value=config['compression_level'])
+        integers = list(range(1, 10))  # Create a list of integers
+        compression_level_options = [str(i) for i in integers]
+        compression_level_combobox = ctk.CTkComboBox(
+            master=self.frame,
+            width=130,
+            values=compression_level_options,
+            command=lambda choice: Combobox(key='compression_level', choice=choice),
+            variable=compression_level_combobox_var
+        )
+
+        compression_level_combobox.place(x=450, y=90)
 
 
     def create_system_tray_switch(self):

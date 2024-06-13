@@ -44,7 +44,7 @@ class ConfigDict(dict):
 SETTINGS_PATH = 'settings.json'
 config = ConfigDict({
     "_comments": {
-        "platform": "Get name of operating system ( Windows, Linux, Darwin [for macOS] )",
+        "platform": "Get name of operating system (Windows, Linux)",
         "source_paths": "List of source paths (local folders) for backups (type: list with strings)",
         "destination_path": "Destination path (storage media) for backups (type: string)",
         "backup_to_cloud": "Flag indicating whether to backup to the cloud (specify: storage_provider) (type: boolean)",                    
@@ -57,6 +57,7 @@ config = ConfigDict({
         "storage_provider": "Storage provider for backups (Google Drive / FTP) (type: string)",
         "compression_method": "Specify the compression method for your backups (type: string)",
         "allowZip64": "Enable/Disable zip files (backups) to extend larger than 4 GiB (type: boolean)",
+        "compression_level": "Specify compression level for zip files (backups) - 1: fast, 9: small size (type: integer)",
         "backup_interval": "Set automatic backup frequency (specify: hours) (type: integer)",
         "ftp_hostname": "Hostname for FTP configuration (type: string)",
         "ftp_username": "Username for FTP configuration (type: string)",
@@ -82,6 +83,7 @@ config = ConfigDict({
     "storage_provider": "Google Drive",
     "compression_method": "ZIP_DEFLATED",
     "allowZip64": True,
+    "compression_level": "5",
     "backup_interval": None,
     "ftp_hostname": "",
     "ftp_username": "",
