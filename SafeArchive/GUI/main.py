@@ -106,20 +106,6 @@ class App(ctk.CTk):
 
         backup_expiry_date_combobox.place(x=15, y=225)
 
-        cloud_switch_var = ctk.StringVar(
-            value="on" if config['backup_to_cloud'] else "off")
-
-        cloud_switch = ctk.CTkSwitch(
-            master=self,
-            text="Back up to Cloud",
-            command=lambda: Switch(key='backup_to_cloud', switch_var=cloud_switch_var),
-            variable=cloud_switch_var,
-            onvalue="on",
-            offvalue="off"
-        )
-
-        cloud_switch.place(x=340, y=225)
-
         backup_these_folders_label = ctk.CTkLabel(
             master=self, text="Backup these folders", font=('Helvetica', 12))
         backup_these_folders_label.place(x=15, y=255)

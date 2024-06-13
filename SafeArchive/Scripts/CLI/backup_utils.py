@@ -113,16 +113,15 @@ class Backup:
 
 
     def upload_to_cloud(self, DESTINATION_PATH):
-        """Initialize & Upload local backups to cloud if JSON value is True"""
-        if config['backup_to_cloud']:
-            if config['storage_provider'] == "Google Drive":
-                google_drive.backup_to_google_drive(DESTINATION_PATH)
-            elif config['storage_provider'] == "FTP":
-                ftp.backup_to_ftp_server(DESTINATION_PATH)
-            elif config['storage_provider'] == "Mega":
-                mega_cloud.backup_to_mega(DESTINATION_PATH)
-            elif config['storage_provider'] == "Dropbox":
-                dropbox.upload_to_dropbox(DESTINATION_PATH)
+        """Initialize & Upload local backups to cloud"""
+        if config['storage_provider'] == "Google Drive":
+            google_drive.backup_to_google_drive(DESTINATION_PATH)
+        elif config['storage_provider'] == "FTP":
+            ftp.backup_to_ftp_server(DESTINATION_PATH)
+        elif config['storage_provider'] == "Mega":
+            mega_cloud.backup_to_mega(DESTINATION_PATH)
+        elif config['storage_provider'] == "Dropbox":
+            dropbox.upload_to_dropbox(DESTINATION_PATH)
 
 
     def get_backup_password(self):
