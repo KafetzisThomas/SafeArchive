@@ -98,7 +98,7 @@ class RestoreBackup:
         for item in self.listbox.curselection():
             with pyzipper.AESZipFile(f'{self.DESTINATION_PATH}{self.listbox.get(item)}.zip') as zipObj:
                 try:
-                    if config['encryption']:
+                    if config['encryption'] and (config['compression_method'] == "ZIP_DEFLATED" or config['compression_method'] == "ZIP_STORED"):
                         zipObj.setpassword(self.get_backup_password())
                     zipObj.extractall(config['destination_path'])
 
