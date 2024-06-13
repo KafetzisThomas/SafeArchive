@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
+import os
+import sys
 from pathlib import Path
 from plyer import notification
-from Scripts.configs import config
+from SafeArchive.Scripts.configs import config
 
 
-def notify_user(title, message, icon, terminal_color):
+def notify_user(message, title=None, icon=None, terminal_color=None):
     """Display notification message with specified title, message, and icon"""
-    if config['platform'] == "Windows":
+    if os.path.basename(sys.argv[0]) == "main.py":  # Get name of the script being executed
         if config['notifications']:
             notification.notify(
                 title=title,

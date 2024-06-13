@@ -7,6 +7,7 @@ It also automatically triggers the saving of the configuration file whenever a s
 """
 
 import os
+import sys
 import json
 import platform
 from pathlib import Path
@@ -79,8 +80,8 @@ config = ConfigDict({
     "encryption": False,
     "appearance_mode": "dark",
     "color_theme": "blue",
-    "backup_expiry_date": "Forever (default)",
-    "storage_provider": "Google Drive",
+    "backup_expiry_date": "Forever (default)" if os.path.basename(sys.argv[0]) == "main.py" else None,  # Get name of the script being executed
+    "storage_provider": "None",
     "compression_method": "ZIP_DEFLATED",
     "allowZip64": True,
     "compression_level": "5",

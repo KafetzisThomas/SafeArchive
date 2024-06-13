@@ -7,9 +7,9 @@ import psutil
 import datetime
 import platform
 import colorama
-from Scripts.system_notifications import notify_user
 from tkinter import filedialog
-from Scripts.configs import config
+from SafeArchive.Scripts.system_notifications import notify_user
+from SafeArchive.Scripts.configs import config
 from colorama import Fore as F, Back as B
 colorama.init(autoreset=True)
 
@@ -110,7 +110,7 @@ def backup_expiry_date(DESTINATION_PATH):
         modification_time = datetime.datetime.fromtimestamp(
             os.path.getmtime(filepath))  # Get the modification time of the file
 
-        if config['platform'] == "Windows":
+        if os.path.basename(sys.argv[0]) == "main.py":  # Get name of the script being executed
             if config['backup_expiry_date'] == "1 month":
                 days = 30
             elif config['backup_expiry_date'] == "3 months":
@@ -122,10 +122,10 @@ def backup_expiry_date(DESTINATION_PATH):
             elif config['backup_expiry_date'] == "1 year":
                 days = 365
         else:
-            days = config["backup_expiry_date"]
+            days = config['backup_expiry_date']
 
         # Check if the file is older than JSON value
-        if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=days)):
+        if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=int(days))):
             os.remove(filepath)  # Delete the file
 
 

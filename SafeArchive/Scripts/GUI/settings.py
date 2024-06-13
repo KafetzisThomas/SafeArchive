@@ -3,8 +3,8 @@
 
 import tkinter as tk
 import customtkinter as ctk
-from Scripts.widgets import Combobox, Switch
-from Scripts.configs import config
+from SafeArchive.Scripts.GUI.widgets import Combobox, Switch
+from SafeArchive.Scripts.configs import config
 
 
 class Settings:
