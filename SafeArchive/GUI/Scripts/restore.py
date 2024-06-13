@@ -96,7 +96,8 @@ class RestoreBackup:
 
         self.disable_restore_button()
         for item in self.listbox.curselection():
-            with pyzipper.AESZipFile(f'{self.DESTINATION_PATH}{self.listbox.get(item)}.zip') as zipObj:
+            file_name = f"{self.DESTINATION_PATH}{self.listbox.get(item)}.zip"
+            with pyzipper.AESZipFile(file=file_name) as zipObj:
                 try:
                     if config['encryption'] and (config['compression_method'] == "ZIP_DEFLATED" or config['compression_method'] == "ZIP_STORED"):
                         zipObj.setpassword(self.get_backup_password())
