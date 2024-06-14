@@ -205,11 +205,7 @@ class MegaCloud:
             folder = self.create_directory()
             for file_name in os.listdir(DESTINATION_PATH):
                 file_path = os.path.join(DESTINATION_PATH, file_name)
-                try:
-                    self.m.upload(file_path, folder[0])
-                    print(f"Uploaded {file_name} successfully.")
-                except Exception as e:
-                    print(f"Error uploading {file_name}: {str(e)}")
+                self.m.upload(file_path, folder[0])
         else:
             notify_user(
                 title='SafeArchive: [Warning] Your Mega storage is running out.',
