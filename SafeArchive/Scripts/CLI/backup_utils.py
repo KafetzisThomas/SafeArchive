@@ -7,9 +7,10 @@ import threading
 import colorama
 from datetime import date
 from pyzipper import BadZipFile
-from Scripts.cli_file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
-from Scripts.cli_cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
-from Scripts.cli_configs import config
+from SafeArchive.Scripts.file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
+from SafeArchive.Scripts.cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
+from SafeArchive.Scripts.system_notifications import notify_user
+from SafeArchive.Scripts.configs import config
 from getpass import getpass
 from colorama import Fore as F
 colorama.init(autoreset=True)
@@ -37,10 +38,19 @@ class Backup:
             if config['backup_expiry_date'] != None:
                 backup_expiry_date(DESTINATION_PATH)
 
-            encryption = pyzipper.WZ_AES if config['encryption'] else None
-            self.password = self.get_backup_password() if config['encryption'] else None
+            file_name = f"{DESTINATION_PATH}{date.today()}.zip"
+            compression_method = self.get_compression_method()
+            allowZip64 = config['allowZip64']
+            compression_level = config['compression_level']
+            if config['encryption'] and (config['compression_method'] == "ZIP_DEFLATED" or config['compression_method'] == "ZIP_STORED"):
+                encryption = pyzipper.WZ_AES
+                self.password = self.get_backup_password()
+            else:
+                encryption = None
+                self.password = None
+
             print("[!] Opening zipfile in write mode")
-            with pyzipper.AESZipFile(f'{DESTINATION_PATH}{date.today()}.zip', mode='w', compression=pyzipper.ZIP_DEFLATED, encryption=encryption, allowZip64=True, compresslevel=9) as zipObj:
+            with pyzipper.AESZipFile(file=file_name, mode='w', compression=compression_method, encryption=encryption, allowZip64=allowZip64, compresslevel=int(compression_level)) as zipObj:
                 try:
                     zipObj.setpassword(self.password)
                 except UnboundLocalError:
@@ -68,9 +78,27 @@ class Backup:
 
             self.check_zip_file(DESTINATION_PATH)
             self.upload_to_cloud(DESTINATION_PATH)
-            print(f"{F.LIGHTYELLOW_EX}* Backup completed successfully.")
+            notify_user(message="Backup completed successfully.", terminal_color=F.LIGHTYELLOW_EX)
         else:
-            print(f"{F.LIGHTYELLOW_EX}* Your Drive storage is almost full.\nTo make sure your files can sync, clean up space.")
+            notify_user(message="Your Drive storage is almost full.\nTo make sure your files can sync, clean up space.", terminal_color=F.LIGHTYELLOW_EX)
+
+
+    def get_compression_method(self):
+        # Define a mapping from JSON values to pyzipper attributes
+        compression_mapping = {
+            "ZIP_STORED": pyzipper.ZIP_STORED,
+            "ZIP_DEFLATED": pyzipper.ZIP_DEFLATED,
+            "ZIP_BZIP2": pyzipper.ZIP_BZIP2,
+            "ZIP_LZMA": pyzipper.ZIP_LZMA
+        }
+
+        # Retrieve the compression method from the configuration
+        compression_method_key = config['compression_method']
+
+        # Get the corresponding pyzipper attribute
+        compression_method = compression_mapping.get(compression_method_key)
+
+        return compression_method
 
 
     def check_zip_file(self, DESTINATION_PATH):
@@ -81,20 +109,19 @@ class Backup:
                 zf.setpassword(self.password)
                 zf.testzip()
         except BadZipFile:
-            print(f"{F.LIGHTRED_EX}* The backup file is corrupted.")
+            notify_user(message="The backup file is corrupted.", terminal_color=F.LIGHTRED_EX)
 
 
     def upload_to_cloud(self, DESTINATION_PATH):
-        """Initialize & Upload local backups to cloud if JSON value is True"""
-        if config['backup_to_cloud']:
-            if config['storage_provider'] == "Google Drive":
-                google_drive.backup_to_google_drive(DESTINATION_PATH)
-            elif config['storage_provider'] == "FTP":
-                ftp.backup_to_ftp_server(DESTINATION_PATH)
-            elif config['storage_provider'] == "Mega":
-                mega_cloud.backup_to_mega(DESTINATION_PATH)
-            elif config['storage_provider'] == "Dropbox":
-                dropbox.upload_to_dropbox(DESTINATION_PATH)
+        """Initialize & Upload local backups to cloud"""
+        if config['storage_provider'] == "Google Drive":
+            google_drive.backup_to_google_drive(DESTINATION_PATH)
+        elif config['storage_provider'] == "FTP":
+            ftp.backup_to_ftp_server(DESTINATION_PATH)
+        elif config['storage_provider'] == "Mega":
+            mega_cloud.backup_to_mega(DESTINATION_PATH)
+        elif config['storage_provider'] == "Dropbox":
+            dropbox.upload_to_dropbox(DESTINATION_PATH)
 
 
     def get_backup_password(self):

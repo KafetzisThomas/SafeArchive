@@ -3,7 +3,7 @@
 
 """
 This file serves as the command-line interface (CLI) version of the program.
-Supportive Platforms: Windows, Mac, Linux
+Supportive Platforms: Windows, Linux
 """
 
 # Import built-in modules
@@ -12,11 +12,16 @@ import sys
 import time
 import platform
 
+# Append the parent directory to the sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
 # Import module files
-from Scripts.cli_backup_utils import Backup
-from Scripts.cli_restore import RestoreBackup
-from Scripts.cli_file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path, edit_configs
-from Scripts.cli_configs import config
+from SafeArchive.Scripts.CLI.backup_utils import Backup
+from SafeArchive.Scripts.CLI.restore import RestoreBackup
+from SafeArchive.Scripts.file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path
+from SafeArchive.Scripts.CLI.file_utils import edit_configs
+from SafeArchive.Scripts.system_notifications import notify_user
+from SafeArchive.Scripts.configs import config
 config.load()
 
 # Import other (third-party) modules
@@ -84,10 +89,10 @@ print(f"2. Restore {F.LIGHTGREEN_EX}previous{F.RESET} backup"
 try:
     choice = int(input("\nChoice (1-2): "))
 except ValueError:
-    print(f"{F.LIGHTRED_EX}* Undefined choice.")
+    notify_user(message="Undefined choice.", terminal_color=F.LIGHTRED_EX)
     sys.exit()
 except KeyboardInterrupt:
-    print(f"\n{F.LIGHTCYAN_EX}* Exiting...")
+    notify_user(message="Exiting...", terminal_color=F.LIGHTCYAN_EX)
     sys.exit()
 
 if choice == 1:
@@ -98,9 +103,9 @@ if choice == 1:
         time_elapsed = end - start
         print(f"[Finished in {time_elapsed:.1f}s]")
     except KeyboardInterrupt:
-        print(f"{F.LIGHTRED_EX}* Backup process cancelled.")
+        notify_user(message="Backup process cancelled.", terminal_color=F.LIGHTRED_EX)
         sys.exit()
 elif choice == 2:
     restore_backup.run_restore_thread(DESTINATION_PATH=DESTINATION_PATH)
 else:
-    print(f"{F.LIGHTRED_EX}* Undefined choice.")
+    notify_user(message="Undefined choice.", terminal_color=F.LIGHTRED_EX)

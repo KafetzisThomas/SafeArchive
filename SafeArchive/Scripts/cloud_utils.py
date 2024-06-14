@@ -4,23 +4,23 @@
 """
 This file allows you to sync your files with storage providers.
 It allows uploading, updating, and deleting files in a specified folder.
-Note: This feature becomes optional in the program. If you want to use it, just set the JSON value to true.
+Note: This feature becomes optional in the program. If you want to use it, just turn the cloud switch on,
+or set the JSON value to true.
 For detailed setup instructions:
-https://github.com/KafetzisThomas/SafeArchive/wiki
+https://github.com/KafetzisThomas/SafeArchive/blob/main/docs/sync_files_to_cloud.md
 """
+
 
 import os
 import sys
 import ftplib
 import dropbox
-import colorama
 from mega import Mega
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 from pydrive2.settings import InvalidConfigError
-from Scripts.cli_configs import config
-from colorama import Fore as F
-colorama.init(autoreset=True)
+from SafeArchive.Scripts.system_notifications import notify_user
+from SafeArchive.Scripts.configs import config
 
 config.load()
 mega = Mega()
@@ -47,7 +47,11 @@ class GoogleDriveCloud:
             # Delete files in Google Drive that don't exist in the local folder anymore
             self.delete_files_not_in_local_folder(DESTINATION_PATH[:-1])
         else:
-            print(f"{F.LIGHTYELLOW_EX}* Your Google Drive storage is almost full.\nTo make sure your files can sync, clean up space.")
+            notify_user(
+                title='SafeArchive: [Warning] Your Google Drive storage is running out.',
+                message='Your Google Drive storage is almost full. To make sure your files can sync, clean up space.',
+                icon='cloud.ico'
+            )
 
 
     def initialize_connection(self):
@@ -58,7 +62,11 @@ class GoogleDriveCloud:
             gauth.LocalWebserverAuth()
             self.drive = GoogleDrive(gauth)
         except InvalidConfigError:
-            print(f"{F.LIGHTYELLOW_EX}* [Error] File 'client_secrets.json' is missing.\nFile not found in the program directory.\nPlease refer to the documentation for instructions on how to get it.")
+            notify_user(
+                title='SafeArchive: [Error] File \'client_secrets.json\' is missing.',
+                message='File not found in the program directory. Please refer to the documentation for instructions on how to get it.',
+                icon='file_missing.ico'
+            )
             sys.exit()
 
         # Check if the folder already exists in Google Drive
@@ -137,7 +145,7 @@ class FTP:
     def backup_to_ftp_server(self, folderpath):
         """Upload folder and files to the FTP server"""
         try:
-            self.connect()
+            self.initialize_connection()
             self.create_directory()
 
             for file in os.listdir(folderpath):
@@ -148,14 +156,19 @@ class FTP:
 
             self.delete_files_not_in_local_folder(folderpath)
             self.disconnect()
+
         except AttributeError:
-            print(f"{F.LIGHTYELLOW_EX}* FTP not configured.\nPlease edit the configuration file (settings.json) to add your ftp credentials.")
+            notify_user(
+                title='SafeArchive: [Error] FTP credentials are missing.',
+                message='FTP not configured. Please edit the configuration file (settings.json) to add your ftp credentials.',
+                icon='error.ico'
+            )
 
 
     def initialize_connection(self):
         """Connect to FTP Server"""
         self.ftp_server = ftplib.FTP(self.hostname, self.username, self.password)
-        self.ftp_server.encoding = "utf-8"  # force UTF-8 encoding
+        self.ftp_server.encoding = "utf-8"  # Force UTF-8 encoding
 
 
     def create_directory(self):
@@ -198,7 +211,11 @@ class MegaCloud:
                 except Exception as e:
                     print(f"Error uploading {file_name}: {str(e)}")
         else:
-            print(f"{F.LIGHTYELLOW_EX}* Your Mega storage is almost full.\nTo make sure your files can sync, clean up space.")
+            notify_user(
+                title='SafeArchive: [Warning] Your Mega storage is running out.',
+                message='Your Mega storage is almost full. To make sure your files can sync, clean up space.',
+                icon='cloud.ico'
+            )
 
 
     def initialize_connection(self):
@@ -232,14 +249,18 @@ class Dropbox:
         if self.get_used_space_percentage() < 90:
             self.create_directory()
             self.delete_directory(self.dropbox_folder_path)
-            for root, dirs, files in os.walk(DESTINATION_PATH):
+            for root, _, files in os.walk(DESTINATION_PATH):
                 for filename in files:
                     local_file_path = os.path.join(root, filename)
                     dropbox_file_path = os.path.join(self.dropbox_folder_path, os.path.relpath(local_file_path, DESTINATION_PATH))
                     with open(local_file_path, 'rb') as f:
                         self.dbx.files_upload(f.read(), dropbox_file_path, mode=dropbox.files.WriteMode.overwrite)
         else:
-            print(f"{F.LIGHTYELLOW_EX}* Your Dropbox storage is almost full.\nTo make sure your files can sync, clean up space.")
+            notify_user(
+                title='SafeArchive: [Warning] Your Dropbox storage is running out.',
+                message='Your Dropbox storage is almost full. To make sure your files can sync, clean up space.',
+                icon='cloud.ico'
+            )
 
 
     def initialize_connection(self):

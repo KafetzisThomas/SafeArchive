@@ -9,17 +9,23 @@
 version = "1.5.0"
 
 # Import built-in modules
+import os
+import sys
 import tkinter as tk
 
+# Append the parent directory to the sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
 # Import module files
-from Scripts.file_utils import get_available_drives, get_backup_size, storage_media_free_space, last_backup, update_listbox, remove_item, add_item, create_destination_directory_path
-from Scripts.widgets import Combobox, Switch
-from Scripts.backup_utils import Backup
-from Scripts.restore import RestoreBackup
-from Scripts.settings import Settings
-from Scripts.about import About
-from Scripts.ui import SetupUI
-from Scripts.configs import config
+from SafeArchive.Scripts.file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path
+from SafeArchive.Scripts.GUI.file_utils import get_available_drives, update_listbox, remove_item, add_item
+from SafeArchive.Scripts.GUI.widgets import Combobox
+from SafeArchive.Scripts.GUI.backup_utils import Backup
+from SafeArchive.Scripts.GUI.restore import RestoreBackup
+from SafeArchive.Scripts.GUI.settings import Settings
+from SafeArchive.Scripts.GUI.about import About
+from SafeArchive.Scripts.GUI.ui import SetupUI
+from SafeArchive.Scripts.configs import config
 config.load() # Load the JSON file into memory
 
 # Import other (third-party) modules
@@ -101,20 +107,6 @@ class App(ctk.CTk):
 
         backup_expiry_date_combobox.place(x=15, y=225)
 
-        cloud_switch_var = ctk.StringVar(
-            value="on" if config['backup_to_cloud'] else "off")
-
-        cloud_switch = ctk.CTkSwitch(
-            master=self,
-            text="Back up to Cloud",
-            command=lambda: Switch(key='backup_to_cloud', switch_var=cloud_switch_var),
-            variable=cloud_switch_var,
-            onvalue="on",
-            offvalue="off"
-        )
-
-        cloud_switch.place(x=340, y=225)
-
         backup_these_folders_label = ctk.CTkLabel(
             master=self, text="Backup these folders", font=('Helvetica', 12))
         backup_these_folders_label.place(x=15, y=255)
@@ -177,7 +169,7 @@ class App(ctk.CTk):
         close_button.place(x=350, y=450)
 
         if config['system_tray'] and config['platform'] == "Windows":
-            from Scripts.system_tray import hide_window
+            from SafeArchive.Scripts.GUI.system_tray import hide_window
             self.protocol('WM_DELETE_WINDOW', lambda: hide_window(
                 DESTINATION_PATH=DESTINATION_PATH, App=self))
 

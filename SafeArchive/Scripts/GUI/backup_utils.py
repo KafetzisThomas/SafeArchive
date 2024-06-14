@@ -6,10 +6,10 @@ import pyzipper
 import threading
 from datetime import date
 from pyzipper import BadZipFile
-from Scripts.cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
-from Scripts.system_notifications import notify_user
-from Scripts.file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
-from Scripts.configs import config
+from SafeArchive.Scripts.cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
+from SafeArchive.Scripts.system_notifications import notify_user
+from SafeArchive.Scripts.file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
+from SafeArchive.Scripts.configs import config
 import customtkinter as ctk
 
 google_drive = GoogleDriveCloud()
@@ -122,16 +122,15 @@ class Backup:
 
 
     def upload_to_cloud(self, DESTINATION_PATH):
-        """Initialize & Upload local backups to cloud if JSON value is True"""
-        if config['backup_to_cloud']:
-            if config['storage_provider'] == "Google Drive":
-                google_drive.backup_to_google_drive(DESTINATION_PATH)    
-            elif config['storage_provider'] == "FTP":
-                ftp.backup_to_ftp_server(DESTINATION_PATH)
-            elif config['storage_provider'] == "Mega":
-                mega_cloud.backup_to_mega(DESTINATION_PATH)
-            elif config['storage_provider'] == "Dropbox":
-                dropbox.upload_to_dropbox(DESTINATION_PATH)
+        """Initialize & Upload local backups to cloud"""
+        if config['storage_provider'] == "Google Drive":
+            google_drive.backup_to_google_drive(DESTINATION_PATH)    
+        elif config['storage_provider'] == "FTP":
+            ftp.backup_to_ftp_server(DESTINATION_PATH)
+        elif config['storage_provider'] == "Mega":
+            mega_cloud.backup_to_mega(DESTINATION_PATH)
+        elif config['storage_provider'] == "Dropbox":
+            dropbox.upload_to_dropbox(DESTINATION_PATH)
 
 
     def get_backup_password(self):

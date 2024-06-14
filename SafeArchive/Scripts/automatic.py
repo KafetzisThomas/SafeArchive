@@ -28,13 +28,13 @@ This script is designed to run 24/7 in the background.
 Please refer to your operating system's documentation for instructions on configuring background execution of scripts.
 Common methods include using task schedulers or systemd services.
 For detailed setup instructions:
-https://github.com/KafetzisThomas/SafeArchive/wiki
+https://github.com/KafetzisThomas/SafeArchive/blob/main/docs/automatic_backups.md
 """
 
 import schedule
 import time
-from Scripts.cli_backup_utils import Backup
-from Scripts.cli_configs import config
+from SafeArchive.Scripts.CLI.backup_utils import Backup
+from SafeArchive.Scripts.configs import config
 config.load()
 
 backup = Backup()
