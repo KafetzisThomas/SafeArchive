@@ -2,15 +2,16 @@
 # -*- coding: UTF-8 -*-
 
 import os
+import sys
 import pyzipper
 import threading
 import colorama
 from datetime import date
 from pyzipper import BadZipFile
-from SafeArchive.Scripts.file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
-from SafeArchive.Scripts.cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
-from SafeArchive.Scripts.system_notifications import notify_user
-from SafeArchive.Scripts.configs import config
+from ...Scripts.file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
+from ...Scripts.cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
+from ...Scripts.system_notifications import notify_user
+from ...Scripts.configs import config
 from getpass import getpass
 from colorama import Fore as F
 colorama.init(autoreset=True)
@@ -27,9 +28,9 @@ class Backup:
     def zip_files(self, SOURCE_PATHS, DESTINATION_PATH):
         """
         Zip (backup) source path files to destination path:
-            * Compression method: ZIP_DEFLATED
-            * allowZip64 is set to True (this parameter use the ZIP64 extensions when the zip file is larger than 4gb)
-            * Compresslevel is set to 9 (its sometimes really slow when source path files are too large, saves storage space)
+            * Supported compression methods: ZIP_DEFLATED, ZIP_STORED, ZIP_LZMA, ZIP_BZIP2
+            * Enable/Disable Zip64 (this parameter use the ZIP64 extensions when the zip file is larger than 4gb)
+            * Set compression level (1: fast ... 9: saves storage space)
         """
         print("[!] backup init")
         if get_drive_usage_percentage() <= 90:
@@ -45,6 +46,9 @@ class Backup:
             if config['encryption'] and (config['compression_method'] == "ZIP_DEFLATED" or config['compression_method'] == "ZIP_STORED"):
                 encryption = pyzipper.WZ_AES
                 self.password = self.get_backup_password()
+                if not self.password:
+                    notify_user(message="The two password fields didn't match.", terminal_color=F.LIGHTRED_EX)
+                    sys.exit()
             else:
                 encryption = None
                 self.password = None
@@ -127,7 +131,8 @@ class Backup:
     def get_backup_password(self):
         """Return user-input backup password in bytes (UTF-8)"""
         password = getpass("Backup Password: ")
-        return bytes(password, 'utf-8')
+        confirm_password = getpass("Confirm Backup Password: ")
+        return bytes(password, 'utf-8') if password == confirm_password else None
 
 
     def perform_backup(self, SOURCE_PATHS, DESTINATION_PATH):
