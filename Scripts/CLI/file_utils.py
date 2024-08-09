@@ -4,9 +4,9 @@
 import sys
 import colorama
 import platform
-from SafeArchive.Scripts.configs import ConfigDict
-from SafeArchive.Scripts.system_notifications import notify_user
-from SafeArchive.Scripts.configs import config
+from ..configs import ConfigDict
+from ..system_notifications import notify_user
+from ..configs import config
 from colorama import Fore as F, Back as B
 
 colorama.init(autoreset=True)

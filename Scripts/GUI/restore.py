@@ -5,8 +5,8 @@ import os
 import pyzipper
 import threading
 import tkinter as tk
-from SafeArchive.Scripts.system_notifications import notify_user
-from SafeArchive.Scripts.configs import config
+from ..system_notifications import notify_user
+from ..configs import config
 import customtkinter as ctk
 
 

@@ -5,7 +5,7 @@ import tkinter as tk
 import customtkinter as ctk
 from PIL import Image
 import webbrowser
-from SafeArchive.Scripts.configs import config
+from ..configs import config
 
 
 class About:

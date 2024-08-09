@@ -4,7 +4,7 @@
 import psutil
 import platform
 from tkinter import filedialog
-from SafeArchive.Scripts.configs import config
+from ..configs import config
 
 
 def get_available_drives():

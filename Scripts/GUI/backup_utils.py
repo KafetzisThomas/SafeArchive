@@ -6,10 +6,10 @@ import pyzipper
 import threading
 from datetime import date
 from pyzipper import BadZipFile
-from SafeArchive.Scripts.cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
-from SafeArchive.Scripts.system_notifications import notify_user
-from SafeArchive.Scripts.file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
-from SafeArchive.Scripts.configs import config
+from ..cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
+from ..system_notifications import notify_user
+from ..file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
+from ..configs import config
 import customtkinter as ctk
 
 google_drive = GoogleDriveCloud()

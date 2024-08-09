@@ -33,8 +33,8 @@ https://github.com/KafetzisThomas/SafeArchive/blob/main/docs/automatic_backups.m
 
 import schedule
 import time
-from SafeArchive.Scripts.CLI.backup_utils import Backup
-from SafeArchive.Scripts.configs import config
+from CLI.backup_utils import Backup
+from .configs import config
 config.load()
 
 backup = Backup()

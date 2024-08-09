@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-from SafeArchive.Scripts.configs import config
+from ..configs import config
 
 
 class SetupUI:

@@ -16,17 +16,17 @@ import platform
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 # Import module files
-from SafeArchive.Scripts.CLI.backup_utils import Backup
-from SafeArchive.Scripts.CLI.restore import RestoreBackup
-from SafeArchive.Scripts.file_utils import (
+from Scripts.CLI.backup_utils import Backup
+from Scripts.CLI.restore import RestoreBackup
+from Scripts.file_utils import (
     get_backup_size,
     storage_media_free_space,
     last_backup,
     create_destination_directory_path,
 )
-from SafeArchive.Scripts.CLI.file_utils import get_config_info, edit_configs
-from SafeArchive.Scripts.system_notifications import notify_user
-from SafeArchive.Scripts.configs import config
+from Scripts.CLI.file_utils import get_config_info, edit_configs
+from Scripts.system_notifications import notify_user
+from Scripts.configs import config
 
 config.load()
 
@@ -68,26 +68,6 @@ try:
         sys.exit()
 except IndexError:
     pass
-
-if config["source_paths"] is None or config["destination_path"] is None:
-    print(
-        f"{B.RED}{F.WHITE} NOTE {B.RESET}{F.RESET} Please specify your preferences in {F.LIGHTYELLOW_EX}settings.json{F.RESET} file..."
-    )
-    print("\nREQUIRED:")
-    print("'source_paths': [path/to/, path/to/, ...] --> string inside list")
-    print("'destination_path': 'path' --> string")
-    print("\nOPTIONAL:")
-    print("'backup_to_cloud' --> boolean")
-    print("'encryption' --> boolean")
-    print("'backup_expiry_date' --> integer")
-    print("'ftp_hostname' --> string")
-    print("'ftp_username' --> string")
-    print("'ftp_password' --> string")
-    print("'mega_email' --> string")
-    print("'mega_password' --> string")
-    print("'dropbox_access_token' --> string\n")
-    sys.exit()
-
 
 create_destination_directory_path(DESTINATION_PATH)
 print(text2art("SafeArchive-CLI"))

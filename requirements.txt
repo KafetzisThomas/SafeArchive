@@ -8,3 +8,7 @@ psutil==5.9.4
 Pillow==10.3.0
 mega.py==1.0.8
 plyer==2.1.0
+schedule==1.2.2
+prettytable==3.7.0
+colorama==0.4.6
+art==5.9

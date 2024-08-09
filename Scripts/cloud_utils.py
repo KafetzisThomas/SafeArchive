@@ -19,8 +19,8 @@ from mega import Mega
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 from pydrive2.settings import InvalidConfigError
-from SafeArchive.Scripts.system_notifications import notify_user
-from SafeArchive.Scripts.configs import config
+from .system_notifications import notify_user
+from .configs import config
 
 config.load()
 mega = Mega()

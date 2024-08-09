@@ -8,8 +8,8 @@ import threading
 import colorama
 from getpass import getpass
 from prettytable import PrettyTable
-from SafeArchive.Scripts.configs import config
-from SafeArchive.Scripts.system_notifications import notify_user
+from ..configs import config
+from ..system_notifications import notify_user
 from colorama import Fore as F
 colorama.init(autoreset=True)
 config.load()

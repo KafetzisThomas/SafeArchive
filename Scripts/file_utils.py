@@ -5,8 +5,8 @@ import os
 import sys
 import psutil
 import datetime
-from SafeArchive.Scripts.system_notifications import notify_user
-from SafeArchive.Scripts.configs import config
+from .system_notifications import notify_user
+from .configs import config
 
 
 def create_destination_directory_path(DESTINATION_PATH):
@@ -99,26 +99,26 @@ def backup_expiry_date(DESTINATION_PATH):
     Check if previous backups are older than expiry date
     Remove every past backup if True
     """
+    is_valid_expiry_date  = True
     for filename in os.listdir(DESTINATION_PATH):  # Iterate through all files in the destination directory
         filepath = os.path.join(DESTINATION_PATH, filename)
 
         modification_time = datetime.datetime.fromtimestamp(
             os.path.getmtime(filepath))  # Get the modification time of the file
 
-        if os.path.basename(sys.argv[0]) == "main.py":  # Get name of the script being executed
-            if config['backup_expiry_date'] == "1 month":
-                days = 30
-            elif config['backup_expiry_date'] == "3 months":
-                days = 90
-            elif config['backup_expiry_date'] == "6 months":
-                days = 180
-            elif config['backup_expiry_date'] == "9 months":
-                days = 270
-            elif config['backup_expiry_date'] == "1 year":
-                days = 365
+        if config['backup_expiry_date'] == "1 month":
+            days = 30
+        elif config['backup_expiry_date'] == "3 months":
+            days = 90
+        elif config['backup_expiry_date'] == "6 months":
+            days = 180
+        elif config['backup_expiry_date'] == "9 months":
+            days = 270
+        elif config['backup_expiry_date'] == "1 year":
+            days = 365
         else:
-            days = config['backup_expiry_date']
+            is_valid_expiry_date = False
 
         # Check if the file is older than JSON value
-        if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=int(days))):
+        if is_valid_expiry_date and modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=int(days))):
             os.remove(filepath)  # Delete the file

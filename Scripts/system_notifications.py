@@ -5,7 +5,7 @@ import os
 import sys
 from pathlib import Path
 from plyer import notification
-from SafeArchive.Scripts.configs import config
+from .configs import config
 
 
 def notify_user(message, title=None, icon=None, terminal_color=None):

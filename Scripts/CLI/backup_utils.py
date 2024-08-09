@@ -8,10 +8,10 @@ import threading
 import colorama
 from datetime import date
 from pyzipper import BadZipFile
-from ...Scripts.file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
-from ...Scripts.cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
-from ...Scripts.system_notifications import notify_user
-from ...Scripts.configs import config
+from ..file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
+from ..cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
+from ..system_notifications import notify_user
+from ..configs import config
 from getpass import getpass
 from colorama import Fore as F
 colorama.init(autoreset=True)

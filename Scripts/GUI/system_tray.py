@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from pystray import MenuItem as item
-from SafeArchive.Scripts.GUI.backup_utils import Backup
+from .backup_utils import Backup
 from PIL import Image
 import pystray
 
