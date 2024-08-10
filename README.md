@@ -1,7 +1,7 @@
 <div align="center">
     <h1>
         <img 
-            src="/SafeArchive/GUI/assets/ICO/icon.ico" 
+            src="/assets/ICO/icon.ico" 
             height="100" 
             width="100" 
             alt="Icon" 
