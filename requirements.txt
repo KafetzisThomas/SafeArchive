@@ -3,7 +3,7 @@ dropbox==11.36.2
 pyzipper==0.3.6
 PyDrive2==1.18.0
 humanize==4.6.0
-psutil==5.9.4
+psutil==6.0.0
 Pillow==10.3.0
 mega.py==1.0.8
 plyer==2.1.0
