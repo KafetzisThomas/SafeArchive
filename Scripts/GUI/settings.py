@@ -24,9 +24,10 @@ class Settings:
         self.create_compression_method_combobox()
         self.display_compression_level_label()
         self.create_compression_level_combobox()
+        self.display_keep_my_backups_label()
+        self.create_keep_my_backups_combobox()
         self.create_encryption_switch()
         self.create_notifications_switch()
-        self.create_allowZip64_switch()
 
 
     def create_settings_window(self):
@@ -142,6 +143,23 @@ class Settings:
 
         compression_level_combobox.place(x=465, y=55)
 
+    def display_keep_my_backups_label(self):
+        keep_my_backups_label = ctk.CTkLabel(master=self.frame, text="Keep my backups:", font=('Helvetica', 15))
+        keep_my_backups_label.place(x=295, y=90)
+
+    def create_keep_my_backups_combobox(self):
+        backup_expiry_date_combobox_var = ctk.StringVar(value=config['backup_expiry_date'])
+        backup_expiry_date_options = ["1 month", "3 months", "6 months", "9 months", "1 year", "Forever"]
+        backup_expiry_date_combobox = ctk.CTkComboBox(
+            master=self.frame,
+            width=130,
+            values=backup_expiry_date_options,
+            command=lambda choice: Combobox(key='backup_expiry_date', choice=choice),
+            variable=backup_expiry_date_combobox_var
+        )
+
+        backup_expiry_date_combobox.place(x=465, y=90)
+
 
     def create_encryption_switch(self):
         encryption_switch_var = ctk.StringVar(value="on" if config['encryption'] else "off")
@@ -155,7 +173,7 @@ class Settings:
             offvalue="off"
         )
 
-        encryption_switch.place(x=295, y=92)
+        encryption_switch.place(x=295, y=130)
 
 
     def create_notifications_switch(self):
@@ -171,18 +189,3 @@ class Settings:
         )
 
         notifications_switch.place(x=10, y=130)
-
-
-    def create_allowZip64_switch(self):
-        allowZip64_switch_var = ctk.StringVar(value="on" if config['allowZip64'] else "off")
-        allowZip64_switch = ctk.CTkSwitch(
-            master=self.frame,
-            text="allowZip64",
-            font=('Helvetica', 15),
-            command=lambda: Switch(key='allowZip64', switch_var=allowZip64_switch_var),
-            variable=allowZip64_switch_var,
-            onvalue="on",
-            offvalue="off"
-        )
-
-        allowZip64_switch.place(x=295, y=130)

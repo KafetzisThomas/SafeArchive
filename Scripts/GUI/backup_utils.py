@@ -23,7 +23,7 @@ class Backup:
         """
         Zip (backup) source path files to destination path:
             * Supported compression methods: ZIP_DEFLATED, ZIP_STORED, ZIP_LZMA, ZIP_BZIP2
-            * Enable/Disable Zip64 (this parameter use the ZIP64 extensions when the zip file is larger than 4gb)
+            * Enabled Zip64 (this parameter use the ZIP64 extensions when the zip file is larger than 4GiB)
             * Set compression level (1: fast ... 9: saves storage space)
         """
         if get_drive_usage_percentage() <= 90:
@@ -33,7 +33,6 @@ class Backup:
             try:
                 file_name = f"{DESTINATION_PATH}{date.today()}.zip"
                 compression_method = self.get_compression_method()
-                allowZip64 = config['allowZip64']
                 compression_level = config['compression_level']
                 if config['encryption'] and (config['compression_method'] == "ZIP_DEFLATED" or config['compression_method'] == "ZIP_STORED"):
                     encryption = pyzipper.WZ_AES
@@ -42,7 +41,7 @@ class Backup:
                     encryption = None
                     self.password = None
 
-                with pyzipper.AESZipFile(file=file_name, mode='w', compression=compression_method, encryption=encryption, allowZip64=allowZip64, compresslevel=int(compression_level)) as zipObj:
+                with pyzipper.AESZipFile(file=file_name, mode='w', compression=compression_method, encryption=encryption, allowZip64=True, compresslevel=int(compression_level)) as zipObj:
                     try:
                         zipObj.setpassword(self.password)
                     except UnboundLocalError:
