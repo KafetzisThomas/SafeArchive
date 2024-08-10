@@ -175,11 +175,6 @@ class App(ctk.CTk):
             master=self, text="CLOSE", command=self.destroy)
         close_button.place(x=350, y=450)
 
-        if config['system_tray'] and config['platform'] == "Windows":
-            from Scripts.GUI.system_tray import hide_window
-            self.protocol('WM_DELETE_WINDOW', lambda: hide_window(
-                DESTINATION_PATH=DESTINATION_PATH, App=self))
-
 
 if __name__ == "__main__":
     app = App()

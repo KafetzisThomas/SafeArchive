@@ -53,7 +53,6 @@ config = ConfigDict({
         "destination_path": "Destination path (storage media) for backups (type: string)",
         "notifications": "Enable/Disable notifications (type: boolean)",
         "encryption": "Enable/Disable encryption on backups (type: boolean)",
-        "system_tray": "Enable or disable system tray [Windows] (type: boolean)",
         "appearance_mode": "Appearance mode for the application (type: string)",
         "color_theme": "Color theme for the application (type: string)",
         "backup_expiry_date": "Expiry date for the backups in the storage media (type: string)",
@@ -77,7 +76,6 @@ config = ConfigDict({
     ],
     "destination_path": os.path.abspath(os.sep).replace("\\", "/") if platform.system() == "Windows" else os.path.join(os.path.expanduser("~"), ""),
     "notifications": True,
-    "system_tray": True,
     "encryption": False,
     "appearance_mode": "dark",
     "color_theme": "blue",
@@ -102,7 +100,6 @@ def get_config_info():
     print(f"{F.LIGHTGREEN_EX}Source paths:{F.RESET} {config['source_paths']}")
     print(f"{F.LIGHTGREEN_EX}Destination path:{F.RESET} {config['destination_path']}")
     print(f"{F.LIGHTGREEN_EX}Notifications:{F.RESET} {config['notifications']}")
-    print(f"{F.LIGHTGREEN_EX}System tray:{F.RESET} {config['system_tray']}")
     print(f"{F.LIGHTGREEN_EX}Encryption:{F.RESET} {config['encryption']}")
     print(f"{F.LIGHTGREEN_EX}Appearance mode:{F.RESET} {config['appearance_mode']}")
     print(f"{F.LIGHTGREEN_EX}Color theme:{F.RESET} {config['color_theme']}")

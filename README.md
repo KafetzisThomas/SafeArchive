@@ -38,7 +38,7 @@
     * FTP
 - [X] Multi-threaded Backup Process
 - [X] Command-Line Interface (CLI) Support
-- [X] System Tray Integration & Notifications
+- [X] Real-time system notifications
 - [X] Backup Encryption & Restoration
 
 ## Setup
@@ -85,12 +85,6 @@
     <img
         alt = 'Settings Window'
         src = 'https://github.com/KafetzisThomas/SafeArchive/assets/105563667/2c1a016c-8b80-42e9-a10e-50c933627f87'>
-    <br>
-    <h2>System Tray Icon<br>(Taskbar Icon)</h2>
-    <br>
-    <img
-        alt = 'System Tray Icon (Taskbar Icon)'
-        src = 'https://user-images.githubusercontent.com/105563667/236020690-da79fd52-fce6-4266-8d66-e0ad3a8d2583.png'>
     <br>
 </div>
 
