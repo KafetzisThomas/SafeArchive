@@ -6,7 +6,7 @@ import pyzipper
 import threading
 from datetime import date
 from pyzipper import BadZipFile
-from ..cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
+from ..cloud_utils import GoogleDriveCloud, FTP, Dropbox
 from ..system_notifications import notify_user
 from ..file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
 from ..configs import config
@@ -14,7 +14,6 @@ import customtkinter as ctk
 
 google_drive = GoogleDriveCloud()
 ftp = FTP()
-mega_cloud = MegaCloud()
 dropbox = Dropbox()
 
 class Backup:
@@ -126,8 +125,6 @@ class Backup:
             google_drive.backup_to_google_drive(DESTINATION_PATH)    
         elif config['storage_provider'] == "FTP":
             ftp.backup_to_ftp_server(DESTINATION_PATH)
-        elif config['storage_provider'] == "Mega":
-            mega_cloud.backup_to_mega(DESTINATION_PATH)
         elif config['storage_provider'] == "Dropbox":
             dropbox.upload_to_dropbox(DESTINATION_PATH)
 

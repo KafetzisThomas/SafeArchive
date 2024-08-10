@@ -9,7 +9,7 @@ import colorama
 from datetime import date
 from pyzipper import BadZipFile
 from ..file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
-from ..cloud_utils import GoogleDriveCloud, FTP, MegaCloud, Dropbox
+from ..cloud_utils import GoogleDriveCloud, FTP, Dropbox
 from ..system_notifications import notify_user
 from ..configs import config
 from getpass import getpass
@@ -18,7 +18,6 @@ colorama.init(autoreset=True)
 
 config.load()
 google_drive = GoogleDriveCloud()
-mega_cloud = MegaCloud()
 dropbox = Dropbox()
 ftp = FTP()
 
@@ -121,8 +120,6 @@ class Backup:
             google_drive.backup_to_google_drive(DESTINATION_PATH)
         elif config['storage_provider'] == "FTP":
             ftp.backup_to_ftp_server(DESTINATION_PATH)
-        elif config['storage_provider'] == "Mega":
-            mega_cloud.backup_to_mega(DESTINATION_PATH)
         elif config['storage_provider'] == "Dropbox":
             dropbox.upload_to_dropbox(DESTINATION_PATH)
 

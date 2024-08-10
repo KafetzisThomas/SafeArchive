@@ -33,7 +33,6 @@
 - [ ] Automatic Backups in the background (beta)
 - [X] Cloud Integration
     * Google Drive
-    * MEGA
     * Dropbox
     * FTP
 - [X] Multi-threaded Backup Process

@@ -15,7 +15,6 @@ import os
 import sys
 import ftplib
 import dropbox
-from mega import Mega
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 from pydrive2.settings import InvalidConfigError
@@ -23,7 +22,6 @@ from .system_notifications import notify_user
 from .configs import config
 
 config.load()
-mega = Mega()
 
 
 class GoogleDriveCloud:
@@ -194,47 +192,6 @@ class FTP:
         """Disconnect from FTP Server"""
         if self.ftp_server:
             self.ftp_server.quit()
-
-
-class MegaCloud:
-
-    def backup_to_mega(self, DESTINATION_PATH):
-        """Upload folder and files to Mega account"""
-        self.initialize_connection()
-        if self.get_used_space_percentage() < 90:
-            folder = self.create_directory()
-            for file_name in os.listdir(DESTINATION_PATH):
-                file_path = os.path.join(DESTINATION_PATH, file_name)
-                self.m.upload(file_path, folder[0])
-        else:
-            notify_user(
-                title='SafeArchive: [Warning] Your Mega storage is running out.',
-                message='Your Mega storage is almost full. To make sure your files can sync, clean up space.',
-                icon='cloud.ico'
-            )
-
-
-    def initialize_connection(self):
-        """Login to Mega"""
-        self.m = mega.login(config['mega_email'], config['mega_password'])
-
-
-    def get_used_space_percentage(self):
-        """Return used space percentage"""
-        space = self.m.get_storage_space(kilo=True)
-        total_space = space.get('total')
-        used_space = space.get('used')
-        space_usage_percentage = (used_space / total_space) * 100
-        return space_usage_percentage
-
-
-    def create_directory(self):
-        """Create directory on Mega account"""
-        files = self.m.get_files()
-        if "SafeArchive" not in files:
-            self.m.create_folder('SafeArchive')
-        folder = self.m.find('SafeArchive')
-        return folder
 
 
 class Dropbox:

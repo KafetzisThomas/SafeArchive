@@ -63,8 +63,6 @@ config = ConfigDict({
         "ftp_hostname": "Hostname for FTP configuration (type: string)",
         "ftp_username": "Username for FTP configuration (type: string)",
         "ftp_password": "Password for FTP configuration (type: string)",
-        "mega_email": "Email for Mega login (type: string)",
-        "mega_password": "Password for Mega login (type: string)",
         "dropbox_access_token": "Access Dropbox account using token with individual scopes (type: string)"
   },
     "platform": platform.system(),
@@ -86,8 +84,6 @@ config = ConfigDict({
     "ftp_hostname": "",
     "ftp_username": "",
     "ftp_password": "",
-    "mega_email": "",
-    "mega_password": "",
     "dropbox_access_token": ""
 }, SETTINGS_PATH)
 
@@ -113,8 +109,6 @@ def get_config_info():
     print(f"{F.LIGHTGREEN_EX}FTP hostname:{F.RESET} {config['ftp_hostname']}")
     print(f"{F.LIGHTGREEN_EX}FTP username:{F.RESET} {config['ftp_username']}")
     print(f"{F.LIGHTGREEN_EX}FTP password:{F.RESET} {config['ftp_password']}")
-    print(f"{F.LIGHTGREEN_EX}Mega email:{F.RESET} {config['mega_email']}")
-    print(f"{F.LIGHTGREEN_EX}Mega password:{F.RESET} {config['mega_password']}")
     print(
         f"{F.LIGHTGREEN_EX}Dropbox access token:{F.RESET} {config['dropbox_access_token']}\n"
     )
