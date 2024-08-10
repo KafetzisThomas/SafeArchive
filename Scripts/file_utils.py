@@ -2,7 +2,6 @@
 # -*- coding: UTF-8 -*-
 
 import os
-import sys
 import psutil
 import datetime
 from .system_notifications import notify_user
