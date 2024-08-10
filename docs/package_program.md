@@ -17,7 +17,7 @@ If you need to package the program yourself, follow these steps:
     <fullpath>/site-packages/customtkinter;customtkinter/" "main.py"
     ```
 
-   ## Linux:
+   ## Linux/macOS:
 
    Debian: 
 

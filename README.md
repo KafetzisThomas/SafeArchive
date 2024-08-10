@@ -21,7 +21,7 @@
 
 ---
 
-**Supported platforms**: `Windows` & `Linux`
+**Supported platforms**: `Windows`, `Linux`, `macOS`
 
 ## Features
 

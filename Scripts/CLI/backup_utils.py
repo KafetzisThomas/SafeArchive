@@ -18,9 +18,9 @@ colorama.init(autoreset=True)
 
 config.load()
 google_drive = GoogleDriveCloud()
-ftp = FTP()
 mega_cloud = MegaCloud()
 dropbox = Dropbox()
+ftp = FTP()
 
 
 class Backup:

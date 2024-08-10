@@ -11,6 +11,7 @@ from prettytable import PrettyTable
 from ..configs import config
 from ..system_notifications import notify_user
 from colorama import Fore as F
+
 colorama.init(autoreset=True)
 config.load()
 
@@ -22,7 +23,6 @@ class RestoreBackup:
         Extract (restore) selected zip file (backup)
         Move zip file content to it's original location
         """
-
         table = PrettyTable()
         table.field_names = ["ID", "Backups", "Type"]
 

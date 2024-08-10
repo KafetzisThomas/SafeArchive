@@ -3,7 +3,7 @@
 
 """
 This file serves as the command-line interface (CLI) version of the program.
-Supportive Platforms: Windows, Linux
+Supportive Platforms: Windows, Linux, macOS
 """
 
 # Import built-in modules
@@ -11,9 +11,6 @@ import os
 import sys
 import time
 import platform
-
-# Append the parent directory to the sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 # Import module files
 from Scripts.CLI.backup_utils import Backup
@@ -24,11 +21,8 @@ from Scripts.file_utils import (
     last_backup,
     create_destination_directory_path,
 )
-from Scripts.CLI.file_utils import get_config_info, edit_configs
 from Scripts.system_notifications import notify_user
-from Scripts.configs import config
-
-config.load()
+from Scripts.configs import config, get_config_info
 
 # Import other (third-party) modules
 import humanize
@@ -36,21 +30,17 @@ import colorama
 from art import text2art
 from colorama import Fore as F, Back as B
 
-colorama.init(autoreset=True)
-
 backup = Backup()
 restore_backup = RestoreBackup()
+colorama.init(autoreset=True)
+config.load()
 
 # Check system platform to set correct console clear command
 clear_command = "cls" if platform.system() == "Windows" else "clear"
 os.system(clear_command)
 
-try:
-    DESTINATION_PATH = (
-        config["destination_path"] + "SafeArchive/"
-    )  # Get value from the JSON file
-except TypeError:
-    pass
+# Get value from the JSON file
+DESTINATION_PATH = config["destination_path"] + "SafeArchive/"
 
 # Run check on python version, must be 3.6 or higher because of f strings
 if sys.version_info[0] < 3 or sys.version_info[1] < 6:
@@ -61,13 +51,6 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 6:
         + str(sys.version_info[1])
     )
     sys.exit()
-
-try:
-    if sys.argv[1] == "conf" or sys.argv[1] == "--conf" or sys.argv[1] == "-c":
-        edit_configs()
-        sys.exit()
-except IndexError:
-    pass
 
 create_destination_directory_path(DESTINATION_PATH)
 print(text2art("SafeArchive-CLI"))
@@ -94,7 +77,7 @@ print(
 )
 
 try:
-    choice = int(input("\nChoice (1-2): "))
+    choice = int(input("\nChoice (1-3): "))
 except ValueError:
     notify_user(message="Undefined choice.", terminal_color=F.LIGHTRED_EX)
     sys.exit()

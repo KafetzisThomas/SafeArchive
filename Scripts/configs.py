@@ -7,10 +7,13 @@ It also automatically triggers the saving of the configuration file whenever a s
 """
 
 import os
-import sys
 import json
 import platform
+import colorama
 from pathlib import Path
+from colorama import Fore as F
+
+colorama.init(autoreset=True)
 
 
 class ConfigDict(dict):
@@ -45,7 +48,7 @@ class ConfigDict(dict):
 SETTINGS_PATH = 'settings.json'
 config = ConfigDict({
     "_comments": {
-        "platform": "Get name of operating system (Windows, Linux)",
+        "platform": "Get name of operating system (Windows, Linux, macOS)",
         "source_paths": "List of source paths (local folders) for backups (type: list with strings)",
         "destination_path": "Destination path (storage media) for backups (type: string)",
         "notifications": "Enable/Disable notifications (type: boolean)",
@@ -91,6 +94,37 @@ config = ConfigDict({
     "mega_password": "",
     "dropbox_access_token": ""
 }, SETTINGS_PATH)
+
+
+def get_config_info():
+    print("Config Info:")
+    print(f"\n{F.LIGHTGREEN_EX}Platform:{F.RESET} {config['platform']}")
+    print(f"{F.LIGHTGREEN_EX}Source paths:{F.RESET} {config['source_paths']}")
+    print(f"{F.LIGHTGREEN_EX}Destination path:{F.RESET} {config['destination_path']}")
+    print(f"{F.LIGHTGREEN_EX}Notifications:{F.RESET} {config['notifications']}")
+    print(f"{F.LIGHTGREEN_EX}System tray:{F.RESET} {config['system_tray']}")
+    print(f"{F.LIGHTGREEN_EX}Encryption:{F.RESET} {config['encryption']}")
+    print(f"{F.LIGHTGREEN_EX}Appearance mode:{F.RESET} {config['appearance_mode']}")
+    print(f"{F.LIGHTGREEN_EX}Color theme:{F.RESET} {config['color_theme']}")
+    print(
+        f"{F.LIGHTGREEN_EX}Backup expiry date:{F.RESET} {config['backup_expiry_date']}"
+    )
+    print(f"{F.LIGHTGREEN_EX}Storage provider:{F.RESET} {config['storage_provider']}")
+    print(
+        f"{F.LIGHTGREEN_EX}Compression method:{F.RESET} {config['compression_method']}"
+    )
+    print(f"{F.LIGHTGREEN_EX}Allow Zip64:{F.RESET} {config['allowZip64']}")
+    print(f"{F.LIGHTGREEN_EX}Compression level:{F.RESET} {config['compression_level']}")
+    print(f"{F.LIGHTGREEN_EX}Backup interval:{F.RESET} {config['backup_interval']}")
+    print(f"{F.LIGHTGREEN_EX}FTP hostname:{F.RESET} {config['ftp_hostname']}")
+    print(f"{F.LIGHTGREEN_EX}FTP username:{F.RESET} {config['ftp_username']}")
+    print(f"{F.LIGHTGREEN_EX}FTP password:{F.RESET} {config['ftp_password']}")
+    print(f"{F.LIGHTGREEN_EX}Mega email:{F.RESET} {config['mega_email']}")
+    print(f"{F.LIGHTGREEN_EX}Mega password:{F.RESET} {config['mega_password']}")
+    print(
+        f"{F.LIGHTGREEN_EX}Dropbox access token:{F.RESET} {config['dropbox_access_token']}\n"
+    )
+
 
 if not os.path.exists(config.path):
     config.save()
