@@ -27,13 +27,12 @@ class Settings:
         self.create_encryption_switch()
         self.create_notifications_switch()
         self.create_allowZip64_switch()
-        self.display_apply_btn()
 
 
     def create_settings_window(self):
         self.settings_window = tk.Toplevel(self.App)
         self.settings_window.title("Settings")
-        self.settings_window.geometry("620x230")
+        self.settings_window.geometry("620x190")
         self.settings_window.iconbitmap("assets/ICO/gear.ico") if config['platform'] == "Windows" else None
         self.settings_window.resizable(False, False)  # Disable minimize/maximize buttons
         self.settings_window.configure(background=self.get_window_background())
@@ -187,13 +186,3 @@ class Settings:
         )
 
         allowZip64_switch.place(x=295, y=130)
-
-
-    def apply_btn(self):
-        """Close window (settings_window)"""
-        self.settings_window.destroy()
-
-
-    def display_apply_btn(self):
-        apply_button = ctk.CTkButton(master=self.settings_window, text="Apply", command=self.apply_btn)
-        apply_button.place(x=230, y=190)
