@@ -78,7 +78,7 @@ config = ConfigDict({
     "encryption": False,
     "appearance_mode": "dark",
     "color_theme": "blue",
-    "backup_expiry_date": "Forever (default)" if os.path.basename(sys.argv[0]) == "main.py" else None,  # Get name of the script being executed
+    "backup_expiry_date": "Forever (default)",
     "storage_provider": "None",
     "compression_method": "ZIP_DEFLATED",
     "allowZip64": True,
