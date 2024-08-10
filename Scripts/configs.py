@@ -78,7 +78,7 @@ config = ConfigDict({
     "encryption": False,
     "appearance_mode": "dark",
     "color_theme": "blue",
-    "backup_expiry_date": "Forever (default)",
+    "backup_expiry_date": "Forever",
     "storage_provider": "None",
     "compression_method": "ZIP_DEFLATED",
     "allowZip64": True,

@@ -27,7 +27,7 @@ class Backup:
             * Set compression level (1: fast ... 9: saves storage space)
         """
         if get_drive_usage_percentage() <= 90:
-            if config['backup_expiry_date'] != "Forever (default)":
+            if config['backup_expiry_date'] != "Forever":
                 backup_expiry_date(DESTINATION_PATH)
 
             try:

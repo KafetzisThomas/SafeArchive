@@ -102,7 +102,7 @@ class App(ctk.CTk):
         backup_expiry_date_combobox_var = ctk.StringVar(
             value=config['backup_expiry_date'])
         backup_expiry_date_options = [
-            "1 month", "3 months", "6 months", "9 months", "1 year", "Forever (default)"]
+            "1 month", "3 months", "6 months", "9 months", "1 year", "Forever"]
 
         backup_expiry_date_combobox = ctk.CTkComboBox(
             master=self,

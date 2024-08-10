@@ -36,7 +36,7 @@ class Backup:
         if get_drive_usage_percentage() <= 90:
             print("[+] driver usage is below 90%")
             print("[!] setting expiry date..")
-            if config['backup_expiry_date'] != None:
+            if config['backup_expiry_date'] != "Forever":
                 backup_expiry_date(DESTINATION_PATH)
 
             file_name = f"{DESTINATION_PATH}{date.today()}.zip"
