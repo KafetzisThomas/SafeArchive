@@ -32,7 +32,7 @@ class About:
     def create_about_window(self):
         self.about_window = tk.Toplevel(self.App)
         self.about_window.title("About SafeArchive")
-        self.about_window.geometry("410x245")
+        self.about_window.geometry("513x305")
         self.about_window.iconbitmap("assets/ICO/info.ico") if config['platform'] == "Windows" else None
         self.about_window.resizable(False, False)  # Disable minimize/maximize buttons
         self.about_window.configure(background=self.get_window_background())

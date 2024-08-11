@@ -61,7 +61,7 @@ class App(ctk.CTk):
         drive_combobox_var = ctk.StringVar(value=DESTINATION_PATH.replace('SafeArchive/', ''))
         drives_combobox = ctk.CTkComboBox(
             master=self,
-            width=470,
+            width=475,
             values=get_available_drives(),
             command=lambda choice: Combobox(key='destination_path', choice=choice),
             variable=drive_combobox_var
@@ -91,7 +91,7 @@ class App(ctk.CTk):
         listbox = tk.Listbox(
             master=frame,
             height=4,
-            width=52,
+            width=53,
             background=ui.get_background_color(),
             foreground=ui.get_foreground_color(),
             activestyle='dotbox',

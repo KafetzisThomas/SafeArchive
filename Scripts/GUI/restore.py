@@ -80,7 +80,7 @@ class RestoreBackup:
     def create_restore_button(self):
         self.App.restore_button = ctk.CTkButton(
             master=self.restore_window, text="Restore backup", command=self.run_restore_thread)
-        self.App.restore_button.place(x=140, y=205)
+        self.App.restore_button.place(x=95, y=163)
 
 
     def run_restore_thread(self):
