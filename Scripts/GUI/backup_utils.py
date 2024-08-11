@@ -52,7 +52,7 @@ class Backup:
                     # Iterate over each path in the source list
                     for item in SOURCE_PATHS:
                         source_item_label = ctk.CTkLabel(master=App, text=item, height=20, font=('Helvetica', 12))
-                        source_item_label.place(x=15, y=430)
+                        source_item_label.place(x=15, y=290)
 
                         # Iterate over the files and folders in the path
                         for root, dirs, files in os.walk(item):
