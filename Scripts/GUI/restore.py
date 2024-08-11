@@ -12,9 +12,7 @@ import customtkinter as ctk
 
 class RestoreBackup:
     """
-    Create a toplevel widget containing a listbox inside a frame
-    Show last backups inside the listbox
-    Restore last backup files by selecting a specific one
+    Provide functionality to restore backups from a zip file.
     """
 
     def __init__(self, App, DESTINATION_PATH):
@@ -69,7 +67,9 @@ class RestoreBackup:
 
 
     def populate_listbox(self):
-        """Populate listbox with the zip file names from the DESTINATION_PATH directory"""
+        """
+        Populate listbox with the zip file names from the DESTINATION_PATH directory.
+        """
         for index, zip_file in enumerate(os.listdir(self.DESTINATION_PATH)):
             filename, _, filetype = zip_file.partition('.')
             if filetype == 'zip':
@@ -84,16 +84,16 @@ class RestoreBackup:
 
 
     def run_restore_thread(self):
-        """Create restore process thread"""
+        """
+        Create and start a thread for the restore process.
+        """
         threading.Thread(target=self.extract_item, daemon=True).start()
 
 
     def extract_item(self):
         """
-        Extract (restore) selected zip file (backup)
-        Move zip file content to it's original location
+        Extract selected zip file & move zip file content to it's original location.
         """
-
         self.disable_restore_button()
         for item in self.listbox.curselection():
             file_name = f"{self.DESTINATION_PATH}{self.listbox.get(item)}.zip"
@@ -115,15 +115,16 @@ class RestoreBackup:
 
 
     def get_backup_password(self):
+        """
+        Prompt the user to enter password and return it as bytes.
+        """
         password = ctk.CTkInputDialog(text="Backup Password:", title="Backup Encryption")
         return bytes(password.get_input(), 'utf-8')
 
 
     def disable_restore_button(self):
-        """Change restore button state to disabled"""
         self.App.restore_button.configure(state="disabled")
 
 
     def enable_restore_button(self):
-        """Change restore button state back to normal"""
         self.App.restore_button.configure(state="normal")

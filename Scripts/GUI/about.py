@@ -9,8 +9,9 @@ from ..configs import config
 
 
 class About:
-    """Create a toplevel widget containing a frame with information about the program"""
-
+    """
+    Create a toplevel widget containing a frame with information about the program.
+    """
     def __init__(self, App, version):
         self.App = App
         self.version = version
@@ -43,14 +44,23 @@ class About:
 
 
     def get_window_background(self):
+        """
+        Determine the background color of the window based on the application's appearance mode.
+        """
         return "#242424" if config['appearance_mode'] == "dark" else "#ebebeb"
 
 
     def get_bg_color(self):
+        """
+        Determine the background color of the frame based on the application's appearance mode.
+        """
         return "#343638" if config['appearance_mode'] == "dark" else "#ebebeb"
 
 
     def get_fg_color(self):
+        """
+        Determine the foreground color (text color) based on the application's appearance mode.
+        """
         return "#2b2b2b" if config['appearance_mode'] == "dark" else "#dbdbdb"
 
 

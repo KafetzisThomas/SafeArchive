@@ -8,8 +8,9 @@ from ..configs import config
 
 
 class Settings:
-    """Create a toplevel widget containing a frame with settings"""
-
+    """
+    Create a toplevel widget containing a frame with settings.
+    """
     def __init__(self, App):
         self.App = App
         self.create_settings_window()

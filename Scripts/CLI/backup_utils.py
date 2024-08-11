@@ -3,6 +3,7 @@
 
 import os
 import sys
+import time
 import pyzipper
 import threading
 import colorama
@@ -23,13 +24,16 @@ ftp = FTP()
 
 
 class Backup:
+    """
+    Handle the creation, compression, encryption, and storage of backups.
+    """
 
     def zip_files(self, SOURCE_PATHS, DESTINATION_PATH):
         """
         Zip (backup) source path files to destination path:
-            * Supported compression methods: ZIP_DEFLATED, ZIP_STORED, ZIP_LZMA, ZIP_BZIP2
-            * Enabled Zip64 (this parameter use the ZIP64 extensions when the zip file is larger than 4GiB)
-            * Set compression level (1: fast ... 9: saves storage space)
+            * Supported compression methods: ZIP_DEFLATED, ZIP_STORED, ZIP_LZMA, ZIP_BZIP2.
+            * Enabled Zip64 (this parameter use the ZIP64 extensions when the zip file is larger than 4GiB).
+            * Set compression level (1: fast ... 9: saves storage space).
         """
         print("[!] backup init")
         if get_drive_usage_percentage() <= 90:
@@ -58,6 +62,7 @@ class Backup:
                 except UnboundLocalError:
                     pass
 
+                start = time.time()
                 print("[!] iterating..")
                 i, l = 1, 1
                 # Iterate over each path in the source list
@@ -77,16 +82,21 @@ class Backup:
                             zipObj.write(filepath)
                         l += 1
                     i += 1
+                end = time.time()
 
             self.check_zip_file(DESTINATION_PATH)
             self.upload_to_cloud(DESTINATION_PATH)
+            print(f"[!] Finished in {end-start:.1f}s")
             notify_user(message="Backup completed successfully.", terminal_color=F.LIGHTYELLOW_EX)
         else:
             notify_user(message="Your Drive storage is almost full.\nTo make sure your files can sync, clean up space.", terminal_color=F.LIGHTYELLOW_EX)
 
 
     def get_compression_method(self):
-        # Define a mapping from JSON values to pyzipper attributes
+        """
+        Retrieve the compression method specified in the configuration.
+        Return the corresponding pyzipper attribute.
+        """
         compression_mapping = {
             "ZIP_STORED": pyzipper.ZIP_STORED,
             "ZIP_DEFLATED": pyzipper.ZIP_DEFLATED,
@@ -94,17 +104,15 @@ class Backup:
             "ZIP_LZMA": pyzipper.ZIP_LZMA
         }
 
-        # Retrieve the compression method from the configuration
         compression_method_key = config['compression_method']
-
-        # Get the corresponding pyzipper attribute
         compression_method = compression_mapping.get(compression_method_key)
-
         return compression_method
 
 
     def check_zip_file(self, DESTINATION_PATH):
-        """Check if zip file is valid and not corrupted"""
+        """
+        Check if the zip file is valid and not corrupted.
+        """
         filepath = os.path.join(DESTINATION_PATH, last_backup(DESTINATION_PATH))
         try:
             with pyzipper.AESZipFile(f"{filepath}.zip") as zf:
@@ -115,7 +123,9 @@ class Backup:
 
 
     def upload_to_cloud(self, DESTINATION_PATH):
-        """Initialize & Upload local backups to cloud"""
+        """
+        Initialize & upload local backups to the cloud.
+        """
         if config['storage_provider'] == "Google Drive":
             google_drive.backup_to_google_drive(DESTINATION_PATH)
         elif config['storage_provider'] == "FTP":
@@ -125,12 +135,16 @@ class Backup:
 
 
     def get_backup_password(self):
-        """Return user-input backup password in bytes (UTF-8)"""
+        """
+        Prompt the user to enter and confirm a password, returning it as bytes (UTF-8).
+        """
         password = getpass("Backup Password: ")
         confirm_password = getpass("Confirm Backup Password: ")
         return bytes(password, 'utf-8') if password == confirm_password else None
 
 
     def perform_backup(self, SOURCE_PATHS, DESTINATION_PATH):
-        """Start thread when backup is about to take action"""
+        """
+        Create and start a thread for the backup process.
+        """
         threading.Thread(target=self.zip_files(SOURCE_PATHS, DESTINATION_PATH), daemon=True).start()

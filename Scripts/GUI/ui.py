@@ -5,8 +5,9 @@ from ..configs import config
 
 
 class SetupUI:
-    """Manage UI configuration based on user preferences"""
-
+    """
+    Manage UI configuration based on user preferences.
+    """
     def __init__(self, DESTINATION_PATH):
         self.DESTINATION_PATH = DESTINATION_PATH
 

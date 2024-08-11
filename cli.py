@@ -9,7 +9,6 @@ Supportive Platforms: Windows, Linux, macOS
 # Import built-in modules
 import os
 import sys
-import time
 import platform
 
 # Import module files
@@ -53,28 +52,16 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 6:
     sys.exit()
 
 create_destination_directory_path(DESTINATION_PATH)
-print(text2art("SafeArchive-CLI"))
+print(text2art("SafeArchive"))
 print(f"> Author: {F.LIGHTYELLOW_EX}KafetzisThomas")
 print("-------------------------")
-print(
-    f"\n~ Last Backup: {B.LIGHTBLUE_EX}{F.WHITE} {last_backup(DESTINATION_PATH)} {B.RESET}{F.RESET}"
-)
-print(
-    f"~ Free space on ({DESTINATION_PATH.replace('SafeArchive/', '')}): {storage_media_free_space()} GB"
-)
+print(f"\n~ Last Backup: {B.LIGHTBLUE_EX}{F.WHITE} {last_backup(DESTINATION_PATH)} {B.RESET}{F.RESET}")
+print(f"~ Free space on ({DESTINATION_PATH.replace('SafeArchive/', '')}): {storage_media_free_space()} GB")
 print(f"~ Size of backup: {humanize.naturalsize(get_backup_size(DESTINATION_PATH))}")
-print(
-    f"\n1. {F.LIGHTMAGENTA_EX}Config{F.RESET} Info"
-    f" - Display {F.LIGHTCYAN_EX}your{F.RESET} preferences"
-)
-print(
-    f"2. {F.LIGHTMAGENTA_EX}Backup{F.RESET} Now"
-    f" - Zip source path files to {F.LIGHTCYAN_EX}destination{F.RESET} path"
-)
-print(
-    f"3. Restore {F.LIGHTGREEN_EX}previous{F.RESET} backup"
-    f" - {F.LIGHTBLACK_EX}Extract{F.RESET} selected zip file"
-)
+print("\nMenu Options:")
+print(f"  |- 1) Config {F.LIGHTWHITE_EX}Info{F.RESET} - Display your {F.LIGHTBLUE_EX}preferences{F.RESET}")
+print(f"  |- 2) {F.LIGHTMAGENTA_EX}Backup{F.RESET} Now - Zip source path files to {F.LIGHTCYAN_EX}destination{F.RESET} path")
+print(f"  |- 3) Restore {F.LIGHTGREEN_EX}past{F.RESET} backup - {F.LIGHTBLACK_EX}Extract{F.RESET} selected zip file")
 
 try:
     choice = int(input("\nChoice (1-3): "))
@@ -89,17 +76,11 @@ if choice == 1:
     display_config_info()
 elif choice == 2:
     try:
-        start = time.time()
-        backup.perform_backup(
-            SOURCE_PATHS=config["source_paths"], DESTINATION_PATH=DESTINATION_PATH
-        )
-        end = time.time()
-        time_elapsed = end - start
-        print(f"[Finished in {time_elapsed:.1f}s]")
+        backup.perform_backup(config["source_paths"], DESTINATION_PATH)
     except KeyboardInterrupt:
         notify_user(message="Backup process cancelled.", terminal_color=F.LIGHTRED_EX)
         sys.exit()
 elif choice == 3:
-    restore_backup.run_restore_thread(DESTINATION_PATH=DESTINATION_PATH)
+    restore_backup.run_restore_thread(DESTINATION_PATH)
 else:
     notify_user(message="Undefined choice.", terminal_color=F.LIGHTRED_EX)

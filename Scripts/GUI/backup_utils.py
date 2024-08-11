@@ -17,13 +17,16 @@ ftp = FTP()
 dropbox = Dropbox()
 
 class Backup:
+    """
+    Handle the creation, compression, encryption, and storage of backups.
+    """
 
     def zip_files(self, App, SOURCE_PATHS, DESTINATION_PATH):
         """
         Zip (backup) source path files to destination path:
-            * Supported compression methods: ZIP_DEFLATED, ZIP_STORED, ZIP_LZMA, ZIP_BZIP2
-            * Enabled Zip64 (this parameter use the ZIP64 extensions when the zip file is larger than 4GiB)
-            * Set compression level (1: fast ... 9: saves storage space)
+            * Supported compression methods: ZIP_DEFLATED, ZIP_STORED, ZIP_LZMA, ZIP_BZIP2.
+            * Enabled Zip64 (this parameter use the ZIP64 extensions when the zip file is larger than 4GiB).
+            * Set compression level (1: fast ... 9: saves storage space).
         """
         if get_drive_usage_percentage() <= 90:
             if config['backup_expiry_date'] != "Forever":
@@ -87,7 +90,10 @@ class Backup:
 
 
     def get_compression_method(self):
-        # Define a mapping from JSON values to pyzipper attributes
+        """
+        Retrieve the compression method specified in the configuration.
+        Return the corresponding pyzipper attribute.
+        """
         compression_mapping = {
             "ZIP_STORED": pyzipper.ZIP_STORED,
             "ZIP_DEFLATED": pyzipper.ZIP_DEFLATED,
@@ -95,17 +101,15 @@ class Backup:
             "ZIP_LZMA": pyzipper.ZIP_LZMA
         }
 
-        # Retrieve the compression method from the configuration
         compression_method_key = config['compression_method']
-
-        # Get the corresponding pyzipper attribute
         compression_method = compression_mapping.get(compression_method_key)
-
         return compression_method
 
 
     def check_zip_file(self, DESTINATION_PATH):
-        """Check if zip file is valid and not corrupted"""
+        """
+        Check if the zip file is valid and not corrupted.
+        """
         filepath = os.path.join(DESTINATION_PATH, last_backup(DESTINATION_PATH))
         try:
             with pyzipper.AESZipFile(f"{filepath}.zip") as zf:
@@ -120,7 +124,9 @@ class Backup:
 
 
     def upload_to_cloud(self, DESTINATION_PATH):
-        """Initialize & Upload local backups to cloud"""
+        """
+        Initialize & upload local backups to the cloud.
+        """
         if config['storage_provider'] == "Google Drive":
             google_drive.backup_to_google_drive(DESTINATION_PATH)    
         elif config['storage_provider'] == "FTP":
@@ -130,13 +136,17 @@ class Backup:
 
 
     def get_backup_password(self):
-        """Return user-input backup password in bytes (UTF-8)"""
+        """
+        Prompt the user to enter a password, returning it as bytes (UTF-8).
+        """
         password = ctk.CTkInputDialog(text="Backup Password:", title="Backup Encryption")
         return bytes(password.get_input(), 'utf-8')
 
 
     def start_progress_bar(self, App, SOURCE_PATHS, DESTINATION_PATH):
-        """Start/Stop progress bar & Call zip_files() function"""
+        """
+        Start/Stop the progress bar while performing the backup operation.
+        """
         App.backup_progressbar.start()
         App.backup_button.configure(state="disabled")
         self.zip_files(App, SOURCE_PATHS, DESTINATION_PATH)
@@ -145,6 +155,8 @@ class Backup:
 
 
     def perform_backup(self, App, SOURCE_PATHS, DESTINATION_PATH):
-        """Start thread when backup is about to take action"""
+        """
+        Create and start a thread for the backup process.
+        """
         threading.Thread(target=self.start_progress_bar, args=(
             App, SOURCE_PATHS, DESTINATION_PATH), daemon=True).start()
