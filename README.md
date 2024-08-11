@@ -42,23 +42,37 @@
 
 ## Setup
 
-1. Ensure you have Python `3.10` installed or set up a virtual environment specifically for that version:
+1. **Download or clone the repository**
 
-    ```py
-    $ python3.10 -m venv "env_name"
+    First, download or clone the repository to your local machine:
+
+    ```sh
+    $ git clone https://github.com/KafetzisThomas/SafeArchive.git
     ```
 
-2. Download or clone the repo, cd into the **GUI** or **CLI** folder and install the requirements using:
+2. **Install dependencies**
 
-    ```py
+    Navigate to the project directory and install the required python packages:
+
+    ```sh
     $ pip install -r requirements.txt
     ```
 
-3. How to Run:
+3. **Run the application**
 
-    ```py
-    $ python3 main.py
-    ```
+    - **With GUI**: To run the application with the graphical user interface (GUI), use:
+
+      ```sh
+      $ python3 main.py
+      ```
+
+    - **Without GUI**: To run the application without the GUI (CLI mode), use the `--nogui` option:
+
+      ```sh
+      $ python3 main.py --nogui
+      ```
+
+      This will start the application in command-line interface mode, bypassing the GUI components.
 
 **Note:** For the first run, I recommend you to exit the program after setting your preferences, so changes to be applied.
 
