@@ -83,18 +83,22 @@
 <div align = 'center'>
     <br>
     <img
+        height = '353'
         alt = 'Main Window - blue'
         src = 'https://github.com/user-attachments/assets/6bd47490-dd3b-4b69-8854-1470f53e1904'>
     <hr>
     <img
+        height = '353'
         alt = 'Main Window - green'
         src = 'https://github.com/user-attachments/assets/67ea5f0d-387e-4e5f-ae26-064783f269bb'>
     <hr>
     <img
+        height = '353'
         alt = 'Restore Backup Window' 
         src = 'https://github.com/user-attachments/assets/6cd80527-d166-4a24-b383-79ba18c552c0'>
     <hr>
     <img
+        height = '353'
         alt = 'Settings Window'
         src = 'https://github.com/user-attachments/assets/6cefd88b-254d-480a-b0ef-6d86bbee225b'>
     <br>
