@@ -81,23 +81,22 @@
 ## Screenshots
 
 <div align = 'center'>
-    <h2>Software Startup<br>(Drive Properties, Backup Options)</h2>
     <br>
     <img
-        alt = 'Software Startup (Drive Properties, Backup Options)' 
-        src = 'https://github.com/KafetzisThomas/SafeArchive/assets/105563667/3361483c-876c-4e08-911f-413233739bec'>
-    <br>
-    <h2>Restore Selected Backup</h2>
-    <br>
+        alt = 'Main Window - blue'
+        src = 'https://github.com/user-attachments/assets/6bd47490-dd3b-4b69-8854-1470f53e1904'>
+    <hr>
     <img
-        alt = 'Restore Selected Backup' 
-        src = 'https://github.com/KafetzisThomas/SafeArchive/assets/105563667/cee02400-6b7d-482d-a871-4c7e0ba3853a'>
-    <br>
-    <h2>Settings Window</h2>
-    <br>
+        alt = 'Main Window - green'
+        src = 'https://github.com/user-attachments/assets/67ea5f0d-387e-4e5f-ae26-064783f269bb'>
+    <hr>
+    <img
+        alt = 'Restore Backup Window' 
+        src = 'https://github.com/user-attachments/assets/6cd80527-d166-4a24-b383-79ba18c552c0'>
+    <hr>
     <img
         alt = 'Settings Window'
-        src = 'https://github.com/KafetzisThomas/SafeArchive/assets/105563667/2c1a016c-8b80-42e9-a10e-50c933627f87'>
+        src = 'https://github.com/user-attachments/assets/6cefd88b-254d-480a-b0ef-6d86bbee225b'>
     <br>
 </div>
 
