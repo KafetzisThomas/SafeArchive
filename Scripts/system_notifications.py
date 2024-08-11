@@ -5,11 +5,13 @@ import os
 import sys
 from pathlib import Path
 from plyer import notification
-from SafeArchive.Scripts.configs import config
+from .configs import config
 
 
 def notify_user(message, title=None, icon=None, terminal_color=None):
-    """Display notification message with specified title, message, and icon"""
+    """
+    Display notification message with specified title, message, and icon.
+    """
     if os.path.basename(sys.argv[0]) == "main.py":  # Get name of the script being executed
         if config['notifications']:
             notification.notify(
@@ -20,4 +22,4 @@ def notify_user(message, title=None, icon=None, terminal_color=None):
                 timeout=10
             )
     else:
-        print(f"{terminal_color}* {message}")
+        print(f"{terminal_color}[*] {message}")

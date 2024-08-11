@@ -2,15 +2,16 @@
 # -*- coding: UTF-8 -*-
 
 import os
-import sys
 import psutil
 import datetime
-from SafeArchive.Scripts.system_notifications import notify_user
-from SafeArchive.Scripts.configs import config
+from .system_notifications import notify_user
+from .configs import config
 
 
 def create_destination_directory_path(DESTINATION_PATH):
-    """Create the destination directory path if it doesn't exist"""
+    """
+    Create the destination directory path if it doesn't exist.
+    """
     try:
         if not os.path.exists(DESTINATION_PATH):
             os.makedirs(DESTINATION_PATH)
@@ -29,12 +30,13 @@ def create_destination_directory_path(DESTINATION_PATH):
 
 
 def get_backup_size(DESTINATION_PATH):
-    """Walk through all files in the destination path & return total size"""
+    """
+    Walk through all files in the destination path & return the total size.
+    """
     total_size = 0
     for dirpath, _, filenames in os.walk(DESTINATION_PATH):
         for file in filenames:
             filepath = os.path.join(dirpath, file)
-
             # Add size of each file to total size
             total_size += os.path.getsize(filepath)
 
@@ -42,28 +44,34 @@ def get_backup_size(DESTINATION_PATH):
 
 
 def storage_media_free_space():
-    """Return storage media free space"""
+    """
+    Return storage media free space.
+    """
     disk_usage = psutil.disk_usage(config['destination_path']).free
     free_space = round(disk_usage / (1024**3), 2)  # Convert free space to GB
     return free_space
 
 
 def get_drive_usage_percentage():
-    """Return drive usage percentage"""
+    """
+    Return drive usage percentage.
+    """
     drive_usage_percentage = psutil.disk_usage(config['destination_path']).percent
     return drive_usage_percentage
 
 
 def get_modification_time(file, DESTINATION_PATH):
-    """Return the modification time of zip file"""
+    """
+    Return the modification time of zip file.
+    """
     file_path = os.path.join(DESTINATION_PATH, file)
     return os.path.getmtime(file_path)
 
 
 def last_backup(DESTINATION_PATH):
     """
-    Check if last backup is older than 30 days, if True then display a system notification message
-    Return last backup date
+    Check if last backup is older than 30 days, if True then display a system notification message.
+    Return last backup date.
     """
     try:
         files = [file for file in os.listdir(DESTINATION_PATH) if os.path.isfile(os.path.join(DESTINATION_PATH, file))]  # Get a list of all the files in the destination path
@@ -96,29 +104,29 @@ def last_backup(DESTINATION_PATH):
 
 def backup_expiry_date(DESTINATION_PATH):
     """
-    Check if previous backups are older than expiry date
-    Remove every past backup if True
+    Check if previous backups are older than expiry date.
+    Remove every past backup if True.
     """
+    is_valid_expiry_date  = True
     for filename in os.listdir(DESTINATION_PATH):  # Iterate through all files in the destination directory
         filepath = os.path.join(DESTINATION_PATH, filename)
 
         modification_time = datetime.datetime.fromtimestamp(
             os.path.getmtime(filepath))  # Get the modification time of the file
 
-        if os.path.basename(sys.argv[0]) == "main.py":  # Get name of the script being executed
-            if config['backup_expiry_date'] == "1 month":
-                days = 30
-            elif config['backup_expiry_date'] == "3 months":
-                days = 90
-            elif config['backup_expiry_date'] == "6 months":
-                days = 180
-            elif config['backup_expiry_date'] == "9 months":
-                days = 270
-            elif config['backup_expiry_date'] == "1 year":
-                days = 365
+        if config['backup_expiry_date'] == "1 month":
+            days = 30
+        elif config['backup_expiry_date'] == "3 months":
+            days = 90
+        elif config['backup_expiry_date'] == "6 months":
+            days = 180
+        elif config['backup_expiry_date'] == "9 months":
+            days = 270
+        elif config['backup_expiry_date'] == "1 year":
+            days = 365
         else:
-            days = config['backup_expiry_date']
+            is_valid_expiry_date = False
 
         # Check if the file is older than JSON value
-        if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=int(days))):
+        if is_valid_expiry_date and modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=int(days))):
             os.remove(filepath)  # Delete the file

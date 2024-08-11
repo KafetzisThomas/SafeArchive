@@ -8,21 +8,23 @@ import threading
 import colorama
 from getpass import getpass
 from prettytable import PrettyTable
-from SafeArchive.Scripts.configs import config
-from SafeArchive.Scripts.system_notifications import notify_user
+from ..configs import config
+from ..system_notifications import notify_user
 from colorama import Fore as F
+
 colorama.init(autoreset=True)
 config.load()
 
 
 class RestoreBackup:
+    """
+    Provide functionality to restore backups from a zip file.
+    """
 
     def extract_item(self, DESTINATION_PATH, **backups_table):
         """
-        Extract (restore) selected zip file (backup)
-        Move zip file content to it's original location
+        Extract selected zip file & move zip file content to it's original location.
         """
-
         table = PrettyTable()
         table.field_names = ["ID", "Backups", "Type"]
 
@@ -63,10 +65,15 @@ class RestoreBackup:
 
 
     def get_backup_password(self):
+        """
+        Prompt the user to enter password and return it as bytes.
+        """
         password = getpass("Backup Password: ")
         return bytes(password, 'utf-8')
 
 
     def run_restore_thread(self, DESTINATION_PATH):
-        """Create restore process thread"""
+        """
+        Create and start a thread for the restore process.
+        """
         threading.Thread(target=self.extract_item(DESTINATION_PATH), daemon=True).start()

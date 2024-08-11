@@ -44,17 +44,7 @@ To sync your backups to your Dropbox, you will need an access token
 
 8. Select **Dropbox** as the storage provider
 
-
-# [Option 3] Set Up For Mega
-
-1. Enable the **'Back up to Cloud'** option (GUI) or set the corresponding JSON value to **true** (CLI)
-
-2. Select **Mega** as the storage provider
-
-3. Edit the configuration file (settings.json) and add your Mega **'email'** and **'password'** to the corresponding JSON keys **(for enhanced security, option to set credentials as environment variables will be implemented)**
-
-
-# [Option 4] Set Up For FTP Server
+# [Option 3] Set Up For FTP Server
 
 1. Enable the **'Back up to Cloud'** option (GUI) or set the corresponding JSON value to **true** (CLI)
 

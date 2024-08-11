@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-from SafeArchive.Scripts.configs import config
+from ..configs import config
 
 
 class SetupUI:
-    """Manage UI configuration based on user preferences"""
-
+    """
+    Manage UI configuration based on user preferences.
+    """
     def __init__(self, DESTINATION_PATH):
         self.DESTINATION_PATH = DESTINATION_PATH
 

@@ -5,12 +5,13 @@ import tkinter as tk
 import customtkinter as ctk
 from PIL import Image
 import webbrowser
-from SafeArchive.Scripts.configs import config
+from ..configs import config
 
 
 class About:
-    """Create a toplevel widget containing a frame with information about the program"""
-
+    """
+    Create a toplevel widget containing a frame with information about the program.
+    """
     def __init__(self, App, version):
         self.App = App
         self.version = version
@@ -31,7 +32,7 @@ class About:
     def create_about_window(self):
         self.about_window = tk.Toplevel(self.App)
         self.about_window.title("About SafeArchive")
-        self.about_window.geometry("410x245")
+        self.about_window.geometry("513x305")
         self.about_window.iconbitmap("assets/ICO/info.ico") if config['platform'] == "Windows" else None
         self.about_window.resizable(False, False)  # Disable minimize/maximize buttons
         self.about_window.configure(background=self.get_window_background())
@@ -43,14 +44,23 @@ class About:
 
 
     def get_window_background(self):
+        """
+        Determine the background color of the window based on the application's appearance mode.
+        """
         return "#242424" if config['appearance_mode'] == "dark" else "#ebebeb"
 
 
     def get_bg_color(self):
+        """
+        Determine the background color of the frame based on the application's appearance mode.
+        """
         return "#343638" if config['appearance_mode'] == "dark" else "#ebebeb"
 
 
     def get_fg_color(self):
+        """
+        Determine the foreground color (text color) based on the application's appearance mode.
+        """
         return "#2b2b2b" if config['appearance_mode'] == "dark" else "#dbdbdb"
 
 
