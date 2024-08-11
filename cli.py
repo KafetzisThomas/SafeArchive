@@ -22,7 +22,7 @@ from Scripts.file_utils import (
     create_destination_directory_path,
 )
 from Scripts.system_notifications import notify_user
-from Scripts.configs import config, get_config_info
+from Scripts.configs import config, display_config_info
 
 # Import other (third-party) modules
 import humanize
@@ -86,7 +86,7 @@ except KeyboardInterrupt:
     sys.exit()
 
 if choice == 1:
-    get_config_info()
+    display_config_info()
 elif choice == 2:
     try:
         start = time.time()

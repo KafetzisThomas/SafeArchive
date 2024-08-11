@@ -17,7 +17,9 @@ colorama.init(autoreset=True)
 
 
 class ConfigDict(dict):
-    """Set configs & save every time a setting changes"""
+    """
+    Set configs & save every time a setting changes.
+    """
     __slots__ = ["path"]
 
     def __init__(self, config: dict, path: str):
@@ -25,22 +27,30 @@ class ConfigDict(dict):
         self.path = Path(path)
 
     def __setitem__(self, key, value):
-        """Triggers whenever a value is set"""
+        """
+        Triggers whenever a value is set.
+        """
         super().__setitem__(key, value)
         self.save()
 
     def __delitem__(self, key):
-        """Triggers whenever a value is deleted"""
+        """
+        Triggers whenever a value is deleted.
+        """
         super().__delitem__(key)
         self.save()
 
     def save(self):
-        """Saves the config file to the given path"""
+        """
+        Saves the config file to the given path.
+        """
         with open(self.path, 'w') as file:
             json.dump(self, file, indent=2)
 
     def load(self):
-        """Loads the config file from the given path"""
+        """
+        Loads the config file from the given path.
+        """
         with open(self.path, 'r') as file:
             self.update(json.load(file))
 
@@ -88,30 +98,32 @@ config = ConfigDict({
 }, SETTINGS_PATH)
 
 
-def get_config_info():
-    print("Config Info:")
-    print(f"\n{F.LIGHTGREEN_EX}Platform:{F.RESET} {config['platform']}")
-    print(f"{F.LIGHTGREEN_EX}Source paths:{F.RESET} {config['source_paths']}")
-    print(f"{F.LIGHTGREEN_EX}Destination path:{F.RESET} {config['destination_path']}")
-    print(f"{F.LIGHTGREEN_EX}Notifications:{F.RESET} {config['notifications']}")
-    print(f"{F.LIGHTGREEN_EX}Encryption:{F.RESET} {config['encryption']}")
-    print(f"{F.LIGHTGREEN_EX}Appearance mode:{F.RESET} {config['appearance_mode']}")
-    print(f"{F.LIGHTGREEN_EX}Color theme:{F.RESET} {config['color_theme']}")
-    print(
-        f"{F.LIGHTGREEN_EX}Backup expiry date:{F.RESET} {config['backup_expiry_date']}"
-    )
-    print(f"{F.LIGHTGREEN_EX}Storage provider:{F.RESET} {config['storage_provider']}")
-    print(
-        f"{F.LIGHTGREEN_EX}Compression method:{F.RESET} {config['compression_method']}"
-    )
-    print(f"{F.LIGHTGREEN_EX}Compression level:{F.RESET} {config['compression_level']}")
-    print(f"{F.LIGHTGREEN_EX}Backup interval:{F.RESET} {config['backup_interval']}")
-    print(f"{F.LIGHTGREEN_EX}FTP hostname:{F.RESET} {config['ftp_hostname']}")
-    print(f"{F.LIGHTGREEN_EX}FTP username:{F.RESET} {config['ftp_username']}")
-    print(f"{F.LIGHTGREEN_EX}FTP password:{F.RESET} {config['ftp_password']}")
-    print(
-        f"{F.LIGHTGREEN_EX}Dropbox access token:{F.RESET} {config['dropbox_access_token']}\n"
-    )
+def display_config_info():
+    """
+    Display the current configuration settings in a user-friendly format.
+    """
+    config_fields = {
+        "Platform": config['platform'],
+        "Source paths": config['source_paths'],
+        "Destination path": config['destination_path'],
+        "Notifications": config['notifications'],
+        "Encryption": config['encryption'],
+        "Appearance mode": config['appearance_mode'],
+        "Color theme": config['color_theme'],
+        "Backup expiry date": config['backup_expiry_date'],
+        "Storage provider": config['storage_provider'],
+        "Compression method": config['compression_method'],
+        "Compression level": config['compression_level'],
+        "Backup interval": config['backup_interval'],
+        "FTP hostname": config['ftp_hostname'],
+        "FTP username": config['ftp_username'],
+        "FTP password": config['ftp_password'],
+        "Dropbox access token": config['dropbox_access_token']
+    }
+    
+    print("Config Info:\n")
+    for key, value in config_fields.items():
+        print(f"{F.LIGHTGREEN_EX}{key}:{F.RESET} {value}")
 
 
 if not os.path.exists(config.path):
