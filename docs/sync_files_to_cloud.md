@@ -16,14 +16,12 @@ To sync your backups to your Google Drive, you will need an "Oauth2" credential.
 
 6. Rename the file to `client_secrets.json` and place it in the path that the script exists
 
-7. Enable the **'Back up to Cloud'** option (GUI) or set the corresponding JSON value to **true** (CLI)
-
-8. Select **Google Drive** as the storage provider
+7. Select **Google Drive** as the storage provider or set the corresponding JSON value
 
 
 # [Option 2] Set Up For Dropbox
 
-To sync your backups to your Dropbox, you will need an access token
+To sync your backups to your Dropbox, you will need an access token.
 
 1. Visit the [Dropbox Developer Console](https://dropbox.com/developers/apps) and make your own app
 
@@ -40,14 +38,10 @@ To sync your backups to your Dropbox, you will need an access token
 
 6. Grab token and paste it to the **'dropbox_access_token'** field (within settings.json)
 
-7. Enable the **'Back up to Cloud'** option (GUI) or set the corresponding JSON value to **true** (CLI)
-
-8. Select **Dropbox** as the storage provider
+7. Select **Dropbox** as the storage provider or set the corresponding JSON value
 
 # [Option 3] Set Up For FTP Server
 
-1. Enable the **'Back up to Cloud'** option (GUI) or set the corresponding JSON value to **true** (CLI)
+1. Select **FTP** as the storage provider or set the corresponding JSON value
 
-2. Select **FTP** as the storage provider
-
-3. Edit the configuration file (settings.json) and add your FTP server **hostname**, **username** and **password** to the corresponding JSON keys **(for enhanced security, option to set credentials as environment variables will be implemented)**
+2. Edit the configuration file (settings.json) and add your FTP server **hostname**, **username** and **password** to the corresponding JSON keys ~~**(for enhanced security, option to set credentials as environment variables will be implemented)**~~ --> The JSON file serves the exact same security measures as environment variables would for the purpose of this script.
