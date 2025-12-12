@@ -3,27 +3,20 @@
 
 """
 This file serves as the command-line interface (CLI) version of the program.
-Supportive Platforms: Windows, Linux, macOS
+Supported platforms: Windows, Linux, macOS
 """
 
-# Import built-in modules
 import os
 import sys
 import platform
-
-# Import module files
 from Scripts.CLI.backup_utils import Backup
 from Scripts.CLI.restore import RestoreBackup
 from Scripts.file_utils import (
-    get_backup_size,
-    storage_media_free_space,
-    last_backup,
-    create_destination_directory_path,
+    get_backup_size, storage_media_free_space,
+    last_backup, create_destination_directory_path,
 )
 from Scripts.system_notifications import notify_user
 from Scripts.configs import config, display_config_info
-
-# Import other (third-party) modules
 import humanize
 import colorama
 from art import text2art
@@ -34,22 +27,12 @@ restore_backup = RestoreBackup()
 colorama.init(autoreset=True)
 config.load()
 
-# Check system platform to set correct console clear command
+# check system platform to set correct console clear command
 clear_command = "cls" if platform.system() == "Windows" else "clear"
 os.system(clear_command)
 
-# Get value from the JSON file
+# get value from the json file
 DESTINATION_PATH = config["destination_path"] + "SafeArchive/"
-
-# Run check on python version, must be 3.6 or higher because of f strings
-if sys.version_info[0] < 3 or sys.version_info[1] < 6:
-    print(
-        "Error Code U-2: This program requires running python 3.6 or higher! You are running"
-        + str(sys.version_info[0])
-        + "."
-        + str(sys.version_info[1])
-    )
-    sys.exit()
 
 create_destination_directory_path(DESTINATION_PATH)
 print(text2art("SafeArchive"))

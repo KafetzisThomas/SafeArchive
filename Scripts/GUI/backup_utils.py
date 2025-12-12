@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-
 import os
 import pyzipper
 import threading
@@ -125,7 +122,7 @@ class Backup:
 
     def upload_to_cloud(self, DESTINATION_PATH):
         """
-        Initialize & upload local backups to the cloud.
+        Initialize and upload local backups to the cloud.
         """
         if config['storage_provider'] == "Google Drive":
             google_drive.backup_to_google_drive(DESTINATION_PATH)    

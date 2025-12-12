@@ -6,14 +6,9 @@
 # License: GPLv3
 # NOTE: By contributing to this project, you agree to the terms of the GPLv3 license, and agree to grant the project owner the right to also provide or sell this software, including your contribution, to anyone under any other license, with no compensation to you.
 
-version = "1.5.0"
-
-# Import built-in modules
 import sys
 import runpy
 import tkinter as tk
-
-# Import module files
 from Scripts.file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path
 from Scripts.GUI.file_utils import get_available_drives, update_listbox, remove_item, add_item
 from Scripts.GUI.widgets import Combobox
@@ -21,17 +16,16 @@ from Scripts.GUI.backup_utils import Backup
 from Scripts.GUI.restore import RestoreBackup
 from Scripts.GUI.settings import Settings
 from Scripts.GUI.about import About
-from Scripts.GUI.ui import SetupUI
 from Scripts.configs import config
-
-# Import other (third-party) modules
 import humanize
 from PIL import Image
 import customtkinter as ctk
 
-DESTINATION_PATH = config['destination_path'] + 'SafeArchive/'  # Get value from the JSON file
+version = "1.5.0"
+
+DESTINATION_PATH = config['destination_path'] + 'SafeArchive/'  # get value from the json file
 create_destination_directory_path(DESTINATION_PATH)
-config.load() # Load the JSON file into memory
+config.load()  # load the json file into memory
 
 try:
     if sys.argv[1] == "--nogui":
@@ -43,12 +37,10 @@ except IndexError:
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-
-        ui = SetupUI(DESTINATION_PATH)
         backup = Backup()
-
-        ctk.set_appearance_mode(config['appearance_mode'])
-        ctk.set_default_color_theme(config['color_theme'])
+        
+        ctk.set_appearance_mode("dark")
+        ctk.set_default_color_theme("blue")
         self.title(f"SafeArchive {version}")
         self.resizable(False, False)  # Disable minimize/maximize buttons
         self.geometry("500x360")
@@ -60,11 +52,8 @@ class App(ctk.CTk):
 
         drive_combobox_var = ctk.StringVar(value=DESTINATION_PATH.replace('SafeArchive/', ''))
         drives_combobox = ctk.CTkComboBox(
-            master=self,
-            width=475,
-            values=get_available_drives(),
-            command=lambda choice: Combobox(key='destination_path', choice=choice),
-            variable=drive_combobox_var
+            master=self, width=475, values=get_available_drives(),
+            command=lambda choice: Combobox(key='destination_path', choice=choice), variable=drive_combobox_var
         )
 
         drives_combobox.place(x=15, y=40)
@@ -89,14 +78,9 @@ class App(ctk.CTk):
         frame.place(x=10, y=160)
 
         listbox = tk.Listbox(
-            master=frame,
-            height=4,
-            width=53,
-            background=ui.get_background_color(),
-            foreground=ui.get_foreground_color(),
-            activestyle='dotbox',
-            font='Helvetica',
-            selectbackground=ui.get_listbox_selection_background()
+            master=frame, height=4, width=53,
+            background="#343638", foreground="white", activestyle='dotbox',
+            font='Helvetica', selectbackground="#1f6aa5",
         )
 
         listbox.pack(padx=7, pady=7)
@@ -106,18 +90,18 @@ class App(ctk.CTk):
             master=self, width=475, height=15, corner_radius=0, orientation='horizontal', mode='indeterminate')
         self.backup_progressbar.place(x=15, y=275)
 
-        about_image = ctk.CTkImage(Image.open(ui.get_image1()), size=(25, 25))
-        self.about_button = ctk.CTkButton(master=self, text="", fg_color=ui.get_icon_fg_color(), image=about_image,
+        about_image = ctk.CTkImage(Image.open("assets/PNG/info.png"), size=(25, 25))
+        self.about_button = ctk.CTkButton(master=self, text="", fg_color="#242424", image=about_image,
                                              width=5, height=5, command=lambda: About(self, version))
         self.about_button.place(x=15, y=310)
 
-        settings_image = ctk.CTkImage(Image.open(ui.get_image2()), size=(25, 25))
-        self.settings_button = ctk.CTkButton(master=self, text="", fg_color=ui.get_icon_fg_color(), image=settings_image,
+        settings_image = ctk.CTkImage(Image.open("assets/PNG/gear.png"), size=(25, 25))
+        self.settings_button = ctk.CTkButton(master=self, text="", fg_color="#242424", image=settings_image,
                                              width=5, height=5, command=lambda: Settings(self))
         self.settings_button.place(x=50, y=310)
         
-        restore_image = ctk.CTkImage(Image.open(ui.get_image3()), size=(25, 25))
-        self.restore_button = ctk.CTkButton(master=self, text="", fg_color=ui.get_icon_fg_color(), image=restore_image,
+        restore_image = ctk.CTkImage(Image.open("assets/PNG/restore.png"), size=(25, 25))
+        self.restore_button = ctk.CTkButton(master=self, text="", fg_color="#242424", image=restore_image,
                                             width=5, height=5, command=lambda: RestoreBackup(self, DESTINATION_PATH))
         self.restore_button.place(x=85, y=310)
 

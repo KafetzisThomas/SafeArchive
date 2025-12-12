@@ -8,21 +8,21 @@ I'm actively working to minimize this need.
 
 
 Encryption Enabled:
-----
+-------------------
 
 If backup encryption is enabled in the configuration file,
 you will be prompted to set a password every time a backup is performed.
 (Work in progress to automate password management)
 
 Google Drive Storage:
-----
+---------------------
 
 If Google Drive is selected as the storage provider,
 an authorization window will be displayed every time a backup is performed.
 (Investigating alternative authentication methods)
 
 To run backups continuously:
-----
+----------------------------
 
 This script is designed to run 24/7 in the background.
 Please refer to your operating system's documentation for instructions on configuring background execution of scripts.
@@ -39,7 +39,7 @@ config.load()
 
 backup = Backup()
 
-DESTINATION_PATH = config['destination_path'] + "SafeArchive/"  # Get value from the JSON file
+DESTINATION_PATH = config['destination_path'] + "SafeArchive/"  # get value from the json file
 
 schedule.every(config['backup_interval']).hours.do(backup.perform_backup, DESTINATION_PATH)
 

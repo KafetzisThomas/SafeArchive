@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-
 """
 This file manages configurations and provides functionality to save and load them as well.
 It also automatically triggers the saving of the configuration file whenever a setting is changed or deleted.
@@ -15,10 +12,9 @@ from colorama import Fore as F
 
 colorama.init(autoreset=True)
 
-
 class ConfigDict(dict):
     """
-    Set configs & save every time a setting changes.
+    Set configs and save every time a setting changes.
     """
     __slots__ = ["path"]
 
@@ -54,17 +50,13 @@ class ConfigDict(dict):
         with open(self.path, 'r') as file:
             self.update(json.load(file))
 
-
 SETTINGS_PATH = 'settings.json'
 config = ConfigDict({
     "_comments": {
         "platform": "Get name of operating system (Windows, Linux, macOS)",
         "source_paths": "List of source paths (local folders) for backups (type: list with strings)",
         "destination_path": "Destination path (storage media) for backups (type: string)",
-        "notifications": "Enable/Disable notifications (type: boolean)",
         "encryption": "Enable/Disable encryption on backups (type: boolean)",
-        "appearance_mode": "Appearance mode for the application (type: string)",
-        "color_theme": "Color theme for the application (type: string)",
         "backup_expiry_date": "Expiry date for the backups in the storage media (type: string)",
         "storage_provider": "Storage provider for backups (Google Drive / FTP) (type: string)",
         "compression_method": "Specify the compression method for your backups (type: string)",
@@ -82,10 +74,7 @@ config = ConfigDict({
         str(Path('~/Downloads').expanduser()).replace("\\", "/") + "/",
     ],
     "destination_path": os.path.abspath(os.sep).replace("\\", "/") if platform.system() == "Windows" else os.path.join(os.path.expanduser("~"), ""),
-    "notifications": True,
     "encryption": False,
-    "appearance_mode": "dark",
-    "color_theme": "blue",
     "backup_expiry_date": "Forever",
     "storage_provider": "None",
     "compression_method": "ZIP_DEFLATED",
@@ -97,7 +86,6 @@ config = ConfigDict({
     "dropbox_access_token": ""
 }, SETTINGS_PATH)
 
-
 def display_config_info():
     """
     Display the current configuration settings in a user-friendly format.
@@ -106,10 +94,7 @@ def display_config_info():
         "Platform": config['platform'],
         "Source paths": config['source_paths'],
         "Destination path": config['destination_path'],
-        "Notifications": config['notifications'],
         "Encryption": config['encryption'],
-        "Appearance mode": config['appearance_mode'],
-        "Color theme": config['color_theme'],
         "Backup expiry date": config['backup_expiry_date'],
         "Storage provider": config['storage_provider'],
         "Compression method": config['compression_method'],
@@ -124,7 +109,6 @@ def display_config_info():
     print("Config Info:\n")
     for key, value in config_fields.items():
         print(f"{F.LIGHTGREEN_EX}{key}:{F.RESET} {value}")
-
 
 if not os.path.exists(config.path):
     config.save()

@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-
 import os
 import sys
 import time
@@ -22,18 +19,16 @@ google_drive = GoogleDriveCloud()
 dropbox = Dropbox()
 ftp = FTP()
 
-
 class Backup:
     """
     Handle the creation, compression, encryption, and storage of backups.
     """
-
     def zip_files(self, SOURCE_PATHS, DESTINATION_PATH):
         """
         Zip (backup) source path files to destination path:
-            * Supported compression methods: ZIP_DEFLATED, ZIP_STORED, ZIP_LZMA, ZIP_BZIP2.
-            * Enabled Zip64 (this parameter use the ZIP64 extensions when the zip file is larger than 4GiB).
-            * Set compression level (1: fast ... 9: saves storage space).
+            - Supported compression methods: ZIP_DEFLATED, ZIP_STORED, ZIP_LZMA, ZIP_BZIP2.
+            - Enabled Zip64 (this parameter use the ZIP64 extensions when the zip file is larger than 4GiB).
+            - Set compression level (1: fast ... 9: saves storage space).
         """
         print("[!] backup init")
         if get_drive_usage_percentage() <= 90:
@@ -64,13 +59,13 @@ class Backup:
 
                 start = time.time()
                 print("[!] iterating..")
-                i, l = 1, 1
-                # Iterate over each path in the source list
+                i, j = 1, 1
+                # iterate over each path in the source list
                 for item in SOURCE_PATHS:
                     print(f"[{i}] iterating over {item}")
-                    # Iterate over the files and folders in the path
+                    # iterate over the files and folders in the path
                     for root, dirs, files in os.walk(item):
-                        print(f"[{l}] iterating over files and folders in {item}")
+                        print(f"[{j}] iterating over files and folders in {item}")
                         for dirname in dirs:
                             dirpath = os.path.join(root, dirname)
                             print(f"[+] Writing '{dirname}' to zip")
@@ -80,7 +75,7 @@ class Backup:
                             filepath = os.path.join(root, filename)
                             print(f"[+] Writing '{filename}' to zip")
                             zipObj.write(filepath)
-                        l += 1
+                        j += 1
                     i += 1
                 end = time.time()
 
@@ -103,11 +98,9 @@ class Backup:
             "ZIP_BZIP2": pyzipper.ZIP_BZIP2,
             "ZIP_LZMA": pyzipper.ZIP_LZMA
         }
-
         compression_method_key = config['compression_method']
         compression_method = compression_mapping.get(compression_method_key)
         return compression_method
-
 
     def check_zip_file(self, DESTINATION_PATH):
         """
@@ -121,10 +114,9 @@ class Backup:
         except BadZipFile:
             notify_user(message="The backup file is corrupted.", terminal_color=F.LIGHTRED_EX)
 
-
     def upload_to_cloud(self, DESTINATION_PATH):
         """
-        Initialize & upload local backups to the cloud.
+        Initialize and upload local backups to the cloud.
         """
         if config['storage_provider'] == "Google Drive":
             google_drive.backup_to_google_drive(DESTINATION_PATH)
@@ -133,7 +125,6 @@ class Backup:
         elif config['storage_provider'] == "Dropbox":
             dropbox.upload_to_dropbox(DESTINATION_PATH)
 
-
     def get_backup_password(self):
         """
         Prompt the user to enter and confirm a password, returning it as bytes (UTF-8).
@@ -141,7 +132,6 @@ class Backup:
         password = getpass("Backup Password: ")
         confirm_password = getpass("Confirm Backup Password: ")
         return bytes(password, 'utf-8') if password == confirm_password else None
-
 
     def perform_backup(self, SOURCE_PATHS, DESTINATION_PATH):
         """

@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-
 import psutil
 import platform
 from tkinter import filedialog
@@ -35,7 +32,7 @@ def update_listbox(listbox, SOURCE_PATHS):
 
 def remove_item(listbox, SOURCE_PATHS):
     """
-    Remove a source path from the listbox & JSON file, by selecting a specific one.
+    Remove a source path from the listbox and JSON file, by selecting a specific one.
     """
     selected_items = listbox.curselection()
     for i in reversed(selected_items):
@@ -50,7 +47,7 @@ def remove_item(listbox, SOURCE_PATHS):
 
 def add_item(listbox, SOURCE_PATHS):
     """
-    Add a source path to the listbox & JSON file.
+    Add a source path to the listbox and JSON file.
     """
     try:
         source_path_file_explorer = filedialog.askdirectory(title='Backup these folders') + '/'

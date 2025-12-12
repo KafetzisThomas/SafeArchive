@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-
 import os
 import sys
 import pyzipper
@@ -15,27 +12,25 @@ from colorama import Fore as F
 colorama.init(autoreset=True)
 config.load()
 
-
 class RestoreBackup:
     """
     Provide functionality to restore backups from a zip file.
     """
-
     def extract_item(self, DESTINATION_PATH, **backups_table):
         """
-        Extract selected zip file & move zip file content to it's original location.
+        Extract selected zip file and move zip file content to it's original location.
         """
         table = PrettyTable()
         table.field_names = ["ID", "Backups", "Type"]
 
-        # Iterate over the files in the destination path
+        # iterate over the files in the destination path
         for index, zip_file in enumerate(os.listdir(DESTINATION_PATH)):
             filename, _, filetype = zip_file.partition('.')
 
-            # Check if it's a zip file
+            # check if it's a zip file
             if filetype == 'zip':
                 backups_table[index] = filename
-                # Add file information to the table
+                # add file information to the table
                 table.add_row([index, filename, filetype])
 
         print(table)
@@ -50,7 +45,7 @@ class RestoreBackup:
             selected_filename = backups_table[int(selected_id)]
             file_name = f"{DESTINATION_PATH}{selected_filename}.zip"
 
-            # Open the zipfile in read mode, extract its content
+            # open the zipfile in read mode, extract its content
             with pyzipper.AESZipFile(file=file_name, mode='r') as zipObj:
                 try:
                     if config['encryption'] and (config['compression_method'] == "ZIP_DEFLATED" or config['compression_method'] == "ZIP_STORED"):

@@ -53,10 +53,17 @@ uv run main.py --nogui
 
 ![Settings Window](https://github.com/user-attachments/assets/6cefd88b-254d-480a-b0ef-6d86bbee225b)
 
-## Getting Help
+## Contributing Guidelines
 
-If you find a bug please see [CONTRIBUTING.md](https://github.com/KafetzisThomas/SafeArchive/blob/main/CONTRIBUTING.md) for information on how to report it.
+### Pull Requests
 
-## License
+- **Simplicity**: Keep changes focused and easy to review.
+- **Libraries**: Avoid adding non-standard libraries unless discussed via an issue.
+- **Testing**: Ensure code runs error-free, passes all tests, and meets coding standards.
 
-SafeArchive is distributed under the GPL-3.0 license please see [LICENSE](https://github.com/KafetzisThomas/SafeArchive/blob/main/LICENSE) for more information.
+### Bug Reports
+
+- Report bugs via GitHub Issues.
+- Submit pull requests via GitHub Pull Requests.
+
+Thank you for supporting SafeArchive!

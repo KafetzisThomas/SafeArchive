@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-
 """
 This file allows you to sync your files with storage providers.
 It allows uploading, updating, and deleting files in a specified folder.
@@ -9,7 +6,6 @@ or set the JSON value to true.
 For detailed setup instructions:
 https://github.com/KafetzisThomas/SafeArchive/blob/main/docs/sync_files_to_cloud.md
 """
-
 
 import os
 import sys
@@ -23,12 +19,10 @@ from .configs import config
 
 config.load()
 
-
 class GoogleDriveCloud:
     """
     Provide functionalities to backup files from a local directory to Google Drive.
     """
-
     def backup_to_google_drive(self, DESTINATION_PATH):
         """
         Upload local backup files to Google Drive.
@@ -41,11 +35,11 @@ class GoogleDriveCloud:
             for filename in os.listdir(DESTINATION_PATH[:-1]):
                 filepath = os.path.join(DESTINATION_PATH[:-1], filename)
                 gdrive_file = self.get_or_create_file(filename, filepath)
-                # Update existing files or upload new ones
+                # update existing files or upload new ones
                 gdrive_file.SetContentFile(filepath)
                 gdrive_file.Upload()
 
-            # Delete files in Google Drive that don't exist in the local folder anymore
+            # delete files in Google Drive that don't exist in the local folder anymore
             self.delete_files_not_in_local_folder(DESTINATION_PATH[:-1])
         else:
             notify_user(
@@ -53,7 +47,6 @@ class GoogleDriveCloud:
                 message='Your Google Drive storage is almost full. To make sure your files can sync, clean up space.',
                 icon='cloud.ico'
             )
-
 
     def initialize_connection(self):
         """
@@ -71,19 +64,18 @@ class GoogleDriveCloud:
             )
             sys.exit()
 
-        # Check if the folder already exists in Google Drive
+        # check if the folder already exists in Google Drive
         folder_query = ("title='SafeArchive' and mimeType='application/vnd.google-apps.folder' and trashed=false")
         file_list = self.drive.ListFile({'q': folder_query}).GetList()
 
         if file_list:
-            # The folder already exists, so just update the existing files
+            # the folder already exists, so just update the existing files
             self.gdrive_folder = file_list[0]
         else:
-            # The folder doesn't exist, so create a new one
+            # the folder doesn't exist, so create a new one
             self.gdrive_folder = self.drive.CreateFile(
                 {'title': 'SafeArchive', 'mimeType': 'application/vnd.google-apps.folder'})
             self.gdrive_folder.Upload()
-
 
     def get_cloud_usage_percentage(self):
         """
@@ -94,7 +86,6 @@ class GoogleDriveCloud:
         total_storage = int(account_details['quotaBytesTotal'])
         storage_usage_percentage = (used_storage / total_storage) * 100
         return storage_usage_percentage
-
 
     def get_or_create_folder(self, foldername):
         """
@@ -114,7 +105,6 @@ class GoogleDriveCloud:
             new_folder.Upload()
             return new_folder
 
-
     def get_or_create_file(self, filename):
         """
         Get or create file in Google Drive.
@@ -128,7 +118,6 @@ class GoogleDriveCloud:
             new_file = self.drive.CreateFile({'title': filename, 'parents': [{'id': self.gdrive_folder['id']}]})
             return new_file
 
-
     def delete_files_not_in_local_folder(self, local_folder_path):
         """
         Delete files in Google Drive that don't exist in the local folder.
@@ -140,12 +129,10 @@ class GoogleDriveCloud:
             if not os.path.exists(local_file_path):
                 file.Trash()
 
-
 class FTP:
     """
     Provide functionalities to backup files from a local directory to an FTP server.
     """
-
     def __init__(self):
         """
         Initialize FTP server connection.
@@ -154,7 +141,6 @@ class FTP:
         self.username = config['ftp_username']
         self.password = config['ftp_password']
         self.ftp_server = None
-
 
     def backup_to_ftp_server(self, folderpath):
         """
@@ -180,14 +166,12 @@ class FTP:
                 icon='error.ico'
             )
 
-
     def initialize_connection(self):
         """
         Connect to the FTP Server.
         """
         self.ftp_server = ftplib.FTP(self.hostname, self.username, self.password)
-        self.ftp_server.encoding = "utf-8"  # Force UTF-8 encoding
-
+        self.ftp_server.encoding = "utf-8"  # force utf-8 encoding
 
     def create_directory(self):
         """
@@ -200,7 +184,6 @@ class FTP:
         finally:
             self.ftp_server.cwd('/SafeArchive')
 
-
     def delete_files_not_in_local_folder(self, folderpath):
         """
         Delete remote files that are not present locally.
@@ -211,7 +194,6 @@ class FTP:
             if file not in os.listdir(folderpath):
                 self.ftp_server.delete(file)
 
-
     def disconnect(self):
         """
         Disconnect from the FTP Server.
@@ -219,12 +201,10 @@ class FTP:
         if self.ftp_server:
             self.ftp_server.quit()
 
-
 class Dropbox:
     """
     Provide functionalities to backup files from a local directory to Dropbox.
     """
-
     def upload_to_dropbox(self, DESTINATION_PATH):
         """
         Upload folder and files to Dropbox account.
@@ -246,14 +226,12 @@ class Dropbox:
                 icon='cloud.ico'
             )
 
-
     def initialize_connection(self):
         """
         Authenticate access token.
         """
         self.dbx = dropbox.Dropbox(config['dropbox_access_token'])
         self.dropbox_folder_path = '/SafeArchive'
-
 
     def get_used_space_percentage(self):
         """
@@ -265,7 +243,6 @@ class Dropbox:
         space_usage_percentage = (used_space / total_space) * 100
         return space_usage_percentage
 
-
     def create_directory(self):
         """
         Create a directory on Dropbox.
@@ -275,7 +252,6 @@ class Dropbox:
         except dropbox.exceptions.ApiError as e:
             if e.error.is_path() and e.error.get_path().is_not_found():
                 self.dbx.files_create_folder(self.dropbox_folder_path)
-
 
     def delete_directory(self):
         """
