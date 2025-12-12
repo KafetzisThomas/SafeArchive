@@ -50,12 +50,11 @@
     $ git clone https://github.com/KafetzisThomas/SafeArchive.git
     ```
 
-2. **Install dependencies**
-
-    Navigate to the project directory and install the required python packages:
+2. **Install uv**
 
     ```sh
-    $ pip install -r requirements.txt
+    cd path/to/root/directory
+    pip install uv
     ```
 
 3. **Run the application**
@@ -63,13 +62,13 @@
     - **With GUI**: To run the application with the graphical user interface (GUI), use:
 
       ```sh
-      $ python3 main.py
+      $ uv run main.py
       ```
 
     - **Without GUI**: To run the application without the GUI (CLI mode), use the `--nogui` option:
 
       ```sh
-      $ python3 main.py --nogui
+      $ uv run main.py --nogui
       ```
 
       This will start the application in command-line interface mode, bypassing the GUI components.

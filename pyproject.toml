@@ -1,0 +1,22 @@
+[project]
+name = "safearchive"
+version = "0.1.0"
+description = "Securely backup and manage your files locally and in the cloud."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "art==5.9",
+    "colorama==0.4.6",
+    "customtkinter==5.1.2",
+    "dropbox==11.36.2",
+    "humanize==4.6.0",
+    "pillow==10.3.0",
+    "plyer==2.1.0",
+    "prettytable==3.7.0",
+    "psutil==6.0.0",
+    "pydrive2==1.18.0",
+    "pyqt6>=6.10.1",
+    "pyzipper==0.3.6",
+    "schedule==1.2.2",
+    "setuptools>=80.9.0",
+]
