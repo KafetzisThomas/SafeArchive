@@ -31,7 +31,7 @@ class About:
         self.about_window.geometry("513x305")
         self.about_window.iconbitmap("assets/ICO/info.ico") if config['platform'] == "Windows" else None
         self.about_window.resizable(False, False)  # Disable minimize/maximize buttons
-        self.about_window.configure("#242424")
+        self.about_window.configure(background="#242424")
 
     def create_frame(self):
         self.frame = ctk.CTkFrame(master=self.about_window, corner_radius=10, height=230, width=395)

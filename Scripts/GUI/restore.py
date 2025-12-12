@@ -25,7 +25,7 @@ class RestoreBackup:
         self.restore_window.geometry("410x245")
         self.restore_window.iconbitmap("assets/ICO/restore.ico") if config['platform'] == "Windows" else None
         self.restore_window.resizable(False, False)  # Disable minimize/maximize buttons
-        self.restore_window.configure("#343638")
+        self.restore_window.configure(background="#343638")
 
     def create_listbox(self):
         frame = ctk.CTkFrame(master=self.restore_window)

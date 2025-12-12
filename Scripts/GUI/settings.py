@@ -27,7 +27,7 @@ class Settings:
         self.settings_window.geometry("775x235")
         self.settings_window.iconbitmap("assets/ICO/gear.ico") if config['platform'] == "Windows" else None
         self.settings_window.resizable(False, False)  # Disable minimize/maximize buttons
-        self.settings_window.configure("#242424")
+        self.settings_window.configure(background="#242424")
 
     def create_frame(self):
         self.frame = ctk.CTkFrame(master=self.settings_window, corner_radius=10, height=170, width=605)
