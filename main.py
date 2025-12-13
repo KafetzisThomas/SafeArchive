@@ -30,6 +30,8 @@ from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QComboBox, QFrame, QListWidget, QVBoxLayout, QProgressBar, QPushButton
 from PyQt6.QtGui import QIcon, QFont, QPixmap
 
+from Scripts.GUI.about import AboutWindow
+
 version = "1.5.0"
 
 DESTINATION_PATH = config['destination_path'] + 'SafeArchive/'  # get value from the json file
@@ -123,7 +125,7 @@ class MainWindow(QMainWindow):
         self.about_button.setText("")  # remove default text
         self.about_button.setFixedSize(35, 35)
         self.about_button.move(15, 310)
-        self.about_button.clicked.connect(lambda: About(self, version))
+        self.about_button.clicked.connect(lambda: self.show_about_window(version))
 
         # settings window
         settings_pixmap = QPixmap(os.path.join("assets", "PNG", "gear.png"))
@@ -139,7 +141,7 @@ class MainWindow(QMainWindow):
         self.settings_icon.clicked.connect(lambda: Settings(self))
 
         # restore window
-        restore_pixmap = QPixmap(os.path.join("assets", "PNG", "gear.png"))
+        restore_pixmap = QPixmap(os.path.join("assets", "PNG", "restore.png"))
         restore_scaled_pixmap = restore_pixmap.scaled(25, 25, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio, transformMode=Qt.TransformationMode.SmoothTransformation)
         restore_icon = QIcon(restore_scaled_pixmap)
 
@@ -178,6 +180,10 @@ class MainWindow(QMainWindow):
             )
         )
         self.backup_button.move(350, 310)
+
+    def show_about_window(self, version):
+        self.about_dialog = AboutWindow(parent=self, version=version)
+        self.about_dialog.exec()
 
 
 if __name__ == "__main__":
