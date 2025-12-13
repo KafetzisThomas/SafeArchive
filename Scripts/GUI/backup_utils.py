@@ -7,7 +7,8 @@ from ..cloud_utils import GoogleDriveCloud, FTP, Dropbox
 from ..system_notifications import notify_user
 from ..file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
 from ..configs import config
-import customtkinter as ctk
+from PyQt6.QtWidgets import QApplication, QLabel, QInputDialog, QLineEdit
+from PyQt6.QtGui import QFont
 
 google_drive = GoogleDriveCloud()
 ftp = FTP()
@@ -15,9 +16,8 @@ dropbox = Dropbox()
 
 class Backup:
     """
-    Handle the creation, compression, encryption, and storage of backups.
+    Handle the creation, compression, encryption and storage of backups.
     """
-
     def zip_files(self, App, SOURCE_PATHS, DESTINATION_PATH):
         """
         Zip (backup) source path files to destination path:
@@ -46,12 +46,15 @@ class Backup:
                     except UnboundLocalError:
                         pass
 
-                    # Iterate over each path in the source list
+                    # iterate over each path in the source list
                     for item in SOURCE_PATHS:
-                        source_item_label = ctk.CTkLabel(master=App, text=item, height=20, font=('Helvetica', 12))
-                        source_item_label.place(x=15, y=290)
+                        source_item_label = QLabel(item, App)
+                        source_item_label.setFixedHeight(20)
+                        source_item_label.setFont(QFont('Helvetica', 12))
+                        source_item_label.move(15, 290)
+                        source_item_label.show()
 
-                        # Iterate over the files and folders in the path
+                        # iterate over the files and folders in the path
                         for root, dirs, files in os.walk(item):
                             for dirname in dirs:
                                 dirpath = os.path.join(root, dirname)
@@ -60,7 +63,9 @@ class Backup:
                             for filename in files:
                                 filepath = os.path.join(root, filename)
                                 zipObj.write(filepath)
-                        source_item_label.place_forget()
+
+                        source_item_label.hide()
+                        source_item_label.deleteLater()  # free memory too
 
                 self.check_zip_file(DESTINATION_PATH)
                 self.upload_to_cloud(DESTINATION_PATH)
@@ -85,7 +90,6 @@ class Backup:
                 icon='drive.ico'
             )
 
-
     def get_compression_method(self):
         """
         Retrieve the compression method specified in the configuration.
@@ -97,11 +101,9 @@ class Backup:
             "ZIP_BZIP2": pyzipper.ZIP_BZIP2,
             "ZIP_LZMA": pyzipper.ZIP_LZMA
         }
-
         compression_method_key = config['compression_method']
         compression_method = compression_mapping.get(compression_method_key)
         return compression_method
-
 
     def check_zip_file(self, DESTINATION_PATH):
         """
@@ -119,7 +121,6 @@ class Backup:
                 icon='error.ico'
             )
 
-
     def upload_to_cloud(self, DESTINATION_PATH):
         """
         Initialize and upload local backups to the cloud.
@@ -131,25 +132,25 @@ class Backup:
         elif config['storage_provider'] == "Dropbox":
             dropbox.upload_to_dropbox(DESTINATION_PATH)
 
-
     def get_backup_password(self):
         """
-        Prompt the user to enter a password, returning it as bytes (UTF-8).
+        Prompt the user to enter a password, return it as bytes.
         """
-        password = ctk.CTkInputDialog(text="Backup Password:", title="Backup Encryption")
-        return bytes(password.get_input(), 'utf-8')
-
+        parent = QApplication.activeWindow()
+        password, ok = QInputDialog.getText(
+            parent, "Backup Encryption", "Backup Password:", QLineEdit.EchoMode.Password, ""
+        )
+        return bytes(password, 'utf-8') if ok and password else None
 
     def start_progress_bar(self, App, SOURCE_PATHS, DESTINATION_PATH):
         """
         Start/Stop the progress bar while performing the backup operation.
         """
-        App.backup_progressbar.start()
-        App.backup_button.configure(state="disabled")
+        App.backup_progressbar.show()
+        App.backup_button.setEnabled(False)
         self.zip_files(App, SOURCE_PATHS, DESTINATION_PATH)
-        App.backup_button.configure(state="normal")
-        App.backup_progressbar.stop()
-
+        App.backup_button.setEnabled(True)
+        App.backup_progressbar.hide()
 
     def perform_backup(self, App, SOURCE_PATHS, DESTINATION_PATH):
         """

@@ -15,7 +15,6 @@ from Scripts.GUI.widgets import Combobox
 from Scripts.GUI.backup_utils import Backup
 from Scripts.GUI.restore import RestoreBackup
 from Scripts.GUI.settings import Settings
-from Scripts.GUI.about import About
 from Scripts.configs import config
 import humanize
 from PIL import Image
