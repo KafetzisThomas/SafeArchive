@@ -8,17 +8,13 @@
 
 import sys
 import runpy
-import tkinter as tk
 from Scripts.file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path
 from Scripts.GUI.file_utils import get_available_drives, update_listbox, remove_item, add_item
 from Scripts.GUI.widgets import Combobox
 from Scripts.GUI.backup_utils import Backup
-from Scripts.GUI.restore import RestoreBackup
 from Scripts.GUI.settings import Settings
 from Scripts.configs import config
 import humanize
-from PIL import Image
-import customtkinter as ctk
 
 
 
@@ -30,6 +26,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QComboBox, QFrame
 from PyQt6.QtGui import QIcon, QFont, QPixmap
 
 from Scripts.GUI.about import AboutWindow
+from Scripts.GUI.restore import RestoreWindow
 
 version = "1.5.0"
 
@@ -124,7 +121,7 @@ class MainWindow(QMainWindow):
         self.about_button.setText("")  # remove default text
         self.about_button.setFixedSize(35, 35)
         self.about_button.move(15, 310)
-        self.about_button.clicked.connect(lambda: self.show_about_window(version))
+        self.about_button.clicked.connect(lambda: AboutWindow(self, version))
 
         # settings window
         settings_pixmap = QPixmap(os.path.join("assets", "PNG", "gear.png"))
@@ -150,7 +147,7 @@ class MainWindow(QMainWindow):
         self.restore_icon.setText("")  # remove default text
         self.restore_icon.setFixedSize(35, 35)
         self.restore_icon.move(85, 310)
-        self.restore_icon.clicked.connect(lambda: RestoreBackup(self, DESTINATION_PATH))
+        self.restore_icon.clicked.connect(lambda: RestoreWindow(self, DESTINATION_PATH))
         
         # plus button
         self.plus_button = QPushButton("+", self)
@@ -180,9 +177,9 @@ class MainWindow(QMainWindow):
         )
         self.backup_button.move(350, 310)
 
-    def show_about_window(self, version):
-        self.about_dialog = AboutWindow(parent=self, version=version)
-        self.about_dialog.exec()
+    # def show_about_window(self, version):
+    #     self.about_dialog = AboutWindow(parent=self, version=version)
+    #     self.about_dialog.exec()
 
 
 if __name__ == "__main__":

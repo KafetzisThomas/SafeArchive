@@ -2,29 +2,27 @@ import tkinter as tk
 import customtkinter as ctk
 from PIL import Image
 import webbrowser
-from ..configs import config
 
 import os
-import webbrowser
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtWidgets import QDialog, QFrame, QLabel, QPushButton
-from PyQt6.QtGui import QFont, QIcon, QPixmap
+from PyQt6.QtGui import QFont, QPixmap
 
 
 class AboutWindow(QDialog):
-    def __init__(self, parent=None, version=""):
-        super().__init__(parent)
-        self.App = parent  # reference to the main window
+    def __init__(self, App, version=""):
+        super().__init__(App)
+        self.App = App
         self.version = version
-
         self.create_about_window()
         self.create_widgets()
+        self.exec()
 
     def create_about_window(self):
         self.setWindowTitle("About SafeArchive")
         self.setFixedSize(QSize(410, 250))
 
-        # make window non resizable
+        # hide ? mark
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
     
     def create_widgets(self):
