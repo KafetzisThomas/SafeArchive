@@ -111,7 +111,7 @@ class MainWindow(QMainWindow):
         self.backup_progressbar.setTextVisible(False)  # hide %
 
         # about window
-        about_pixmap = QPixmap(os.path.join("assets", "PNG", "info.png"))
+        about_pixmap = QPixmap(os.path.join("assets", "info.png"))
         about_scaled_pixmap = about_pixmap.scaled(
             25, 25, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio,
             transformMode=Qt.TransformationMode.SmoothTransformation,
@@ -127,7 +127,7 @@ class MainWindow(QMainWindow):
         self.about_button.clicked.connect(lambda: AboutWindow(self, version))
 
         # settings window
-        settings_pixmap = QPixmap(os.path.join("assets", "PNG", "gear.png"))
+        settings_pixmap = QPixmap(os.path.join("assets", "gear.png"))
         settings_scaled_pixmap = settings_pixmap.scaled(
             25, 25, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio,
             transformMode=Qt.TransformationMode.SmoothTransformation,
@@ -143,7 +143,7 @@ class MainWindow(QMainWindow):
         self.settings_icon.clicked.connect(lambda: SettingsWindow(self))
 
         # restore window
-        restore_pixmap = QPixmap(os.path.join("assets", "PNG", "restore.png"))
+        restore_pixmap = QPixmap(os.path.join("assets", "restore.png"))
         restore_scaled_pixmap = restore_pixmap.scaled(
             25, 25, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio,
             transformMode=Qt.TransformationMode.SmoothTransformation,
@@ -184,7 +184,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon("assets/PNG/logo.png"))  # apply icon to all windows
+    app.setWindowIcon(QIcon("assets/logo.png"))  # apply icon to all windows
     window = MainWindow()
     window.show()
     sys.exit(app.exec())

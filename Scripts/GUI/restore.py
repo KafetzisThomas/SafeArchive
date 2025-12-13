@@ -119,7 +119,6 @@ class RestoreWindow(QDialog):
                     notify_user(
                         title='SafeArchive: Files Restored Successfully',
                         message='SafeArchive has finished the restore.',
-                        icon='restore.ico'
                     )
 
             except (RuntimeError, TypeError):

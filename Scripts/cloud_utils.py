@@ -45,7 +45,6 @@ class GoogleDriveCloud:
             notify_user(
                 title='SafeArchive: [Warning] Your Google Drive storage is running out.',
                 message='Your Google Drive storage is almost full. To make sure your files can sync, clean up space.',
-                icon='cloud.ico'
             )
 
     def initialize_connection(self):
@@ -60,7 +59,6 @@ class GoogleDriveCloud:
             notify_user(
                 title='SafeArchive: [Error] File \'client_secrets.json\' is missing.',
                 message='File not found in the program directory. Please refer to the documentation for instructions on how to get it.',
-                icon='file_missing.ico'
             )
             sys.exit()
 
@@ -163,7 +161,6 @@ class FTP:
             notify_user(
                 title='SafeArchive: [Error] FTP credentials are missing.',
                 message='FTP not configured. Please edit the configuration file (settings.json) to add your ftp credentials.',
-                icon='error.ico'
             )
 
     def initialize_connection(self):
@@ -223,7 +220,6 @@ class Dropbox:
             notify_user(
                 title='SafeArchive: [Warning] Your Dropbox storage is running out.',
                 message='Your Dropbox storage is almost full. To make sure your files can sync, clean up space.',
-                icon='cloud.ico'
             )
 
     def initialize_connection(self):

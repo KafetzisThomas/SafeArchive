@@ -15,13 +15,11 @@ def create_destination_directory_path(DESTINATION_PATH):
         notify_user(
             title='SafeArchive: Reconnect your drive',
             message='Your SafeArchive Drive was disconnected for too long. Reconnect it to keep saving copies of your files.',
-            icon='drive.ico'
         )
     except PermissionError:
         notify_user(
             title='SafeArchive: [Error] Permission Denied.',
             message=f'No permissions given to make directory: \'{DESTINATION_PATH}\'. Change it in settings.json or run with elevated priveleges.',
-            icon='error.ico'
         )
 
 
@@ -85,7 +83,6 @@ def last_backup(DESTINATION_PATH):
             notify_user(
                 title='SafeArchive: Reconnect your drive',
                 message='Your SafeArchive Drive was disconnected for too long. Reconnect it to keep saving copies of your files.',
-                icon='drive.ico'
             )
 
         if filetype != 'zip':

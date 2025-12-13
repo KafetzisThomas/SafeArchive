@@ -28,7 +28,7 @@ class AboutWindow(QDialog):
         self.frame.move(8, 8) 
 
         # logo icon
-        icon_pixmap = QPixmap(os.path.join("assets", "PNG", "logo.png")).scaled(
+        icon_pixmap = QPixmap(os.path.join("assets", "logo.png")).scaled(
             80, 80, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio, 
             transformMode=Qt.TransformationMode.SmoothTransformation
         )

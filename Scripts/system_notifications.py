@@ -3,9 +3,9 @@ import sys
 from pathlib import Path
 from plyer import notification
 
-def notify_user(message, title=None, icon=None, terminal_color=None):
+def notify_user(message, title=None, terminal_color=None):
     """
-    Display notification message with specified title, message and icon.
+    Display notification message with specified title and message.
     """
     # get name of the script being executed
     if os.path.basename(sys.argv[0]) == "main.py":
@@ -13,7 +13,7 @@ def notify_user(message, title=None, icon=None, terminal_color=None):
             title=title,
             app_name="SafeArchive",
             message=message,
-            app_icon=str(Path("assets/ICO").joinpath(icon).resolve()),
+            app_icon=str(Path("assets/logo.ico").resolve()),
             timeout=10
         )
     else:

@@ -73,7 +73,6 @@ class Backup:
                 notify_user(
                     title="SafeArchive: Backup Completed",
                     message=f"SafeArchive has finished the backup to '{DESTINATION_PATH.replace('SafeArchive/', '')}'.",
-                    icon='backup_completed.ico'
                 )
 
             except RuntimeError:
@@ -87,7 +86,6 @@ class Backup:
             notify_user(
                 title='SafeArchive: [Warning] Your Drive storage is running out.',
                 message='Your Drive storage is almost full. To make sure your files can sync, clean up space.',
-                icon='drive.ico'
             )
 
     def get_compression_method(self):
@@ -118,7 +116,6 @@ class Backup:
             notify_user(
                 title='SafeArchive: [Error] Backup corrupted.',
                 message='The backup file is corrupted.',
-                icon='error.ico'
             )
 
     def upload_to_cloud(self, DESTINATION_PATH):
