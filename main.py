@@ -102,8 +102,7 @@ class MainWindow(QMainWindow):
         vbox.setContentsMargins(7, 7, 7, 7)
         vbox.addWidget(self.listbox)
 
-        # TODO: make listbox work
-        # update_listbox(listbox=self.listbox, SOURCE_PATHS=config['source_paths'])
+        update_listbox(listbox=self.listbox, SOURCE_PATHS=config['source_paths'])
 
         # backup progress bar
         self.backup_progressbar = QProgressBar(self)
