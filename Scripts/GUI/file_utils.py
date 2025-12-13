@@ -52,12 +52,11 @@ def remove_item(listbox, SOURCE_PATHS):
     Remove a source path from the listbox and json file by selecting a specific one.
     """
     row = listbox.currentRow()  # get current selected row index
-    item_text = listbox.item(row).text()
-    
     try:
+        item_text = listbox.item(row).text()
         SOURCE_PATHS.remove(item_text)
         listbox.takeItem(row)
-    except Exception:
+    except AttributeError:
         pass
     finally:
         config.save()
