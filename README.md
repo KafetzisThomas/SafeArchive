@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="/assets/ICO/icon.ico" width="100" alt="Logo Icon"/>
+  <img src="/assets/PNG/logo.png" width="100" alt="Logo Icon"/>
   <h1>SafeArchive</h1>
   <p>Securely backup and manage your files locally and in the cloud.</p>
   <h3>
