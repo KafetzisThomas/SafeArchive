@@ -1,157 +1,122 @@
 import os
 import pyzipper
-import threading
 from datetime import date
 from pyzipper import BadZipFile
+from PyQt6.QtCore import QThread, pyqtSignal
+from PyQt6.QtWidgets import QApplication, QInputDialog, QLineEdit
 from ..cloud_utils import GoogleDriveCloud, FTP, Dropbox
-from ..system_notifications import notify_user
 from ..file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
 from ..configs import config
-from PyQt6.QtWidgets import QApplication, QLabel, QInputDialog, QLineEdit
-from PyQt6.QtGui import QFont
 
 google_drive = GoogleDriveCloud()
 ftp = FTP()
 dropbox = Dropbox()
 
-class Backup:
+class BackupWorker(QThread):
     """
-    Handle the creation, compression, encryption and storage of backups.
+    Worker thread that handles backup in background.
     """
-    def zip_files(self, App, SOURCE_PATHS, DESTINATION_PATH):
+    # signals to update ui elements safely in main thread
+    started_signal = pyqtSignal()
+    finished_signal = pyqtSignal()
+    notify_signal = pyqtSignal(str, str)
+
+    def __init__(self, source_paths, destination_path, password=None):
+        super().__init__()
+        self.source_paths = source_paths
+        self.destination_path = destination_path
+        self.password = password
+    
+    def run(self):
         """
-        Zip (backup) source path files to destination path:
-            * Supported compression methods: ZIP_DEFLATED, ZIP_STORED, ZIP_LZMA, ZIP_BZIP2.
-            * Enabled Zip64 (this parameter use the ZIP64 extensions when the zip file is larger than 4GiB).
-            * Set compression level (1: fast ... 9: saves storage space).
+        Zip source path files to destination path:
+            - Supported compression methods: ZIP_DEFLATED, ZIP_STORED, ZIP_LZMA, ZIP_BZIP2.
+            - Enabled Zip64 (this parameter use the ZIP64 extensions when the zip file is larger than 4GiB).
+            - Set compression level (1: fast ... 9: saves storage space).
         """
+        self.started_signal.emit()
         if get_drive_usage_percentage() <= 90:
             if config['backup_expiry_date'] != "Forever":
-                backup_expiry_date(DESTINATION_PATH)
-
+                backup_expiry_date(self.destination_path)
             try:
-                file_name = f"{DESTINATION_PATH}{date.today()}.zip"
-                compression_method = self.get_compression_method()
-                compression_level = config['compression_level']
-                if config['encryption'] and (config['compression_method'] == "ZIP_DEFLATED" or config['compression_method'] == "ZIP_STORED"):
-                    encryption = pyzipper.WZ_AES
-                    self.password = self.get_backup_password()
-                else:
-                    encryption = None
-                    self.password = None
-
-                with pyzipper.AESZipFile(file=file_name, mode='w', compression=compression_method, encryption=encryption, allowZip64=True, compresslevel=int(compression_level)) as zipObj:
-                    try:
-                        zipObj.setpassword(self.password)
-                    except UnboundLocalError:
-                        pass
-
-                    # iterate over each path in the source list
-                    for item in SOURCE_PATHS:
-                        source_item_label = QLabel(item, App)
-                        source_item_label.setFixedHeight(20)
-                        source_item_label.setFont(QFont('Helvetica', 12))
-                        source_item_label.move(15, 290)
-                        source_item_label.show()
-
-                        # iterate over the files and folders in the path
-                        for root, dirs, files in os.walk(item):
-                            for dirname in dirs:
-                                dirpath = os.path.join(root, dirname)
-                                zipObj.write(dirpath)
-
-                            for filename in files:
-                                filepath = os.path.join(root, filename)
-                                zipObj.write(filepath)
-
-                        source_item_label.hide()
-                        source_item_label.deleteLater()  # free memory too
-
-                self.check_zip_file(DESTINATION_PATH)
-                self.upload_to_cloud(DESTINATION_PATH)
-
-                notify_user(
-                    title="SafeArchive: Backup Completed",
-                    message=f"SafeArchive has finished the backup to '{DESTINATION_PATH.replace('SafeArchive/', '')}'.",
+                self.perform_zip()
+                self.check_zip_file()
+                self.upload_to_cloud()
+                self.notify_signal.emit(
+                    "SafeArchive: Backup Completed",
+                    f"SafeArchive has finished the backup to '{self.destination_path.replace('SafeArchive/', '')}'."
                 )
-
-            except RuntimeError:
-                source_item_label.place_forget()
-                App.backup_button.configure(state="normal")
-                App.backup_progressbar.stop()
-            except TypeError:
-                App.backup_button.configure(state="normal")
-                App.backup_progressbar.stop()
+            except Exception as e:
+                self.notify_signal.emit("SafeArchive: Error", str(e))
         else:
-            notify_user(
-                title='SafeArchive: [Warning] Your Drive storage is running out.',
-                message='Your Drive storage is almost full. To make sure your files can sync, clean up space.',
+            self.notify_signal.emit(
+                'SafeArchive: [Warning] Drive Storage Full',
+                'Your Drive storage is almost full. To make sure your files can sync, clean up space.'
             )
 
-    def get_compression_method(self):
-        """
-        Retrieve the compression method specified in the configuration.
-        Return the corresponding pyzipper attribute.
-        """
-        compression_mapping = {
-            "ZIP_STORED": pyzipper.ZIP_STORED,
-            "ZIP_DEFLATED": pyzipper.ZIP_DEFLATED,
-            "ZIP_BZIP2": pyzipper.ZIP_BZIP2,
-            "ZIP_LZMA": pyzipper.ZIP_LZMA
-        }
-        compression_method_key = config['compression_method']
-        compression_method = compression_mapping.get(compression_method_key)
-        return compression_method
+        self.finished_signal.emit()
 
-    def check_zip_file(self, DESTINATION_PATH):
+    def perform_zip(self):
+        filename = f"{self.destination_path}{date.today()}.zip"
+
+        # retrieve compression method specified in the configuration
+        compression_mapping = {
+            "ZIP_STORED": pyzipper.ZIP_STORED, "ZIP_DEFLATED": pyzipper.ZIP_DEFLATED,
+            "ZIP_BZIP2": pyzipper.ZIP_BZIP2, "ZIP_LZMA": pyzipper.ZIP_LZMA
+        }
+        compression_method = compression_mapping.get(config['compression_method'], pyzipper.ZIP_DEFLATED)
+        compression_level = int(config['compression_level'])
+
+        encryption = None
+        if config['encryption'] and config['compression_method'] in ["ZIP_DEFLATED", "ZIP_STORED"]:
+            encryption = pyzipper.WZ_AES
+
+        with pyzipper.AESZipFile(file=filename, mode='w', compression=compression_method,
+                                 encryption=encryption, compresslevel=compression_level, allowZip64=True) as zipObj:
+            if self.password:
+                zipObj.setpassword(self.password)
+
+            # iterate over each path in the source list
+            for item in self.source_paths:
+                # iterate over the files and folders in the path
+                for root, dirs, files in os.walk(item):
+                    for dirname in dirs:
+                        dirpath = os.path.join(root, dirname)
+                        zipObj.write(dirpath)
+                    for filename in files:
+                        filepath = os.path.join(root, filename)
+                        zipObj.write(filepath)
+
+    def check_zip_file(self):
         """
         Check if the zip file is valid and not corrupted.
         """
-        filepath = os.path.join(DESTINATION_PATH, last_backup(DESTINATION_PATH))
+        filepath = os.path.join(self.destination_path, last_backup(self.destination_path))
         try:
             with pyzipper.AESZipFile(f"{filepath}.zip") as zf:
-                zf.setpassword(self.password)
+                if self.password:
+                    zf.setpassword(self.password)
                 zf.testzip()
         except BadZipFile:
-            notify_user(
-                title='SafeArchive: [Error] Backup corrupted.',
-                message='The backup file is corrupted.',
-            )
+            self.notify_signal.emit('SafeArchive: [Error] Backup corrupted.', 'The backup file is corrupted.')
 
-    def upload_to_cloud(self, DESTINATION_PATH):
+    def upload_to_cloud(self):
         """
         Initialize and upload local backups to the cloud.
         """
         if config['storage_provider'] == "Google Drive":
-            google_drive.backup_to_google_drive(DESTINATION_PATH)    
+            google_drive.backup_to_google_drive(self.destination_path)    
         elif config['storage_provider'] == "FTP":
-            ftp.backup_to_ftp_server(DESTINATION_PATH)
+            ftp.backup_to_ftp_server(self.destination_path)
         elif config['storage_provider'] == "Dropbox":
-            dropbox.upload_to_dropbox(DESTINATION_PATH)
+            dropbox.upload_to_dropbox(self.destination_path)
 
-    def get_backup_password(self):
-        """
-        Prompt the user to enter a password, return it as bytes.
-        """
-        parent = QApplication.activeWindow()
-        password, ok = QInputDialog.getText(
-            parent, "Backup Encryption", "Backup Password:", QLineEdit.EchoMode.Password, ""
-        )
-        return bytes(password, 'utf-8') if ok and password else None
-
-    def start_progress_bar(self, App, SOURCE_PATHS, DESTINATION_PATH):
-        """
-        Start/Stop the progress bar while performing the backup operation.
-        """
-        App.backup_progressbar.show()
-        App.backup_button.setEnabled(False)
-        self.zip_files(App, SOURCE_PATHS, DESTINATION_PATH)
-        App.backup_button.setEnabled(True)
-        App.backup_progressbar.hide()
-
-    def perform_backup(self, App, SOURCE_PATHS, DESTINATION_PATH):
-        """
-        Create and start a thread for the backup process.
-        """
-        threading.Thread(target=self.start_progress_bar, args=(
-            App, SOURCE_PATHS, DESTINATION_PATH), daemon=True).start()
+def get_backup_password():
+    """
+    Prompt user to enter a password and return it as bytes.
+    """
+    parent = QApplication.activeWindow()
+    password, ok = QInputDialog.getText(
+        parent, "Backup Encryption", "Backup Password:", QLineEdit.EchoMode.Password, ""
+    )
+    return bytes(password, 'utf-8') if ok and password else None

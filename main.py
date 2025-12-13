@@ -13,10 +13,11 @@ import humanize
 from Scripts.file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path
 from Scripts.GUI.file_utils import get_available_drives, update_listbox, remove_item, add_item
 from Scripts.GUI.widgets import Combobox
-from Scripts.GUI.backup_utils import Backup
+from Scripts.GUI.backup_utils import BackupWorker, get_backup_password
 from Scripts.GUI.about import AboutWindow
 from Scripts.GUI.restore import RestoreWindow
 from Scripts.GUI.settings import SettingsWindow
+from Scripts.system_notifications import notify_user
 from Scripts.configs import config
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QIcon, QFont, QPixmap
@@ -42,8 +43,6 @@ except IndexError:
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        backup = Backup()
-
         self.setWindowTitle(f"SafeArchive {version}")
         self.setFixedSize(QSize(500, 360))  # disable minimize/maximize buttons
 
@@ -175,12 +174,44 @@ class MainWindow(QMainWindow):
         # backup button
         self.backup_button = QPushButton("BACKUP", self)
         self.backup_button.setFixedWidth(100)
-        self.backup_button.clicked.connect(
-            lambda: backup.perform_backup(
-                SOURCE_PATHS=config["source_paths"], DESTINATION_PATH=DESTINATION_PATH, App=self,
-            )
-        )
+        self.backup_button.clicked.connect(self.start_backup_process)
         self.backup_button.move(350, 310)
+
+    def start_backup_process(self):
+        """
+        1. Get password (if needed) on main thread
+        2. Create thread
+        3. Connect signals
+        4. Start thread
+        """
+        password = None
+
+        # check if we need a password
+        if config['encryption'] and config['compression_method'] in ["ZIP_DEFLATED", "ZIP_STORED"]:
+            password = get_backup_password()
+            if not password: 
+                return
+
+        # initialize worker thread
+        self.worker = BackupWorker(source_paths=config["source_paths"], dest_path=DESTINATION_PATH, password=password)
+
+        # connect signals
+        self.worker.started_signal.connect(self.on_backup_start)
+        self.worker.finished_signal.connect(self.on_backup_finish)
+        self.worker.notify_signal.connect(self.on_backup_notify)
+        self.worker.start()  # start thread
+
+    def on_backup_start(self):
+        self.backup_progressbar.show()
+        self.backup_button.setEnabled(False)
+
+    def on_backup_finish(self):
+        self.backup_progressbar.hide()
+        self.backup_button.setEnabled(True)
+        self.worker.deleteLater()  # clean up thread resource
+
+    def on_backup_notify(self, title, message):
+        notify_user(title=title, message=message)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
