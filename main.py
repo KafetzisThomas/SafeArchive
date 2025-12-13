@@ -193,7 +193,7 @@ class MainWindow(QMainWindow):
                 return
 
         # initialize worker thread
-        self.worker = BackupWorker(source_paths=config["source_paths"], dest_path=DESTINATION_PATH, password=password)
+        self.worker = BackupWorker(source_paths=config["source_paths"], destination_path=DESTINATION_PATH, password=password)
 
         # connect signals
         self.worker.started_signal.connect(self.on_backup_start)
