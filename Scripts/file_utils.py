@@ -1,27 +1,14 @@
 import os
 import psutil
 import datetime
-from .system_notifications import notify_user
 from .configs import config
 
 def create_destination_directory_path(DESTINATION_PATH):
     """
     Create the destination directory path if it doesn't exist.
     """
-    try:
-        if not os.path.exists(DESTINATION_PATH):
-            os.makedirs(DESTINATION_PATH)
-    except FileNotFoundError:
-        notify_user(
-            title='SafeArchive: Reconnect your drive',
-            message='Your SafeArchive Drive was disconnected for too long. Reconnect it to keep saving copies of your files.',
-        )
-    except PermissionError:
-        notify_user(
-            title='SafeArchive: [Error] Permission Denied.',
-            message=f'No permissions given to make directory: \'{DESTINATION_PATH}\'. Change it in settings.json or run with elevated priveleges.',
-        )
-
+    if not os.path.exists(DESTINATION_PATH):
+        os.makedirs(DESTINATION_PATH)
 
 def get_backup_size(DESTINATION_PATH):
     """
@@ -60,8 +47,7 @@ def get_modification_time(file, DESTINATION_PATH):
 
 def last_backup(DESTINATION_PATH):
     """
-    Check if last backup is older than 30 days if True then display a system notification message,
-    return last backup date.
+    Return last backup date.
     """
     try:
         # get a list of all the files in the destination path
@@ -73,17 +59,6 @@ def last_backup(DESTINATION_PATH):
         # the most recently modified file
         most_recently_modified_file = files[-1]
         filename, _, filetype = most_recently_modified_file.partition('.')
-
-        # get the modification time of the most recently modified file
-        modification_time = datetime.datetime.fromtimestamp(
-            os.path.getmtime(f"{DESTINATION_PATH}{most_recently_modified_file}"))
-
-        # check if the file is older than three monthss
-        if modification_time < (datetime.datetime.now()) - (datetime.timedelta(days=30)):
-            notify_user(
-                title='SafeArchive: Reconnect your drive',
-                message='Your SafeArchive Drive was disconnected for too long. Reconnect it to keep saving copies of your files.',
-            )
 
         if filetype != 'zip':
             filename = "No backup"

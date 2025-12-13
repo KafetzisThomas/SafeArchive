@@ -17,7 +17,6 @@ from Scripts.GUI.backup_utils import BackupWorker, get_backup_password
 from Scripts.GUI.about import AboutWindow
 from Scripts.GUI.restore import RestoreWindow
 from Scripts.GUI.settings import SettingsWindow
-from Scripts.system_notifications import notify_user
 from Scripts.configs import config
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QIcon, QFont, QPixmap
@@ -209,9 +208,6 @@ class MainWindow(QMainWindow):
         self.backup_progressbar.hide()
         self.backup_button.setEnabled(True)
         self.worker.deleteLater()  # clean up thread resource
-
-    def on_backup_notify(self, title, message):
-        notify_user(title=title, message=message)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

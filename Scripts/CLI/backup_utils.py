@@ -8,7 +8,6 @@ from datetime import date
 from pyzipper import BadZipFile
 from ..file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
 from ..cloud_utils import GoogleDriveCloud, FTP, Dropbox
-from ..system_notifications import notify_user
 from ..configs import config
 from getpass import getpass
 from colorama import Fore as F
@@ -40,20 +39,17 @@ class Backup:
             file_name = f"{DESTINATION_PATH}{date.today()}.zip"
             compression_method = self.get_compression_method()
             compression_level = config['compression_level']
-            if config['encryption'] and (config['compression_method'] == "ZIP_DEFLATED" or config['compression_method'] == "ZIP_STORED"):
+
+            encryption, self.password = None, None
+            if config['encryption'] and config['compression_method'] in ["ZIP_DEFLATED", "ZIP_STORED"]:
                 encryption = pyzipper.WZ_AES
                 self.password = self.get_backup_password()
-                if not self.password:
-                    notify_user(message="The two password fields didn't match.", terminal_color=F.LIGHTRED_EX)
-                    sys.exit()
-            else:
-                encryption = None
-                self.password = None
 
             print("[!] Opening zipfile in write mode")
             with pyzipper.AESZipFile(file=file_name, mode='w', compression=compression_method, encryption=encryption, allowZip64=True, compresslevel=int(compression_level)) as zipObj:
                 try:
-                    zipObj.setpassword(self.password)
+                    if self.password:
+                        zipObj.setpassword(self.password)
                 except UnboundLocalError:
                     pass
 
@@ -82,9 +78,9 @@ class Backup:
             self.check_zip_file(DESTINATION_PATH)
             self.upload_to_cloud(DESTINATION_PATH)
             print(f"[!] Finished in {end-start:.1f}s")
-            notify_user(message="Backup completed successfully.", terminal_color=F.LIGHTYELLOW_EX)
+            print(f"{F.LIGHTYELLOW_EX}[*] Backup completed successfully.")
         else:
-            notify_user(message="Your Drive storage is almost full.\nTo make sure your files can sync, clean up space.", terminal_color=F.LIGHTYELLOW_EX)
+            print(f"{F.LIGHTYELLOW_EX}[*] Your Drive storage is almost full.\nTo make sure your files can sync, clean up space.")
 
 
     def get_compression_method(self):
@@ -112,7 +108,7 @@ class Backup:
                 zf.setpassword(self.password)
                 zf.testzip()
         except BadZipFile:
-            notify_user(message="The backup file is corrupted.", terminal_color=F.LIGHTRED_EX)
+            print(f"{F.LIGHTRED_EX}[*] The backup file is corrupted.")
 
     def upload_to_cloud(self, DESTINATION_PATH):
         """
@@ -127,11 +123,10 @@ class Backup:
 
     def get_backup_password(self):
         """
-        Prompt the user to enter and confirm a password, returning it as bytes (UTF-8).
+        Prompt the user to enter password and return it as bytes.
         """
         password = getpass("Backup Password: ")
-        confirm_password = getpass("Confirm Backup Password: ")
-        return bytes(password, 'utf-8') if password == confirm_password else None
+        return bytes(password, 'utf-8')
 
     def perform_backup(self, SOURCE_PATHS, DESTINATION_PATH):
         """

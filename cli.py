@@ -11,11 +11,7 @@ import sys
 import platform
 from Scripts.CLI.backup_utils import Backup
 from Scripts.CLI.restore import RestoreBackup
-from Scripts.file_utils import (
-    get_backup_size, storage_media_free_space,
-    last_backup, create_destination_directory_path,
-)
-from Scripts.system_notifications import notify_user
+from Scripts.file_utils import get_backup_size, storage_media_free_space,last_backup, create_destination_directory_path
 from Scripts.configs import config, display_config_info
 import humanize
 import colorama
@@ -49,10 +45,10 @@ print(f"  |- 3) Restore {F.LIGHTGREEN_EX}past{F.RESET} backup - {F.LIGHTBLACK_EX
 try:
     choice = int(input("\nChoice (1-3): "))
 except ValueError:
-    notify_user(message="Undefined choice.", terminal_color=F.LIGHTRED_EX)
+    print(f"{F.LIGHTRED_EX}[*] Undefined choice.")
     sys.exit()
 except KeyboardInterrupt:
-    notify_user(message="Exiting...", terminal_color=F.LIGHTCYAN_EX)
+    print(f"{F.LIGHTCYAN_EX}[*] Exiting...")
     sys.exit()
 
 if choice == 1:
@@ -61,9 +57,9 @@ elif choice == 2:
     try:
         backup.perform_backup(config["source_paths"], DESTINATION_PATH)
     except KeyboardInterrupt:
-        notify_user(message="Backup process cancelled.", terminal_color=F.LIGHTRED_EX)
+        print(f"{F.LIGHTRED_EX}[*] Backup process cancelled.")
         sys.exit()
 elif choice == 3:
     restore_backup.run_restore_thread(DESTINATION_PATH)
 else:
-    notify_user(message="Undefined choice.", terminal_color=F.LIGHTRED_EX)
+    print(f"{F.LIGHTRED_EX}[*] Undefined choice.")

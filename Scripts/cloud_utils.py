@@ -14,7 +14,6 @@ import dropbox
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 from pydrive2.settings import InvalidConfigError
-from .system_notifications import notify_user
 from .configs import config
 
 config.load()
@@ -41,11 +40,11 @@ class GoogleDriveCloud:
 
             # delete files in Google Drive that don't exist in the local folder anymore
             self.delete_files_not_in_local_folder(DESTINATION_PATH[:-1])
-        else:
-            notify_user(
-                title='SafeArchive: [Warning] Your Google Drive storage is running out.',
-                message='Your Google Drive storage is almost full. To make sure your files can sync, clean up space.',
-            )
+        # else:
+        #     notify_user(
+        #         title='SafeArchive: [Warning] Your Google Drive storage is running out.',
+        #         message='Your Google Drive storage is almost full. To make sure your files can sync, clean up space.',
+        #     )
 
     def initialize_connection(self):
         """
@@ -56,10 +55,10 @@ class GoogleDriveCloud:
             gauth.LocalWebserverAuth()
             self.drive = GoogleDrive(gauth)
         except InvalidConfigError:
-            notify_user(
-                title='SafeArchive: [Error] File \'client_secrets.json\' is missing.',
-                message='File not found in the program directory. Please refer to the documentation for instructions on how to get it.',
-            )
+        #     notify_user(
+        #         title='SafeArchive: [Error] File \'client_secrets.json\' is missing.',
+        #         message='File not found in the program directory. Please refer to the documentation for instructions on how to get it.',
+        #     )
             sys.exit()
 
         # check if the folder already exists in Google Drive
@@ -158,10 +157,11 @@ class FTP:
             self.disconnect()
 
         except AttributeError:
-            notify_user(
-                title='SafeArchive: [Error] FTP credentials are missing.',
-                message='FTP not configured. Please edit the configuration file (settings.json) to add your ftp credentials.',
-            )
+            # notify_user(
+            #     title='SafeArchive: [Error] FTP credentials are missing.',
+            #     message='FTP not configured. Please edit the configuration file (settings.json) to add your ftp credentials.',
+            # )
+            pass
 
     def initialize_connection(self):
         """
@@ -216,11 +216,11 @@ class Dropbox:
                     dropbox_file_path = os.path.join(self.dropbox_folder_path, os.path.relpath(local_file_path, DESTINATION_PATH))
                     with open(local_file_path, 'rb') as f:
                         self.dbx.files_upload(f.read(), dropbox_file_path, mode=dropbox.files.WriteMode.overwrite)
-        else:
-            notify_user(
-                title='SafeArchive: [Warning] Your Dropbox storage is running out.',
-                message='Your Dropbox storage is almost full. To make sure your files can sync, clean up space.',
-            )
+        # else:
+        #     notify_user(
+        #         title='SafeArchive: [Warning] Your Dropbox storage is running out.',
+        #         message='Your Dropbox storage is almost full. To make sure your files can sync, clean up space.',
+        #     )
 
     def initialize_connection(self):
         """
