@@ -3,7 +3,6 @@ import pyzipper
 from pyzipper import BadZipFile
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtWidgets import QDialog, QFrame, QListWidget, QPushButton, QVBoxLayout, QInputDialog, QLineEdit, QMessageBox
-from ..system_notifications import notify_user
 from ..configs import config
 
 
@@ -12,8 +11,8 @@ class RestoreWorker(QThread):
     Worker thread that handles zip extraction in background.
     """
     finished_signal = pyqtSignal()
-    notify_signal = pyqtSignal(str, str)
-    error_signal = pyqtSignal(str)
+    success_signal = pyqtSignal(str, str)
+    error_signal = pyqtSignal(str, str)
 
     def __init__(self, zip_path, extract_to, password=None):
         super().__init__()
@@ -31,14 +30,14 @@ class RestoreWorker(QThread):
                     zipObj.setpassword(self.password)
                 zipObj.extractall(self.extract_to)
 
-            self.notify_signal.emit('SafeArchive: Files Restored Successfully', 'SafeArchive has finished the restore.')        
+            self.success_signal.emit("Files Restored Successfully", "SafeArchive has finished the restore.")
 
         except RuntimeError:
-            self.error_signal.emit("Wrong password or unable to decrypt.")
+            self.error_signal.emit("Restore Failed", "Wrong password or unable to decrypt.")
         except BadZipFile:
-            self.error_signal.emit("The archive is corrupted.")
+            self.error_signal.emit("Restore Failed", "The archive is corrupted.")
         except Exception as e:
-            self.error_signal.emit(str(e))
+            self.error_signal.emit("Restore Failed", str(e))
         finally:
             self.finished_signal.emit()
 
@@ -152,8 +151,8 @@ class RestoreWindow(QDialog):
         self.worker = RestoreWorker(filename, config['destination_path'], password)
         self.worker.started.connect(lambda: self.restore_button.setEnabled(False))
         self.worker.finished_signal.connect(self.on_restore_finish)
-        self.worker.notify_signal.connect(lambda t, m: notify_user(title=t, message=m))
-        self.worker.error_signal.connect(lambda e: QMessageBox.critical(self, "Restore Failed", e))
+        self.worker.success_signal.connect(lambda t, m: QMessageBox.information(self, t, m))
+        self.worker.error_signal.connect(lambda t, m: QMessageBox.critical(self, t, m ))
         self.worker.start()
 
     def on_restore_finish(self):

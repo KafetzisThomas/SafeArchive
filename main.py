@@ -22,8 +22,8 @@ from Scripts.configs import config
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QIcon, QFont, QPixmap
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QLabel, QComboBox,
-    QFrame, QListWidget, QVBoxLayout, QProgressBar, QPushButton
+    QApplication, QMainWindow, QLabel, QComboBox, QFrame,
+    QListWidget, QVBoxLayout, QProgressBar, QPushButton, QMessageBox
 )
 
 version = "1.5.0"
@@ -198,7 +198,7 @@ class MainWindow(QMainWindow):
         # connect signals
         self.worker.started_signal.connect(self.on_backup_start)
         self.worker.finished_signal.connect(self.on_backup_finish)
-        self.worker.notify_signal.connect(self.on_backup_notify)
+        self.worker.success_signal.connect(lambda t, m: QMessageBox.information(self, t, m))
         self.worker.start()  # start thread
 
     def on_backup_start(self):

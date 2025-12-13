@@ -19,7 +19,9 @@ class BackupWorker(QThread):
     # signals to update ui elements safely in main thread
     started_signal = pyqtSignal()
     finished_signal = pyqtSignal()
-    notify_signal = pyqtSignal(str, str)
+    success_signal = pyqtSignal(str, str)
+    warning_signal = pyqtSignal(str, str)
+    error_signal = pyqtSignal(str, str)
 
     def __init__(self, source_paths, destination_path, password=None):
         super().__init__()
@@ -42,16 +44,16 @@ class BackupWorker(QThread):
                 self.perform_zip()
                 self.check_zip_file()
                 self.upload_to_cloud()
-                self.notify_signal.emit(
-                    "SafeArchive: Backup Completed",
+                self.success_signal.emit(
+                    "Backup Completed",
                     f"SafeArchive has finished the backup to '{self.destination_path.replace('SafeArchive/', '')}'."
                 )
             except Exception as e:
-                self.notify_signal.emit("SafeArchive: Error", str(e))
+                self.error_signal.emit("Backup Failed", str(e))
         else:
-            self.notify_signal.emit(
-                'SafeArchive: [Warning] Drive Storage Full',
-                'Your Drive storage is almost full. To make sure your files can sync, clean up space.'
+            self.warning_signal.emit(
+                "Backup Failed",
+                "Your Drive storage is almost full. To make sure your files can sync, clean up space."
             )
 
         self.finished_signal.emit()
@@ -98,7 +100,7 @@ class BackupWorker(QThread):
                     zf.setpassword(self.password)
                 zf.testzip()
         except BadZipFile:
-            self.notify_signal.emit('SafeArchive: [Error] Backup corrupted.', 'The backup file is corrupted.')
+            self.error_signal.emit("Backup Failed", "Backup file is corrupted.")
 
     def upload_to_cloud(self):
         """
