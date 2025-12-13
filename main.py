@@ -12,7 +12,6 @@ from Scripts.file_utils import get_backup_size, storage_media_free_space, last_b
 from Scripts.GUI.file_utils import get_available_drives, update_listbox, remove_item, add_item
 from Scripts.GUI.widgets import Combobox
 from Scripts.GUI.backup_utils import Backup
-from Scripts.GUI.settings import Settings
 from Scripts.configs import config
 import humanize
 
@@ -27,6 +26,7 @@ from PyQt6.QtGui import QIcon, QFont, QPixmap
 
 from Scripts.GUI.about import AboutWindow
 from Scripts.GUI.restore import RestoreWindow
+from Scripts.GUI.settings import SettingsWindow
 
 version = "1.5.0"
 
@@ -134,7 +134,7 @@ class MainWindow(QMainWindow):
         self.settings_icon.setText("")  # remove default text
         self.settings_icon.setFixedSize(35, 35)
         self.settings_icon.move(50, 310)
-        self.settings_icon.clicked.connect(lambda: Settings(self))
+        self.settings_icon.clicked.connect(lambda: SettingsWindow(self))
 
         # restore window
         restore_pixmap = QPixmap(os.path.join("assets", "PNG", "restore.png"))
