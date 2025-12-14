@@ -6,11 +6,11 @@ import colorama
 from getpass import getpass
 from prettytable import PrettyTable
 from ..configs import config
-from ..system_notifications import notify_user
 from colorama import Fore as F
 
 colorama.init(autoreset=True)
 config.load()
+
 
 class RestoreBackup:
     """
@@ -38,7 +38,7 @@ class RestoreBackup:
         try:
             selected_id = input("\nSelect backup to restore (Enter the ID): ")
         except KeyboardInterrupt:
-            print(f"\n{F.LIGHTCYAN_EX}* Exiting...")
+            print(f"\n{F.LIGHTCYAN_EX}[*] Exiting...")
             sys.exit()
 
         if selected_id.isdigit() and int(selected_id) in backups_table:
@@ -51,13 +51,12 @@ class RestoreBackup:
                     if config['encryption'] and (config['compression_method'] == "ZIP_DEFLATED" or config['compression_method'] == "ZIP_STORED"):
                         zipObj.setpassword(self.get_backup_password())
                     zipObj.extractall(config['destination_path'])
-                    notify_user(message="Files Restored Sucessfully.", terminal_color=F.LIGHTYELLOW_EX)
+                    print(f"{F.LIGHTYELLOW_EX}[*] Files Restored Sucessfully.")
                 except (RuntimeError, TypeError):
                     pass
         else:
-            notify_user(message="Invalid backup ID selected.", terminal_color=F.LIGHTRED_EX)
+            print(f"{F.LIGHTRED_EX}[*] Invalid backup ID selected.")
             sys.exit()
-
 
     def get_backup_password(self):
         """
@@ -65,7 +64,6 @@ class RestoreBackup:
         """
         password = getpass("Backup Password: ")
         return bytes(password, 'utf-8')
-
 
     def run_restore_thread(self, DESTINATION_PATH):
         """

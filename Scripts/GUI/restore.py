@@ -1,102 +1,124 @@
 import os
 import pyzipper
-import threading
-import tkinter as tk
-from ..system_notifications import notify_user
+from pyzipper import BadZipFile
+from PyQt6.QtCore import Qt, QThread, pyqtSignal
+from PyQt6.QtWidgets import QDialog, QListWidget, QPushButton, QVBoxLayout, QInputDialog, QLineEdit, QMessageBox
 from ..configs import config
-import customtkinter as ctk
 
 
-class RestoreBackup:
+class RestoreWorker(QThread):
     """
-    Provide functionality to restore backups from a zip file.
+    Worker thread that handles zip extraction in background.
     """
-    def __init__(self, App, DESTINATION_PATH):
-        self.App = App
-        self.DESTINATION_PATH = DESTINATION_PATH
-        self.create_restore_window()
-        self.create_listbox()
-        self.populate_listbox()
-        self.create_restore_button()
+    finished_signal = pyqtSignal()
+    success_signal = pyqtSignal(str, str)
+    error_signal = pyqtSignal(str, str)
 
-    def create_restore_window(self):
-        self.restore_window = tk.Toplevel(self.App)
-        self.restore_window.title("Select backup to restore")
-        self.restore_window.geometry("410x245")
-        self.restore_window.iconbitmap("assets/ICO/restore.ico") if config['platform'] == "Windows" else None
-        self.restore_window.resizable(False, False)  # Disable minimize/maximize buttons
-        self.restore_window.configure(background="#343638")
+    def __init__(self, zip_path, extract_to, password=None):
+        super().__init__()
+        self.zip_path = zip_path
+        self.extract_to = extract_to
+        self.password = password
 
-    def create_listbox(self):
-        frame = ctk.CTkFrame(master=self.restore_window)
-        frame.place(x=8, y=8)
-        height, width = (9, 43) if config['platform'] == "Windows" else (8, 35)
-        self.listbox = tk.Listbox(
-            master=frame,
-            height=height,
-            width=width,
-            background="#343638",
-            foreground="white",
-            activestyle='dotbox',
-            font='Helvetica, 13',
-            justify="center",
-            selectbackground="#1f6aa5",
-        )
-        self.listbox.pack()
-
-    def populate_listbox(self):
-        """
-        Populate listbox with the zip file names from the DESTINATION_PATH directory.
-        """
-        for index, zip_file in enumerate(os.listdir(self.DESTINATION_PATH)):
-            filename, _, filetype = zip_file.partition('.')
-            if filetype == 'zip':
-                self.listbox.insert(index, filename)
-        self.listbox.selection_set(0)  # set the initial selection to the first item
-
-    def create_restore_button(self):
-        self.App.restore_button = ctk.CTkButton(
-            master=self.restore_window, text="Restore backup", command=self.run_restore_thread)
-        self.App.restore_button.place(x=95, y=163)
-
-    def run_restore_thread(self):
-        """
-        Create and start a thread for the restore process.
-        """
-        threading.Thread(target=self.extract_item, daemon=True).start()
-
-    def extract_item(self):
+    def run(self):
         """
         Extract selected zip file and move zip file content to it's original location.
         """
-        self.disable_restore_button()
-        for item in self.listbox.curselection():
-            file_name = f"{self.DESTINATION_PATH}{self.listbox.get(item)}.zip"
-            with pyzipper.AESZipFile(file=file_name) as zipObj:
-                try:
-                    if config['encryption'] and (config['compression_method'] == "ZIP_DEFLATED" or config['compression_method'] == "ZIP_STORED"):
-                        zipObj.setpassword(self.get_backup_password())
-                    zipObj.extractall(config['destination_path'])
+        try:
+            with pyzipper.AESZipFile(self.zip_path) as zipObj:
+                if self.password:
+                    zipObj.setpassword(self.password)
+                zipObj.extractall(self.extract_to)
 
-                    notify_user(
-                        title='SafeArchive: Files Restored Sucessfully',
-                        message='SafeArchive has finished the restore.',
-                        icon='restore.ico'
-                    )
+            self.success_signal.emit("Files Restored Successfully", "SafeArchive has finished the restore.")
 
-                except (RuntimeError, TypeError):
-                    pass
-        self.enable_restore_button()
+        except RuntimeError:
+            self.error_signal.emit("Restore Failed", "Wrong password or unable to decrypt.")
+        except BadZipFile:
+            self.error_signal.emit("Restore Failed", "The archive is corrupted.")
+        except Exception as e:
+            self.error_signal.emit("Restore Failed", str(e))
+        finally:
+            self.finished_signal.emit()
 
-    def get_backup_password(self):
+class RestoreWindow(QDialog):
+    def __init__(self, App, DESTINATION_PATH):
+        super().__init__(App)
+        self.App = App
+        self.DESTINATION_PATH = DESTINATION_PATH
+        self.create_restore_window()
+        self.create_widgets()
+        self.exec()
+
+    def create_restore_window(self):
+        self.setWindowTitle("Select backup to restore")
+        self.setFixedSize(410, 245)  # disable minimize/maximize buttons
+
+        # hide ? mark
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
+
+    def create_widgets(self):
+        # main frame layout
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(8, 8, 8, 20)
+        main_layout.setSpacing(12)
+
+        # list widget
+        self.listbox = QListWidget()
+        main_layout.addWidget(self.listbox)
+
+        # populate listbox
+        self.listbox.clear()
+        if os.path.exists(self.DESTINATION_PATH):
+            for zip_file in os.listdir(self.DESTINATION_PATH):
+                filename, _, filetype = zip_file.partition('.')
+                if filetype == 'zip':
+                    self.listbox.addItem(filename)
+
+        # set initial selection to the first item if available
+        if self.listbox.count() > 0:
+            self.listbox.setCurrentRow(0)
+
+        # restore button
+        self.restore_button = QPushButton("Restore backup")
+        self.restore_button.setFixedSize(394, 35)
+
+        # connect to main thread
+        self.restore_button.clicked.connect(self.prepare_restore)
+        main_layout.addWidget(self.restore_button)
+
+    def prepare_restore(self):
         """
-        Prompt the user to enter password and return it as bytes.
+        Main thread:
+        1. Identify file
+        2. Ask user for password (if needed) on main thread
+        3. Start thread
         """
-        password = ctk.CTkInputDialog(text="Backup Password:", title="Backup Encryption")
-        return bytes(password.get_input(), 'utf-8')
+        selected_items = self.listbox.selectedItems()
+        if not selected_items:
+            return
 
-    def disable_restore_button(self):
-        self.App.restore_button.configure(state="disabled")
+        item = selected_items[0]
+        filename = f"{self.DESTINATION_PATH}{item.text()}.zip"
 
-    def enable_restore_button(self):
-        self.App.restore_button.configure(state="normal")
+        # ask for password if needed
+        password = None
+        if config["encryption"]:
+            pwd_text, ok = QInputDialog.getText(
+                self, "Backup Encryption", "Enter Backup Password:", QLineEdit.EchoMode.Password
+            )
+            if not ok:
+                return
+            password = bytes(pwd_text, 'utf-8')
+
+        # setup worker
+        self.worker = RestoreWorker(filename, config['destination_path'], password)
+        self.worker.started.connect(lambda: self.restore_button.setEnabled(False))
+        self.worker.finished_signal.connect(self.on_restore_finish)
+        self.worker.success_signal.connect(lambda t, m: QMessageBox.information(self, t, m))
+        self.worker.error_signal.connect(lambda t, m: QMessageBox.critical(self, t, m ))
+        self.worker.start()
+
+    def on_restore_finish(self):
+        self.restore_button.setEnabled(True)
+        self.worker.deleteLater()  # clean up thread resource

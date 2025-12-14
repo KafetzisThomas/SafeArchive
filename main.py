@@ -8,116 +8,211 @@
 
 import sys
 import runpy
-import tkinter as tk
+import humanize
+import qtawesome as qta
 from Scripts.file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path
 from Scripts.GUI.file_utils import get_available_drives, update_listbox, remove_item, add_item
 from Scripts.GUI.widgets import Combobox
-from Scripts.GUI.backup_utils import Backup
-from Scripts.GUI.restore import RestoreBackup
-from Scripts.GUI.settings import Settings
-from Scripts.GUI.about import About
+from Scripts.GUI.backup_utils import BackupWorker, get_backup_password
+from Scripts.GUI.about import AboutWindow
+from Scripts.GUI.restore import RestoreWindow
+from Scripts.GUI.settings import SettingsWindow
 from Scripts.configs import config
-import humanize
-from PIL import Image
-import customtkinter as ctk
+from PyQt6.QtCore import QSize
+from PyQt6.QtGui import QIcon, QFont
+from PyQt6.QtWidgets import (
+    QApplication, QMainWindow, QLabel, QComboBox, QFrame, QListWidget,
+    QVBoxLayout, QProgressBar, QPushButton, QMessageBox, QWidget, QHBoxLayout,
+)
 
 version = "1.5.0"
 
-DESTINATION_PATH = config['destination_path'] + 'SafeArchive/'  # get value from the json file
+DESTINATION_PATH = config["destination_path"] + "SafeArchive/"  # get value from the json file
 create_destination_directory_path(DESTINATION_PATH)
 config.load()  # load the json file into memory
 
 try:
     if sys.argv[1] == "--nogui":
-        runpy.run_path('cli.py')
+        runpy.run_path("cli.py")
         sys.exit()
 except IndexError:
     pass
 
-class App(ctk.CTk):
+
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        backup = Backup()
-        
-        ctk.set_appearance_mode("dark")
-        ctk.set_default_color_theme("blue")
-        self.title(f"SafeArchive {version}")
-        self.resizable(False, False)  # Disable minimize/maximize buttons
-        self.geometry("500x360")
-        self.iconbitmap("assets/ICO/icon.ico") if config['platform'] == "Windows" else None
+        self.setWindowTitle(f"SafeArchive {version}")
+        self.setFixedSize(QSize(500, 380))  # disable minimize/maximize buttons
 
+        top_widget = QWidget(self)
+        top_widget.setGeometry(10, 10, 480, 150)  # x, y, width, height
 
-        drive_label = ctk.CTkLabel(master=self, text="Drive", font=('Helvetica', 12))
-        drive_label.place(x=15, y=15)
+        top_layout = QVBoxLayout(top_widget)
+        top_layout.setContentsMargins(5, 5, 5, 5)
+        top_layout.setSpacing(6)
 
-        drive_combobox_var = ctk.StringVar(value=DESTINATION_PATH.replace('SafeArchive/', ''))
-        drives_combobox = ctk.CTkComboBox(
-            master=self, width=475, values=get_available_drives(),
-            command=lambda choice: Combobox(key='destination_path', choice=choice), variable=drive_combobox_var
+        # drive combobox
+        self.drive_label = QLabel("Drive", self)
+        self.drive_label.setFont(QFont("Helvetica", 12))
+        top_layout.addWidget(self.drive_label)
+
+        self.drives_combobox = QComboBox(self)
+        self.drives_combobox.setFixedWidth(470)
+        self.drives_combobox.setFixedHeight(24)
+        self.drives_combobox.addItems(get_available_drives())
+
+        # set initial value
+        initial_val = DESTINATION_PATH.replace("SafeArchive/", "")
+        self.drives_combobox.setCurrentText(initial_val)
+
+        self.drives_combobox.currentTextChanged.connect(
+            lambda choice: Combobox(key="destination_path", choice=choice)
         )
+        top_layout.addWidget(self.drives_combobox)
 
-        drives_combobox.place(x=15, y=40)
-
-        size_of_backup_label = ctk.CTkLabel(
-            master=self, text=f"Size of backup: {humanize.naturalsize(get_backup_size(DESTINATION_PATH))}", font=('Helvetica', 12))
-        size_of_backup_label.place(x=15, y=70)
-
-        total_drive_space_label = ctk.CTkLabel(
-            master=self, text=f"Free space on ({DESTINATION_PATH.replace('SafeArchive/', '')}): {storage_media_free_space()} GB", font=('Helvetica', 12))
-        total_drive_space_label.place(x=15, y=90)
-
-        last_backup_label = ctk.CTkLabel(
-            master=self, text=f"Last backup: {last_backup(DESTINATION_PATH)}", font=('Helvetica', 12))
-        last_backup_label.place(x=15, y=110)
-
-        backup_these_folders_label = ctk.CTkLabel(
-            master=self, text="Backup these folders:", font=('Helvetica', 12))
-        backup_these_folders_label.place(x=15, y=130)
-
-        frame = ctk.CTkFrame(master=self, corner_radius=10)
-        frame.place(x=10, y=160)
-
-        listbox = tk.Listbox(
-            master=frame, height=4, width=53,
-            background="#343638", foreground="white", activestyle='dotbox',
-            font='Helvetica', selectbackground="#1f6aa5",
+        # size of backup label
+        self.size_of_backup_label = QLabel(
+            f"Size of backup: {humanize.naturalsize(get_backup_size(DESTINATION_PATH))}", self
         )
+        self.size_of_backup_label.setFont(QFont("Helvetica", 10))
+        self.size_of_backup_label.setWordWrap(True)
+        top_layout.addWidget(self.size_of_backup_label)
 
-        listbox.pack(padx=7, pady=7)
-        update_listbox(listbox=listbox, SOURCE_PATHS=config['source_paths'])
+        # total drive space label
+        self.total_drive_space_label = QLabel(
+            f"Free space on ({DESTINATION_PATH.replace('SafeArchive/', '')}): {storage_media_free_space()} GB", self
+        )
+        self.total_drive_space_label.setFont(QFont("Helvetica", 10))
+        self.total_drive_space_label.setWordWrap(True)
+        top_layout.addWidget(self.total_drive_space_label)
 
-        self.backup_progressbar = ctk.CTkProgressBar(
-            master=self, width=475, height=15, corner_radius=0, orientation='horizontal', mode='indeterminate')
-        self.backup_progressbar.place(x=15, y=275)
+        # last backup label
+        self.last_backup_label = QLabel(f"Last backup: {last_backup(DESTINATION_PATH)}", self)
+        self.last_backup_label.setFont(QFont("Helvetica", 10))
+        self.last_backup_label.setWordWrap(True)
+        top_layout.addWidget(self.last_backup_label)
 
-        about_image = ctk.CTkImage(Image.open("assets/PNG/info.png"), size=(25, 25))
-        self.about_button = ctk.CTkButton(master=self, text="", fg_color="#242424", image=about_image,
-                                             width=5, height=5, command=lambda: About(self, version))
-        self.about_button.place(x=15, y=310)
+        # backup these folders label
+        self.backup_these_folders_label = QLabel("Backup these folders:", self)
+        self.backup_these_folders_label.setFont(QFont("Helvetica", 10))
+        top_layout.addWidget(self.backup_these_folders_label)
 
-        settings_image = ctk.CTkImage(Image.open("assets/PNG/gear.png"), size=(25, 25))
-        self.settings_button = ctk.CTkButton(master=self, text="", fg_color="#242424", image=settings_image,
-                                             width=5, height=5, command=lambda: Settings(self))
-        self.settings_button.place(x=50, y=310)
-        
-        restore_image = ctk.CTkImage(Image.open("assets/PNG/restore.png"), size=(25, 25))
-        self.restore_button = ctk.CTkButton(master=self, text="", fg_color="#242424", image=restore_image,
-                                            width=5, height=5, command=lambda: RestoreBackup(self, DESTINATION_PATH))
-        self.restore_button.place(x=85, y=310)
+        # frame containing listbox
+        self.frame = QFrame(self)
+        self.frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame.setFrameShadow(QFrame.Shadow.Raised)
+        self.frame.setGeometry(10, 160, 480, 130)  # x, y, width, height
 
-        plus_button = ctk.CTkButton(
-            master=self, text="ADD", width=20, command=lambda: add_item(listbox=listbox, SOURCE_PATHS=config['source_paths']))
-        plus_button.place(x=235, y=310)
+        self.listbox = QListWidget()
+        vbox = QVBoxLayout(self.frame)
+        vbox.setContentsMargins(7, 7, 7, 7)
+        vbox.addWidget(self.listbox)
 
-        minus_button = ctk.CTkButton(
-            master=self, text="REMOVE", width=20, command=lambda: remove_item(listbox=listbox, SOURCE_PATHS=config['source_paths']))
-        minus_button.place(x=280, y=310)
+        update_listbox(listbox=self.listbox, SOURCE_PATHS=config['source_paths'])
 
-        self.backup_button = ctk.CTkButton(master=self, text="BACKUP", command=lambda: backup.perform_backup(
-            SOURCE_PATHS=config['source_paths'], DESTINATION_PATH=DESTINATION_PATH, App=self))
-        self.backup_button.place(x=350, y=310)
+        # backup progress bar
+        self.backup_progressbar = QProgressBar(self)
+        self.backup_progressbar.setGeometry(15, 305, 475, 15)  # x, y, width, height
+        self.backup_progressbar.setRange(0, 100)  # make it static by default
+        self.backup_progressbar.setValue(0)
+        self.backup_progressbar.setTextVisible(False)  # hide %
 
+        # bottom bar layout
+        bottom_widget = QWidget(self)
+        bottom_widget.setGeometry(10, 320, 480, 45)  # x, y, width, height
+
+        bottom_layout = QHBoxLayout(bottom_widget)
+        bottom_layout.setContentsMargins(1, 1, 1, 1)
+        bottom_layout.setSpacing(1)
+
+        no_border_style = "QPushButton { border: none; padding: 0px; }"
+
+        # about window
+        self.about_button = QPushButton()
+        self.about_button.setIcon(qta.icon('mdi.information'))
+        self.about_button.setIconSize(QSize(22, 22))
+        self.about_button.setFixedSize(35, 35)
+        self.about_button.setStyleSheet(no_border_style)
+        self.about_button.clicked.connect(lambda: AboutWindow(self, version))
+        bottom_layout.addWidget(self.about_button)
+
+        # settings window
+        self.settings_icon = QPushButton()
+        self.settings_icon.setIcon(qta.icon('ph.gear-fill'))
+        self.settings_icon.setIconSize(QSize(22, 22))
+        self.settings_icon.setFixedSize(35, 35)
+        self.settings_icon.setStyleSheet(no_border_style)
+        self.settings_icon.clicked.connect(lambda: SettingsWindow(self))
+        bottom_layout.addWidget(self.settings_icon)
+
+        # restore window
+        self.restore_icon = QPushButton()
+        self.restore_icon.setIcon(qta.icon('fa6s.rotate'))
+        self.restore_icon.setIconSize(QSize(20, 20))
+        self.restore_icon.setFixedSize(35, 35)
+        self.restore_icon.setStyleSheet(no_border_style)
+        self.restore_icon.clicked.connect(lambda: RestoreWindow(self, DESTINATION_PATH))
+        bottom_layout.addWidget(self.restore_icon)
+
+        # spacer
+        bottom_layout.addStretch()
+
+        # plus button
+        self.plus_button = QPushButton("+")
+        self.plus_button.setFixedSize(35, 35)
+        self.plus_button.clicked.connect(lambda: add_item(listbox=self.listbox, SOURCE_PATHS=config["source_paths"]))
+        bottom_layout.addWidget(self.plus_button)
+
+        # minus button
+        self.minus_button = QPushButton("-")
+        self.minus_button.setFixedSize(35, 35)
+        self.minus_button.clicked.connect(lambda: remove_item(listbox=self.listbox, SOURCE_PATHS=config["source_paths"]))
+        bottom_layout.addWidget(self.minus_button)
+
+        # backup button
+        self.backup_button = QPushButton("BACKUP")
+        self.backup_button.setFixedSize(100, 35)
+        self.backup_button.clicked.connect(self.start_backup_process)
+        bottom_layout.addWidget(self.backup_button)
+
+    def start_backup_process(self):
+        """
+        1. Get password (if needed) on main thread
+        2. Create thread
+        3. Connect signals
+        4. Start thread
+        """
+        password = None
+
+        # check if we need a password
+        if config['encryption'] and config['compression_method'] in ["ZIP_DEFLATED", "ZIP_STORED"]:
+            password = get_backup_password()
+            if not password: 
+                return
+
+        # initialize worker thread
+        self.worker = BackupWorker(source_paths=config["source_paths"], destination_path=DESTINATION_PATH, password=password)
+
+        # connect signals
+        self.worker.started_signal.connect(self.on_backup_start)
+        self.worker.finished_signal.connect(self.on_backup_finish)
+        self.worker.success_signal.connect(lambda t, m: QMessageBox.information(self, t, m))
+        self.worker.start()  # start thread
+
+    def on_backup_start(self):
+        self.backup_progressbar.setRange(0, 0)  # make it pulse continuously
+        self.backup_button.setEnabled(False)
+
+    def on_backup_finish(self):
+        self.backup_progressbar.setRange(0, 100)  # make it static again
+        self.backup_progressbar.setValue(0)
+        self.backup_button.setEnabled(True)
+        self.worker.deleteLater()  # clean up thread resource
 
 if __name__ == "__main__":
-    app = App()
-    app.mainloop()
+    app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon("assets/logo.png"))  # apply icon to all windows
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())

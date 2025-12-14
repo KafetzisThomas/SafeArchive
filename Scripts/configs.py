@@ -12,6 +12,7 @@ from colorama import Fore as F
 
 colorama.init(autoreset=True)
 
+
 class ConfigDict(dict):
     """
     Set configs and save every time a setting changes.
@@ -53,7 +54,6 @@ class ConfigDict(dict):
 SETTINGS_PATH = 'settings.json'
 config = ConfigDict({
     "_comments": {
-        "platform": "Get name of operating system (Windows, Linux, macOS)",
         "source_paths": "List of source paths (local folders) for backups (type: list with strings)",
         "destination_path": "Destination path (storage media) for backups (type: string)",
         "encryption": "Enable/Disable encryption on backups (type: boolean)",
@@ -67,7 +67,6 @@ config = ConfigDict({
         "ftp_password": "Password for FTP configuration (type: string)",
         "dropbox_access_token": "Access Dropbox account using token with individual scopes (type: string)"
   },
-    "platform": platform.system(),
     "source_paths": [
         str(Path('~/Desktop').expanduser()).replace("\\", "/") + "/",
         str(Path('~/Documents').expanduser()).replace("\\", "/") + "/",
@@ -91,7 +90,6 @@ def display_config_info():
     Display the current configuration settings in a user-friendly format.
     """
     config_fields = {
-        "Platform": config['platform'],
         "Source paths": config['source_paths'],
         "Destination path": config['destination_path'],
         "Encryption": config['encryption'],
