@@ -438,14 +438,14 @@ wheels = [
 
 [[package]]
 name = "prettytable"
-version = "3.7.0"
+version = "3.17.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "wcwidth" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/95/8d/f6b4448e386eb1382a99cbceabe3899f3aa431992582cc90496843548303/prettytable-3.7.0.tar.gz", hash = "sha256:ef8334ee40b7ec721651fc4d37ecc7bb2ef55fde5098d994438f0dfdaa385c0c", size = 47169, upload-time = "2023-04-11T03:32:11.695Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/79/45/b0847d88d6cfeb4413566738c8bbf1e1995fad3d42515327ff32cc1eb578/prettytable-3.17.0.tar.gz", hash = "sha256:59f2590776527f3c9e8cf9fe7b66dd215837cca96a9c39567414cbc632e8ddb0", size = 67892, upload-time = "2025-11-14T17:33:20.212Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7a/cd/bec5850e23eb005c6fe30fe4c26bafd9a07b3d2524771f22a0fa01270078/prettytable-3.7.0-py3-none-any.whl", hash = "sha256:f4aaf2ed6e6062a82fd2e6e5289bbbe705ec2788fe401a3a1f62a1cea55526d2", size = 27508, upload-time = "2023-04-10T09:05:16.908Z" },
+    { url = "https://files.pythonhosted.org/packages/ee/8c/83087ebc47ab0396ce092363001fa37c17153119ee282700c0713a195853/prettytable-3.17.0-py3-none-any.whl", hash = "sha256:aad69b294ddbe3e1f95ef8886a060ed1666a0b83018bbf56295f6f226c43d287", size = 34433, upload-time = "2025-11-14T17:33:19.093Z" },
 ]
 
 [[package]]
@@ -773,7 +773,7 @@ requires-dist = [
     { name = "colorama", specifier = "==0.4.6" },
     { name = "dropbox", specifier = "==11.36.2" },
     { name = "humanize", specifier = "==4.6.0" },
-    { name = "prettytable", specifier = "==3.7.0" },
+    { name = "prettytable", specifier = "==3.17.0" },
     { name = "psutil", specifier = "==6.0.0" },
     { name = "pydrive2", specifier = "==1.18.0" },
     { name = "pyqt6", specifier = ">=6.10.1" },
