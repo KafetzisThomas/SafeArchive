@@ -2,7 +2,7 @@ import os
 import pyzipper
 from pyzipper import BadZipFile
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
-from PyQt6.QtWidgets import QDialog, QFrame, QListWidget, QPushButton, QVBoxLayout, QInputDialog, QLineEdit, QMessageBox
+from PyQt6.QtWidgets import QDialog, QListWidget, QPushButton, QVBoxLayout, QInputDialog, QLineEdit, QMessageBox
 from ..configs import config
 
 
@@ -58,34 +58,14 @@ class RestoreWindow(QDialog):
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
 
     def create_widgets(self):
-        # frame
-        self.frame = QFrame(self)
-        self.frame.move(8, 8)
-        self.frame.setFixedSize(394, 150)
+        # main frame layout
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(8, 8, 8, 20)
+        main_layout.setSpacing(12)
 
         # list widget
-        self.listbox = QListWidget(self.frame)
-        self.listbox.setStyleSheet("""
-            QListWidget {
-                background-color: #343638;
-                color: white;
-                font-family: Helvetica;
-                font-size: 13pt;
-                border: 1px solid #1f6aa5;
-            }
-            QListWidget::item {
-                padding: 5px;
-            }
-            QListWidget::item:selected {
-                background-color: #1f6aa5;
-                color: white;
-            }
-        """)
-        
-        # layout inside frame
-        layout = QVBoxLayout(self.frame)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(self.listbox)
+        self.listbox = QListWidget()
+        main_layout.addWidget(self.listbox)
 
         # populate listbox
         self.listbox.clear()
@@ -100,28 +80,12 @@ class RestoreWindow(QDialog):
             self.listbox.setCurrentRow(0)
 
         # restore button
-        self.restore_button = QPushButton("Restore backup", self)
+        self.restore_button = QPushButton("Restore backup")
+        self.restore_button.setFixedSize(394, 35)
 
         # connect to main thread
         self.restore_button.clicked.connect(self.prepare_restore)
-        self.restore_button.setFixedWidth(220)
-        self.restore_button.move(95, 163)
-        self.restore_button.setStyleSheet("""
-            QPushButton {
-                background-color: #1f6aa5;
-                color: white;
-                font-weight: bold;
-                border-radius: 5px;
-                padding: 8px;
-            }
-            QPushButton:hover {
-                background-color: #144870;
-            }
-            QPushButton:disabled {
-                background-color: #555555;
-                color: #aaaaaa;
-            }
-        """)
+        main_layout.addWidget(self.restore_button)
 
     def prepare_restore(self):
         """
