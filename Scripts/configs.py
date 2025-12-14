@@ -12,6 +12,7 @@ from colorama import Fore as F
 
 colorama.init(autoreset=True)
 
+
 class ConfigDict(dict):
     """
     Set configs and save every time a setting changes.

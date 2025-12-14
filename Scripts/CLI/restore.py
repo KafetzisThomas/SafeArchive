@@ -38,7 +38,7 @@ class RestoreBackup:
         try:
             selected_id = input("\nSelect backup to restore (Enter the ID): ")
         except KeyboardInterrupt:
-            print(f"\n{F.LIGHTCYAN_EX}* Exiting...")
+            print(f"\n{F.LIGHTCYAN_EX}[*] Exiting...")
             sys.exit()
 
         if selected_id.isdigit() and int(selected_id) in backups_table:
