@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle(f"SafeArchive {version}")
-        self.setFixedSize(QSize(500, 350))  # disable minimize/maximize buttons
+        self.setFixedSize(QSize(500, 380))  # disable minimize/maximize buttons
 
         top_widget = QWidget(self)
         top_widget.setGeometry(10, 10, 480, 150)  # x, y, width, height
@@ -100,11 +100,9 @@ class MainWindow(QMainWindow):
 
         # frame containing listbox
         self.frame = QFrame(self)
-
-        # default visual border
         self.frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QFrame.Shadow.Raised)
-        self.frame.setGeometry(10, 160, 480, 100)  # x, y, width, height
+        self.frame.setGeometry(10, 160, 480, 130)  # x, y, width, height
 
         self.listbox = QListWidget()
         vbox = QVBoxLayout(self.frame)
@@ -115,13 +113,13 @@ class MainWindow(QMainWindow):
 
         # backup progress bar
         self.backup_progressbar = QProgressBar(self)
-        self.backup_progressbar.setGeometry(15, 275, 475, 15)  # x, y, width, height
+        self.backup_progressbar.setGeometry(15, 305, 475, 15)  # x, y, width, height
         self.backup_progressbar.setRange(0, 0)  # make it pulse continuously
         self.backup_progressbar.setTextVisible(False)  # hide %
 
         # bottom bar layout
         bottom_widget = QWidget(self)
-        bottom_widget.setGeometry(10, 290, 480, 45)  # x, y, width, height
+        bottom_widget.setGeometry(10, 320, 480, 45)  # x, y, width, height
 
         bottom_layout = QHBoxLayout(bottom_widget)
         bottom_layout.setContentsMargins(1, 1, 1, 1)
