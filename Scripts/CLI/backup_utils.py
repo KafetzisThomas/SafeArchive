@@ -114,12 +114,13 @@ class Backup:
         """
         Initialize and upload local backups to the cloud.
         """
-        if config['storage_provider'] == "Google Drive":
-            google_drive.backup_to_google_drive(DESTINATION_PATH)
-        elif config['storage_provider'] == "FTP":
-            ftp.backup_to_ftp_server(DESTINATION_PATH)
-        elif config['storage_provider'] == "Dropbox":
-            dropbox.upload_to_dropbox(DESTINATION_PATH)
+        # if config['storage_provider'] == "Google Drive":
+        #     google_drive.backup_to_google_drive(DESTINATION_PATH)
+        # elif config['storage_provider'] == "FTP":
+        #     ftp.backup_to_ftp_server(DESTINATION_PATH)
+        # elif config['storage_provider'] == "Dropbox":
+        #     dropbox.upload_to_dropbox(DESTINATION_PATH)
+        pass
 
     def get_backup_password(self):
         """

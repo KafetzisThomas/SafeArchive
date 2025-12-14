@@ -114,7 +114,8 @@ class MainWindow(QMainWindow):
         # backup progress bar
         self.backup_progressbar = QProgressBar(self)
         self.backup_progressbar.setGeometry(15, 305, 475, 15)  # x, y, width, height
-        self.backup_progressbar.setRange(0, 0)  # make it pulse continuously
+        self.backup_progressbar.setRange(0, 100)  # make it static by default
+        self.backup_progressbar.setValue(0)
         self.backup_progressbar.setTextVisible(False)  # hide %
 
         # bottom bar layout
@@ -200,11 +201,12 @@ class MainWindow(QMainWindow):
         self.worker.start()  # start thread
 
     def on_backup_start(self):
-        self.backup_progressbar.show()
+        self.backup_progressbar.setRange(0, 0)  # make it pulse continuously
         self.backup_button.setEnabled(False)
 
     def on_backup_finish(self):
-        self.backup_progressbar.hide()
+        self.backup_progressbar.setRange(0, 100)  # make it static again
+        self.backup_progressbar.setValue(0)
         self.backup_button.setEnabled(True)
         self.worker.deleteLater()  # clean up thread resource
 
