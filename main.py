@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
         self.setFixedSize(QSize(500, 360))  # disable minimize/maximize buttons
 
         top_widget = QWidget(self)
-        top_widget.setGeometry(10, 10, 480, 140)
+        top_widget.setGeometry(10, 10, 480, 150)  # x, y, width, height
 
         top_layout = QVBoxLayout(top_widget)
         top_layout.setContentsMargins(5, 5, 5, 5)
@@ -58,6 +58,7 @@ class MainWindow(QMainWindow):
         top_layout.addWidget(self.drive_label)
 
         self.drives_combobox = QComboBox(self)
+        self.drives_combobox.setFixedWidth(470)
         self.drives_combobox.setFixedHeight(24)
         self.drives_combobox.addItems(get_available_drives())
 
@@ -103,7 +104,7 @@ class MainWindow(QMainWindow):
         # default visual border
         self.frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QFrame.Shadow.Raised)
-        self.frame.setGeometry(10, 160, 500, 100)  # x, y, width, height
+        self.frame.setGeometry(10, 160, 480, 100)  # x, y, width, height
 
         self.listbox = QListWidget()
         vbox = QVBoxLayout(self.frame)
@@ -120,11 +121,11 @@ class MainWindow(QMainWindow):
 
         # bottom bar layout
         bottom_widget = QWidget(self)
-        bottom_widget.setGeometry(10, 300, 480, 45)
+        bottom_widget.setGeometry(10, 300, 480, 45)  # x, y, width, height
 
         bottom_layout = QHBoxLayout(bottom_widget)
-        bottom_layout.setContentsMargins(5, 5, 5, 5)
-        bottom_layout.setSpacing(2)
+        bottom_layout.setContentsMargins(1, 1, 1, 1)
+        bottom_layout.setSpacing(1)
 
         no_border_style = "QPushButton { border: none; padding: 0px; }"
 
