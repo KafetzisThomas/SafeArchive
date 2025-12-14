@@ -1,6 +1,6 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import QDialog, QFrame, QLabel, QComboBox, QCheckBox
+from PyQt6.QtWidgets import QDialog, QFrame, QLabel, QComboBox, QCheckBox, QVBoxLayout
 from .widgets import Combobox, Switch
 from ..configs import config
 
@@ -15,128 +15,73 @@ class SettingsWindow(QDialog):
 
     def create_settings_window(self):
         self.setWindowTitle("Settings")
-        self.setFixedSize(630, 190)  # disable minimize/maximize buttons
+        self.setFixedSize(280, 350)  # disable minimize/maximize buttons
 
         # hide ? mark
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
 
     def create_widgets(self):
-        # frame
+        # main frame layout
         self.frame = QFrame(self)
-        self.frame.move(8, 8)
-        self.frame.setFixedSize(615, 174)
-        
-        # rounded corners and background
-        self.frame.setStyleSheet("""
-            QFrame { 
-                background-color: #2b2b2b; 
-                border-radius: 10px; 
-            }
-        """)
+        self.frame.setGeometry(0, 0, 280, 350)  # x, y, width, height
+        main_layout = QVBoxLayout(self.frame)
+        main_layout.setContentsMargins(25, 20, 25, 20)
+        main_layout.setSpacing(10)
 
-        # display storage provider label
-        lbl = QLabel("Storage Provider:", self.frame)
-        lbl.setFont(QFont('Helvetica', 15))
-        lbl.setStyleSheet("color: white; background: transparent;")
-        lbl.move(10, 90)
+        # display storage provider label + combobox
+        storage_provider_label = QLabel("Storage Provider:")
+        storage_provider_label.setFont(QFont('Helvetica', 10))
+        main_layout.addWidget(storage_provider_label)
 
-        # storage provider combobox
-        combo = QComboBox(self.frame)
-        combo.addItems(["None", "Google Drive", "Dropbox", "FTP"])
-        combo.setCurrentText(config['storage_provider'])
-        combo.setFixedWidth(130)
-        combo.move(160, 90)
-        
-        # signal connection
-        combo.currentTextChanged.connect(lambda choice: Combobox(key='storage_provider', choice=choice))
+        storage_provider_combobox = QComboBox()
+        storage_provider_combobox.addItems(["None", "Google Drive", "Dropbox", "FTP"])
+        storage_provider_combobox.setCurrentText(config['storage_provider'])
+        storage_provider_combobox.setFixedSize(230, 30)
+        storage_provider_combobox.currentTextChanged.connect(lambda choice: Combobox(key='storage_provider', choice=choice))
+        main_layout.addWidget(storage_provider_combobox)
 
-        # compression combobox
-        lbl = QLabel("Compression Method:", self.frame)
-        lbl.setFont(QFont('Helvetica', 15))
-        lbl.setStyleSheet("color: white; background: transparent;")
-        lbl.move(295, 20)
+        # compression label + combobox
+        compression_label = QLabel("Compression Method:")
+        compression_label.setFont(QFont('Helvetica', 10))
+        main_layout.addWidget(compression_label)
 
-        combo = QComboBox(self.frame)
-        combo.addItems(["ZIP_DEFLATED", "ZIP_STORED", "ZIP_LZMA", "ZIP_BZIP2"])
-        combo.setCurrentText(config['compression_method'])
-        combo.setFixedWidth(130)
-        combo.move(465, 20)
-        
-        combo.currentTextChanged.connect(lambda choice: Combobox(key='compression_method', choice=choice))
+        compression_combobox = QComboBox()
+        compression_combobox.addItems(["ZIP_DEFLATED", "ZIP_STORED", "ZIP_LZMA", "ZIP_BZIP2"])
+        compression_combobox.setCurrentText(config['compression_method'])
+        compression_combobox.setFixedSize(230, 30)
+        compression_combobox.currentTextChanged.connect(lambda choice: Combobox(key='compression_method', choice=choice))
+        main_layout.addWidget(compression_combobox)
 
-        # compression level combobox
-        lbl = QLabel("Compression Level:", self.frame)
-        lbl.setFont(QFont('Helvetica', 15))
-        lbl.setStyleSheet("color: white; background: transparent;")
-        lbl.move(295, 55)
+        # compression level label + combobox
+        compression_level_label = QLabel("Compression Level:")
+        compression_level_label.setFont(QFont('Helvetica', 10))
+        main_layout.addWidget(compression_level_label)
 
-        combo = QComboBox(self.frame)
-        combo.addItems([str(i) for i in range(1, 10)])  # create a list of strings [1, 9]
-        combo.setCurrentText(str(config['compression_level']))
-        combo.setFixedWidth(130)
-        combo.move(465, 55)
-        
-        combo.currentTextChanged.connect(lambda choice: Combobox(key='compression_level', choice=choice))
+        compression_level_combobox = QComboBox()
+        compression_level_combobox.addItems([str(i) for i in range(1, 10)])  # create a list of strings [1, 9]
+        compression_level_combobox.setCurrentText(str(config['compression_level']))
+        compression_level_combobox.setFixedSize(230, 30)
+        compression_level_combobox.currentTextChanged.connect(lambda choice: Combobox(key='compression_level', choice=choice))
+        main_layout.addWidget(compression_level_combobox)
 
-        # keep my backups combobox
-        lbl = QLabel("Keep my backups:", self.frame)
-        lbl.setFont(QFont('Helvetica', 15))
-        lbl.setStyleSheet("color: white; background: transparent;")
-        lbl.move(295, 90)
+        # keep my backups label + combobox
+        keep_my_backups_label = QLabel("Keep my backups:")
+        keep_my_backups_label.setFont(QFont('Helvetica', 10))
+        main_layout.addWidget(keep_my_backups_label)
 
-        combo = QComboBox(self.frame)
-        combo.addItems(["1 month", "3 months", "6 months", "9 months", "1 year", "Forever"])
-        combo.setCurrentText(config['backup_expiry_date'])
-        combo.setFixedWidth(130)
-        combo.move(465, 90)
-        
-        combo.currentTextChanged.connect(lambda choice: Combobox(key='backup_expiry_date', choice=choice))
+        keep_my_backups_combobox = QComboBox()
+        keep_my_backups_combobox.addItems(["1 month", "3 months", "6 months", "9 months", "1 year", "Forever"])
+        keep_my_backups_combobox.setCurrentText(config['backup_expiry_date'])
+        keep_my_backups_combobox.setFixedSize(230, 30)
+        keep_my_backups_combobox.currentTextChanged.connect(lambda choice: Combobox(key='backup_expiry_date', choice=choice))
+        main_layout.addWidget(keep_my_backups_combobox)
 
         # encryption switch
-        self.chk_encryption = QCheckBox("Encrypt Backups", self.frame)
-        self.chk_encryption.setFont(QFont('Helvetica', 15))
-        self.chk_encryption.setChecked(config['encryption'])
-        self.chk_encryption.move(295, 130)
-        
-        # dark mode style
-        self.chk_encryption.setStyleSheet("""
-            QCheckBox {
-                color: white;
-                background: transparent;
-                spacing: 10px;
-            }
-            QCheckBox::indicator {
-                width: 18px;
-                height: 18px;
-                border: 1px solid #555;
-                border-radius: 4px;
-                background: #343638;
-            }
-            QCheckBox::indicator:checked {
-                background-color: #1f6aa5;
-                border: 1px solid #1f6aa5;
-            }
-        """)
+        main_layout.addSpacing(10)
+        encryption_switch = QCheckBox("Encrypt Backups")
+        encryption_switch.setFont(QFont('Helvetica', 10))
+        encryption_switch.setChecked(config['encryption'])
+        encryption_switch.toggled.connect(lambda checked: Switch(key='encryption', value=checked))
+        main_layout.addWidget(encryption_switch)
 
-        # signal connection
-        self.chk_encryption.toggled.connect(
-            lambda checked: Switch(key='encryption', value=checked)
-        )
-
-        combo.setStyleSheet("""
-            QComboBox {
-                background-color: #343638;
-                color: white;
-                border: 1px solid #555;
-                border-radius: 4px;
-                padding: 5px;
-            }
-            QComboBox::drop-down {
-                border: 0px;
-            }
-            QComboBox QAbstractItemView {
-                background-color: #343638;
-                color: white;
-                selection-background-color: #1f6aa5;
-            }
-        """)
+        main_layout.addStretch()
