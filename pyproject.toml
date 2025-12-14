@@ -9,7 +9,7 @@ dependencies = [
     "colorama==0.4.6",
     "dropbox==11.36.2",
     "humanize==4.6.0",
-    "prettytable==3.7.0",
+    "prettytable==3.17.0",
     "psutil==6.0.0",
     "pydrive2==1.18.0",
     "pyqt6>=6.10.1",
