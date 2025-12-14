@@ -118,6 +118,14 @@ class MainWindow(QMainWindow):
         self.backup_progressbar.setRange(0, 0)  # make it pulse continuously
         self.backup_progressbar.setTextVisible(False)  # hide %
 
+        # bottom bar layout
+        bottom_widget = QWidget(self)
+        bottom_widget.setGeometry(10, 300, 480, 45)
+
+        bottom_layout = QHBoxLayout(bottom_widget)
+        bottom_layout.setContentsMargins(5, 5, 5, 5)
+        bottom_layout.setSpacing(8)
+
         # about window
         about_pixmap = QPixmap(os.path.join("assets", "info.png"))
         about_scaled_pixmap = about_pixmap.scaled(
@@ -126,13 +134,12 @@ class MainWindow(QMainWindow):
         )
         about_icon = QIcon(about_scaled_pixmap)
 
-        self.about_button = QPushButton(self)
+        self.about_button = QPushButton()
         self.about_button.setIcon(about_icon)
         self.about_button.setIconSize(about_scaled_pixmap.size())
-        self.about_button.setText("")  # remove default text
         self.about_button.setFixedSize(35, 35)
-        self.about_button.move(15, 310)
         self.about_button.clicked.connect(lambda: AboutWindow(self, version))
+        bottom_layout.addWidget(self.about_button)
 
         # settings window
         settings_pixmap = QPixmap(os.path.join("assets", "gear.png"))
@@ -142,13 +149,12 @@ class MainWindow(QMainWindow):
         )
         settings_icon = QIcon(settings_scaled_pixmap)
 
-        self.settings_icon = QPushButton(self)
+        self.settings_icon = QPushButton()
         self.settings_icon.setIcon(settings_icon)
         self.settings_icon.setIconSize(settings_scaled_pixmap.size())
-        self.settings_icon.setText("")  # remove default text
         self.settings_icon.setFixedSize(35, 35)
-        self.settings_icon.move(50, 310)
         self.settings_icon.clicked.connect(lambda: SettingsWindow(self))
+        bottom_layout.addWidget(self.settings_icon)
 
         # restore window
         restore_pixmap = QPixmap(os.path.join("assets", "restore.png"))
@@ -158,33 +164,37 @@ class MainWindow(QMainWindow):
         )
         restore_icon = QIcon(restore_scaled_pixmap)
 
-        self.restore_icon = QPushButton(self)
+        self.restore_icon = QPushButton()
         self.restore_icon.setIcon(restore_icon)
         self.restore_icon.setIconSize(restore_scaled_pixmap.size())
-        self.restore_icon.setText("")  # remove default text
         self.restore_icon.setFixedSize(35, 35)
-        self.restore_icon.move(85, 310)
         self.restore_icon.clicked.connect(lambda: RestoreWindow(self, DESTINATION_PATH))
+        bottom_layout.addWidget(self.restore_icon)
+
+        # spacer
+        bottom_layout.addStretch()
 
         # plus button
-        self.plus_button = QPushButton("+", self)
+        self.plus_button = QPushButton("+")
         self.plus_button.setFixedWidth(40)
-        self.plus_button.clicked.connect(lambda: add_item(listbox=self.listbox, SOURCE_PATHS=config["source_paths"]))
-        self.plus_button.move(235, 310)
+        self.plus_button.clicked.connect(
+            lambda: add_item(listbox=self.listbox, SOURCE_PATHS=config["source_paths"])
+        )
+        bottom_layout.addWidget(self.plus_button)
 
         # minus button
-        self.minus_button = QPushButton("-", self)
-        self.minus_button.setFixedWidth(65)
+        self.minus_button = QPushButton("-")
+        self.minus_button.setFixedWidth(40)
         self.minus_button.clicked.connect(
             lambda: remove_item(listbox=self.listbox, SOURCE_PATHS=config["source_paths"])
         )
-        self.minus_button.move(280, 310)
+        bottom_layout.addWidget(self.minus_button)
 
         # backup button
-        self.backup_button = QPushButton("BACKUP", self)
+        self.backup_button = QPushButton("BACKUP")
         self.backup_button.setFixedWidth(100)
         self.backup_button.clicked.connect(self.start_backup_process)
-        self.backup_button.move(350, 310)
+        bottom_layout.addWidget(self.backup_button)
 
     def start_backup_process(self):
         """
