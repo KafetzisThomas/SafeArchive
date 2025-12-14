@@ -21,8 +21,8 @@ from Scripts.configs import config
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QIcon, QFont, QPixmap
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QLabel, QComboBox, QFrame,
-    QListWidget, QVBoxLayout, QProgressBar, QPushButton, QMessageBox
+    QApplication, QMainWindow, QLabel, QComboBox, QFrame, QListWidget,
+    QVBoxLayout, QProgressBar, QPushButton, QMessageBox, QWidget, QHBoxLayout
 )
 
 version = "1.5.0"
@@ -45,13 +45,20 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(f"SafeArchive {version}")
         self.setFixedSize(QSize(500, 360))  # disable minimize/maximize buttons
 
+        top_widget = QWidget(self)
+        top_widget.setGeometry(10, 10, 480, 140)
+
+        top_layout = QVBoxLayout(top_widget)
+        top_layout.setContentsMargins(5, 5, 5, 5)
+        top_layout.setSpacing(6)
+
         # drive combobox
         self.drive_label = QLabel("Drive", self)
         self.drive_label.setFont(QFont("Helvetica", 12))
-        self.drive_label.move(15, 15)
+        top_layout.addWidget(self.drive_label)
 
         self.drives_combobox = QComboBox(self)
-        self.drives_combobox.setFixedWidth(475)
+        self.drives_combobox.setFixedHeight(24)
         self.drives_combobox.addItems(get_available_drives())
 
         # set initial value
@@ -61,31 +68,34 @@ class MainWindow(QMainWindow):
         self.drives_combobox.currentTextChanged.connect(
             lambda choice: Combobox(key="destination_path", choice=choice)
         )
-        self.drives_combobox.move(15, 40)
+        top_layout.addWidget(self.drives_combobox)
 
         # size of backup label
         self.size_of_backup_label = QLabel(
             f"Size of backup: {humanize.naturalsize(get_backup_size(DESTINATION_PATH))}", self
         )
-        self.size_of_backup_label.setFont(QFont("Helvetica", 12))
-        self.size_of_backup_label.move(15, 70)
+        self.size_of_backup_label.setFont(QFont("Helvetica", 10))
+        self.size_of_backup_label.setWordWrap(True)
+        top_layout.addWidget(self.size_of_backup_label)
 
         # total drive space label
         self.total_drive_space_label = QLabel(
             f"Free space on ({DESTINATION_PATH.replace('SafeArchive/', '')}): {storage_media_free_space()} GB", self
         )
-        self.total_drive_space_label.setFont(QFont("Helvetica", 12))
-        self.total_drive_space_label.move(15, 90)
+        self.total_drive_space_label.setFont(QFont("Helvetica", 10))
+        self.total_drive_space_label.setWordWrap(True)
+        top_layout.addWidget(self.total_drive_space_label)
 
         # last backup label
         self.last_backup_label = QLabel(f"Last backup: {last_backup(DESTINATION_PATH)}", self)
-        self.last_backup_label.setFont(QFont("Helvetica", 12))
-        self.last_backup_label.move(15, 110)
+        self.last_backup_label.setFont(QFont("Helvetica", 10))
+        self.last_backup_label.setWordWrap(True)
+        top_layout.addWidget(self.last_backup_label)
 
         # backup these folders label
         self.backup_these_folders_label = QLabel("Backup these folders:", self)
-        self.backup_these_folders_label.setFont(QFont("Helvetica", 12))
-        self.backup_these_folders_label.move(15, 130)
+        self.backup_these_folders_label.setFont(QFont("Helvetica", 10))
+        top_layout.addWidget(self.backup_these_folders_label)
 
         # frame containing listbox
         self.frame = QFrame(self)
