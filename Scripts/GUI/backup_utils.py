@@ -4,13 +4,14 @@ from datetime import date
 from pyzipper import BadZipFile
 from PyQt6.QtCore import QThread, pyqtSignal
 from PyQt6.QtWidgets import QApplication, QInputDialog, QLineEdit
-from ..cloud_utils import GoogleDriveCloud, FTP, Dropbox
+# from ..cloud_utils import GoogleDriveCloud, FTP, Dropbox
 from ..file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
 from ..configs import config
 
-google_drive = GoogleDriveCloud()
-ftp = FTP()
-dropbox = Dropbox()
+# google_drive = GoogleDriveCloud()
+# ftp = FTP()
+# dropbox = Dropbox()
+
 
 class BackupWorker(QThread):
     """
@@ -106,12 +107,13 @@ class BackupWorker(QThread):
         """
         Initialize and upload local backups to the cloud.
         """
-        if config['storage_provider'] == "Google Drive":
-            google_drive.backup_to_google_drive(self.destination_path)    
-        elif config['storage_provider'] == "FTP":
-            ftp.backup_to_ftp_server(self.destination_path)
-        elif config['storage_provider'] == "Dropbox":
-            dropbox.upload_to_dropbox(self.destination_path)
+        # if config['storage_provider'] == "Google Drive":
+        #     google_drive.backup_to_google_drive(self.destination_path)    
+        # elif config['storage_provider'] == "FTP":
+        #     ftp.backup_to_ftp_server(self.destination_path)
+        # elif config['storage_provider'] == "Dropbox":
+        #     dropbox.upload_to_dropbox(self.destination_path)
+        pass
 
 def get_backup_password():
     """

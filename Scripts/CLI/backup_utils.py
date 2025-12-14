@@ -6,16 +6,17 @@ import colorama
 from datetime import date
 from pyzipper import BadZipFile
 from ..file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
-from ..cloud_utils import GoogleDriveCloud, FTP, Dropbox
+# from ..cloud_utils import GoogleDriveCloud, FTP, Dropbox
 from ..configs import config
 from getpass import getpass
 from colorama import Fore as F
 colorama.init(autoreset=True)
 
 config.load()
-google_drive = GoogleDriveCloud()
-dropbox = Dropbox()
-ftp = FTP()
+# google_drive = GoogleDriveCloud()
+# dropbox = Dropbox()
+# ftp = FTP()
+
 
 class Backup:
     """
