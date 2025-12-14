@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle(f"SafeArchive {version}")
-        self.setFixedSize(QSize(500, 360))  # disable minimize/maximize buttons
+        self.setFixedSize(QSize(500, 350))  # disable minimize/maximize buttons
 
         top_widget = QWidget(self)
         top_widget.setGeometry(10, 10, 480, 150)  # x, y, width, height
@@ -121,7 +121,7 @@ class MainWindow(QMainWindow):
 
         # bottom bar layout
         bottom_widget = QWidget(self)
-        bottom_widget.setGeometry(10, 300, 480, 45)  # x, y, width, height
+        bottom_widget.setGeometry(10, 290, 480, 45)  # x, y, width, height
 
         bottom_layout = QHBoxLayout(bottom_widget)
         bottom_layout.setContentsMargins(1, 1, 1, 1)
