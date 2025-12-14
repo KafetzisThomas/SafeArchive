@@ -16,6 +16,7 @@ dependencies = [
     "pydrive2==1.18.0",
     "pyqt6>=6.10.1",
     "pyzipper==0.3.6",
+    "qtawesome>=1.4.0",
     "schedule==1.2.2",
     "setuptools>=80.9.0",
 ]

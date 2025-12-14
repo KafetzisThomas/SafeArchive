@@ -6,10 +6,10 @@
 # License: GPLv3
 # NOTE: By contributing to this project, you agree to the terms of the GPLv3 license, and agree to grant the project owner the right to also provide or sell this software, including your contribution, to anyone under any other license, with no compensation to you.
 
-import os
 import sys
 import runpy
 import humanize
+import qtawesome as qta
 from Scripts.file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path
 from Scripts.GUI.file_utils import get_available_drives, update_listbox, remove_item, add_item
 from Scripts.GUI.widgets import Combobox
@@ -18,11 +18,11 @@ from Scripts.GUI.about import AboutWindow
 from Scripts.GUI.restore import RestoreWindow
 from Scripts.GUI.settings import SettingsWindow
 from Scripts.configs import config
-from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtGui import QIcon, QFont, QPixmap
+from PyQt6.QtCore import QSize
+from PyQt6.QtGui import QIcon, QFont
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QLabel, QComboBox, QFrame, QListWidget,
-    QVBoxLayout, QProgressBar, QPushButton, QMessageBox, QWidget, QHBoxLayout
+    QVBoxLayout, QProgressBar, QPushButton, QMessageBox, QWidget, QHBoxLayout,
 )
 
 version = "1.5.0"
@@ -124,50 +124,34 @@ class MainWindow(QMainWindow):
 
         bottom_layout = QHBoxLayout(bottom_widget)
         bottom_layout.setContentsMargins(5, 5, 5, 5)
-        bottom_layout.setSpacing(8)
+        bottom_layout.setSpacing(2)
+
+        no_border_style = "QPushButton { border: none; padding: 0px; }"
 
         # about window
-        about_pixmap = QPixmap(os.path.join("assets", "info.png"))
-        about_scaled_pixmap = about_pixmap.scaled(
-            25, 25, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio,
-            transformMode=Qt.TransformationMode.SmoothTransformation,
-        )
-        about_icon = QIcon(about_scaled_pixmap)
-
         self.about_button = QPushButton()
-        self.about_button.setIcon(about_icon)
-        self.about_button.setIconSize(about_scaled_pixmap.size())
+        self.about_button.setIcon(qta.icon('mdi.information'))
+        self.about_button.setIconSize(QSize(22, 22))
         self.about_button.setFixedSize(35, 35)
+        self.about_button.setStyleSheet(no_border_style)
         self.about_button.clicked.connect(lambda: AboutWindow(self, version))
         bottom_layout.addWidget(self.about_button)
 
         # settings window
-        settings_pixmap = QPixmap(os.path.join("assets", "gear.png"))
-        settings_scaled_pixmap = settings_pixmap.scaled(
-            25, 25, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio,
-            transformMode=Qt.TransformationMode.SmoothTransformation,
-        )
-        settings_icon = QIcon(settings_scaled_pixmap)
-
         self.settings_icon = QPushButton()
-        self.settings_icon.setIcon(settings_icon)
-        self.settings_icon.setIconSize(settings_scaled_pixmap.size())
+        self.settings_icon.setIcon(qta.icon('ph.gear-fill'))
+        self.settings_icon.setIconSize(QSize(22, 22))
         self.settings_icon.setFixedSize(35, 35)
+        self.settings_icon.setStyleSheet(no_border_style)
         self.settings_icon.clicked.connect(lambda: SettingsWindow(self))
         bottom_layout.addWidget(self.settings_icon)
 
         # restore window
-        restore_pixmap = QPixmap(os.path.join("assets", "restore.png"))
-        restore_scaled_pixmap = restore_pixmap.scaled(
-            25, 25, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio,
-            transformMode=Qt.TransformationMode.SmoothTransformation,
-        )
-        restore_icon = QIcon(restore_scaled_pixmap)
-
         self.restore_icon = QPushButton()
-        self.restore_icon.setIcon(restore_icon)
-        self.restore_icon.setIconSize(restore_scaled_pixmap.size())
+        self.restore_icon.setIcon(qta.icon('fa6s.rotate'))
+        self.restore_icon.setIconSize(QSize(20, 20))
         self.restore_icon.setFixedSize(35, 35)
+        self.restore_icon.setStyleSheet(no_border_style)
         self.restore_icon.clicked.connect(lambda: RestoreWindow(self, DESTINATION_PATH))
         bottom_layout.addWidget(self.restore_icon)
 
@@ -176,23 +160,19 @@ class MainWindow(QMainWindow):
 
         # plus button
         self.plus_button = QPushButton("+")
-        self.plus_button.setFixedWidth(40)
-        self.plus_button.clicked.connect(
-            lambda: add_item(listbox=self.listbox, SOURCE_PATHS=config["source_paths"])
-        )
+        self.plus_button.setFixedSize(35, 35)
+        self.plus_button.clicked.connect(lambda: add_item(listbox=self.listbox, SOURCE_PATHS=config["source_paths"]))
         bottom_layout.addWidget(self.plus_button)
 
         # minus button
         self.minus_button = QPushButton("-")
-        self.minus_button.setFixedWidth(40)
-        self.minus_button.clicked.connect(
-            lambda: remove_item(listbox=self.listbox, SOURCE_PATHS=config["source_paths"])
-        )
+        self.minus_button.setFixedSize(35, 35)
+        self.minus_button.clicked.connect(lambda: remove_item(listbox=self.listbox, SOURCE_PATHS=config["source_paths"]))
         bottom_layout.addWidget(self.minus_button)
 
         # backup button
         self.backup_button = QPushButton("BACKUP")
-        self.backup_button.setFixedWidth(100)
+        self.backup_button.setFixedSize(100, 35)
         self.backup_button.clicked.connect(self.start_backup_process)
         bottom_layout.addWidget(self.backup_button)
 
