@@ -8,11 +8,11 @@ resolution-markers = [
 
 [[package]]
 name = "art"
-version = "5.9"
+version = "6.5"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/e3/c9/089fd82076dcc7b701542a5b55d76aabb1dbdf47710023c59cf5c2d0ad3b/art-5.9.tar.gz", hash = "sha256:6a311ec0a227c6554c6789e91e74c3f2c86453a2a8e76947788695b7a91ccff0", size = 658896, upload-time = "2023-03-16T12:39:31.906Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d4/7d/7d80509bbd19fb747edef94ba487dbadd2747944774ccc0528ad0d005a36/art-6.5.tar.gz", hash = "sha256:a98d77b42c278697ec6cf4b5bdcdfd997f6b2425332da078d4e31e31377d1844", size = 672902, upload-time = "2025-04-12T17:02:20.279Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b5/fa/c245dfd531c99eda13a8aa05ded728c070e9523df87a9d96679afec99cb1/art-5.9-py2.py3-none-any.whl", hash = "sha256:9b02463468fc51c77200dadee970cf02c9576008c4f3b99d7ed02371ec037bd1", size = 597607, upload-time = "2023-03-16T12:39:34.287Z" },
+    { url = "https://files.pythonhosted.org/packages/67/29/57b06fdb3abdf52c621d3ca3caea735e2db4c8d48288ebd26af448e8e247/art-6.5-py3-none-any.whl", hash = "sha256:70706408144c45c666caab690627d5c74aea7b6c7ce8cc968408ddeef8d84afd", size = 610382, upload-time = "2025-04-12T17:02:21.97Z" },
 ]
 
 [[package]]
@@ -769,7 +769,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "art", specifier = "==5.9" },
+    { name = "art", specifier = "==6.5" },
     { name = "colorama", specifier = "==0.4.6" },
     { name = "dropbox", specifier = "==11.36.2" },
     { name = "humanize", specifier = "==4.6.0" },

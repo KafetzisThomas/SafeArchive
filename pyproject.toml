@@ -5,7 +5,7 @@ description = "Securely backup and manage your files locally and in the cloud."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "art==5.9",
+    "art==6.5",
     "colorama==0.4.6",
     "dropbox==11.36.2",
     "humanize==4.6.0",
