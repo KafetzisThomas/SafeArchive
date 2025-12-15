@@ -111,12 +111,11 @@ class Backup:
         """
         Upload zip file to the ftp server.
         """
-        ftp = FTP()
-        if config['storage_provider'] == "FTP":
-            try:
-                ftp.backup_to_ftp_server(DESTINATION_PATH)
-            except AttributeError:
-                print(f"{F.LIGHTRED_EX}[*] FTP not configured. Please edit the settings.json file to add your ftp credentials.")
+        if config['ftp']:
+            if config['ftp_hostname'] and config['ftp_username'] and config['ftp_password']:
+                FTP().backup_to_ftp_server(DESTINATION_PATH)
+            else:
+                print(f"{F.LIGHTRED_EX}[*] FTP is enabled but credentials are missing in settings.json.")
 
     def get_backup_password(self):
         """

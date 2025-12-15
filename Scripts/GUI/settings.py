@@ -6,7 +6,7 @@ from ..configs import config
 
 
 class SettingsWindow(QDialog):
-    def __init__(self,App):
+    def __init__(self, App):
         super().__init__(App)
         self.App = App
         self.create_settings_window()
@@ -15,7 +15,7 @@ class SettingsWindow(QDialog):
 
     def create_settings_window(self):
         self.setWindowTitle("Settings")
-        self.setFixedSize(280, 350)  # disable minimize/maximize buttons
+        self.setFixedSize(280, 320)  # disable minimize/maximize buttons
 
         # hide ? mark
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
@@ -23,22 +23,10 @@ class SettingsWindow(QDialog):
     def create_widgets(self):
         # main frame layout
         self.frame = QFrame(self)
-        self.frame.setGeometry(0, 0, 280, 350)  # x, y, width, height
+        self.frame.setGeometry(0, 0, 280, 320)  # x, y, width, height
         main_layout = QVBoxLayout(self.frame)
         main_layout.setContentsMargins(25, 20, 25, 20)
         main_layout.setSpacing(10)
-
-        # display storage provider label + combobox
-        storage_provider_label = QLabel("Storage Provider:")
-        storage_provider_label.setFont(QFont('Helvetica', 10))
-        main_layout.addWidget(storage_provider_label)
-
-        storage_provider_combobox = QComboBox()
-        storage_provider_combobox.addItems(["None", "Google Drive", "Dropbox", "FTP"])
-        storage_provider_combobox.setCurrentText(config['storage_provider'])
-        storage_provider_combobox.setFixedSize(230, 30)
-        storage_provider_combobox.currentTextChanged.connect(lambda choice: Combobox(key='storage_provider', choice=choice))
-        main_layout.addWidget(storage_provider_combobox)
 
         # compression label + combobox
         compression_label = QLabel("Compression Method:")
@@ -76,12 +64,20 @@ class SettingsWindow(QDialog):
         keep_my_backups_combobox.currentTextChanged.connect(lambda choice: Combobox(key='backup_expiry_date', choice=choice))
         main_layout.addWidget(keep_my_backups_combobox)
 
-        # encryption switch
         main_layout.addSpacing(10)
+
+        # encryption switch
         encryption_switch = QCheckBox("Encrypt Backups")
         encryption_switch.setFont(QFont('Helvetica', 10))
         encryption_switch.setChecked(config['encryption'])
         encryption_switch.toggled.connect(lambda checked: Switch(key='encryption', value=checked))
         main_layout.addWidget(encryption_switch)
+
+        # ftp switch
+        ftp_switch = QCheckBox("Enable FTP")
+        ftp_switch.setFont(QFont('Helvetica', 10))
+        ftp_switch.setChecked(config['ftp'])
+        ftp_switch.toggled.connect(lambda checked: Switch(key='ftp', value=checked))
+        main_layout.addWidget(ftp_switch)
 
         main_layout.addStretch()

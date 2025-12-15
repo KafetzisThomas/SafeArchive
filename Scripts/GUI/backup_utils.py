@@ -45,11 +45,6 @@ class BackupWorker(QThread):
                     "Backup Completed",
                     f"SafeArchive has finished the backup to '{self.destination_path.replace('SafeArchive/', '')}'."
                 )
-            except AttributeError:
-                self.error_signal.emit(
-                    "FTP credentials are missing",
-                    "FTP not configured. Please edit the settings.json file to add your ftp credentials."
-                )
             except Exception as e:
                 self.error_signal.emit("Backup Failed", str(e))
         else:
@@ -102,16 +97,17 @@ class BackupWorker(QThread):
                     zf.setpassword(self.password)
                 zf.testzip()
         except BadZipFile:
-            self.error_signal.emit("Backup Failed", "Backup file is corrupted.")
+            raise Exception("Backup file is corrupted.")
 
     def upload_to_remote(self):
         """
         Upload zip file to the ftp server.
         """
-        ftp = FTP()
-        if config['storage_provider'] == "FTP":
-            ftp.backup_to_ftp_server(self.destination_path)
-
+        if config['ftp']:
+            if config['ftp_hostname'] and config['ftp_username'] and config['ftp_password']: 
+                FTP().backup_to_ftp_server(self.destination_path)
+            else:
+                raise Exception("FTP is enabled but credentials are missing in settings.json.")
 
 def get_backup_password():
     """
