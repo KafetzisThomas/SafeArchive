@@ -53,11 +53,11 @@ uv run main.py --nogui
 
 ## Demo Images
 
-![Main Window](https://github.com/user-attachments/assets/6bd47490-dd3b-4b69-8854-1470f53e1904)
+![Main Window](assets/main_window.png)
 
-![Restore Backup Window](https://github.com/user-attachments/assets/6cd80527-d166-4a24-b383-79ba18c552c0)
+![Restore Backup Window](assets/restore_window.png)
 
-![Settings Window](https://github.com/user-attachments/assets/6cefd88b-254d-480a-b0ef-6d86bbee225b)
+![Settings Window](assets/settings_window.png)
 
 ## Contributing Guidelines
 
