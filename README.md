@@ -20,7 +20,7 @@
 - [X] ZIP64 support for backup larger than **4 GiB**
 - [X] Automated backup expiry management
 - [ ] Automatic backups in the background (beta)
-- [X] Cloud integration: `Google Drive`, `Dropbox`, `FTP`
+- [X] Remote Backup: `FTP` (**NAS Support**)
 - [X] Multi-threaded backup process
 - [X] Command-line interface (CLI) support
 - [X] Real-time system notifications
@@ -44,6 +44,12 @@ uv run main.py --nogui
 **Note:** For the first run it's recommended to exit the program after setting your preferences so changes to be applied.
 
 > **Tip**: Learn how to [package](https://github.com/KafetzisThomas/SafeArchive/blob/main/docs/package_program.md) it yourself!
+
+## Setup for FTP Server
+
+1. Select **FTP** as the storage provider within the application or set the corresponding JSON value to `"FTP"`.
+
+2. Edit the configuration file (`settings.json`) and add your FTP server **hostname**, **username** and **password**.
 
 ## Demo Images
 

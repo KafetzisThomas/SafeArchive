@@ -6,16 +6,13 @@ import colorama
 from datetime import date
 from pyzipper import BadZipFile
 from ..file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
-# from ..cloud_utils import GoogleDriveCloud, FTP, Dropbox
+from ..remote_utils import FTP
 from ..configs import config
 from getpass import getpass
 from colorama import Fore as F
 colorama.init(autoreset=True)
 
 config.load()
-# google_drive = GoogleDriveCloud()
-# dropbox = Dropbox()
-# ftp = FTP()
 
 
 class Backup:
@@ -76,7 +73,7 @@ class Backup:
                 end = time.time()
 
             self.check_zip_file(DESTINATION_PATH)
-            self.upload_to_cloud(DESTINATION_PATH)
+            self.upload_to_remote(DESTINATION_PATH)
             print(f"[!] Finished in {end-start:.1f}s")
             print(f"{F.LIGHTYELLOW_EX}[*] Backup completed successfully.")
         else:
@@ -110,17 +107,16 @@ class Backup:
         except BadZipFile:
             print(f"{F.LIGHTRED_EX}[*] The backup file is corrupted.")
 
-    def upload_to_cloud(self, DESTINATION_PATH):
+    def upload_to_remote(self, DESTINATION_PATH):
         """
-        Initialize and upload local backups to the cloud.
+        Upload zip file to the ftp server.
         """
-        # if config['storage_provider'] == "Google Drive":
-        #     google_drive.backup_to_google_drive(DESTINATION_PATH)
-        # elif config['storage_provider'] == "FTP":
-        #     ftp.backup_to_ftp_server(DESTINATION_PATH)
-        # elif config['storage_provider'] == "Dropbox":
-        #     dropbox.upload_to_dropbox(DESTINATION_PATH)
-        pass
+        ftp = FTP()
+        if config['storage_provider'] == "FTP":
+            try:
+                ftp.backup_to_ftp_server(DESTINATION_PATH)
+            except AttributeError:
+                print(f"{F.LIGHTRED_EX}[*] FTP not configured. Please edit the settings.json file to add your ftp credentials.")
 
     def get_backup_password(self):
         """

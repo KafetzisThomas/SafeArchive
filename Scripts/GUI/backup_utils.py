@@ -4,13 +4,9 @@ from datetime import date
 from pyzipper import BadZipFile
 from PyQt6.QtCore import QThread, pyqtSignal
 from PyQt6.QtWidgets import QApplication, QInputDialog, QLineEdit
-# from ..cloud_utils import GoogleDriveCloud, FTP, Dropbox
+from ..remote_utils import FTP
 from ..file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
 from ..configs import config
-
-# google_drive = GoogleDriveCloud()
-# ftp = FTP()
-# dropbox = Dropbox()
 
 
 class BackupWorker(QThread):
@@ -44,10 +40,15 @@ class BackupWorker(QThread):
             try:
                 self.perform_zip()
                 self.check_zip_file()
-                self.upload_to_cloud()
+                self.upload_to_remote()
                 self.success_signal.emit(
                     "Backup Completed",
                     f"SafeArchive has finished the backup to '{self.destination_path.replace('SafeArchive/', '')}'."
+                )
+            except AttributeError:
+                self.error_signal.emit(
+                    "FTP credentials are missing",
+                    "FTP not configured. Please edit the settings.json file to add your ftp credentials."
                 )
             except Exception as e:
                 self.error_signal.emit("Backup Failed", str(e))
@@ -103,17 +104,14 @@ class BackupWorker(QThread):
         except BadZipFile:
             self.error_signal.emit("Backup Failed", "Backup file is corrupted.")
 
-    def upload_to_cloud(self):
+    def upload_to_remote(self):
         """
-        Initialize and upload local backups to the cloud.
+        Upload zip file to the ftp server.
         """
-        # if config['storage_provider'] == "Google Drive":
-        #     google_drive.backup_to_google_drive(self.destination_path)    
-        # elif config['storage_provider'] == "FTP":
-        #     ftp.backup_to_ftp_server(self.destination_path)
-        # elif config['storage_provider'] == "Dropbox":
-        #     dropbox.upload_to_dropbox(self.destination_path)
-        pass
+        ftp = FTP()
+        if config['storage_provider'] == "FTP":
+            ftp.backup_to_ftp_server(self.destination_path)
+
 
 def get_backup_password():
     """

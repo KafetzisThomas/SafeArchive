@@ -65,7 +65,6 @@ config = ConfigDict({
         "ftp_hostname": "Hostname for FTP configuration (type: string)",
         "ftp_username": "Username for FTP configuration (type: string)",
         "ftp_password": "Password for FTP configuration (type: string)",
-        "dropbox_access_token": "Access Dropbox account using token with individual scopes (type: string)"
   },
     "source_paths": [
         str(Path('~/Desktop').expanduser()).replace("\\", "/") + "/",
@@ -82,7 +81,6 @@ config = ConfigDict({
     "ftp_hostname": "",
     "ftp_username": "",
     "ftp_password": "",
-    "dropbox_access_token": ""
 }, SETTINGS_PATH)
 
 def display_config_info():
@@ -101,7 +99,6 @@ def display_config_info():
         "FTP hostname": config['ftp_hostname'],
         "FTP username": config['ftp_username'],
         "FTP password": config['ftp_password'],
-        "Dropbox access token": config['dropbox_access_token']
     }
     
     print("Config Info:\n")
