@@ -1,7 +1,6 @@
 <div align="center">
   <img src="/assets/logo.png" width="100" alt="Logo Icon"/>
-  <h1>SafeArchive</h1>
-  <p>Securely backup and manage your files locally with NAS support.</p>
+  <p><strong>SafeArchive:</strong> Securely backup and manage your files locally with NAS support.</p>
   <h3>
     <a href="https://github.com/KafetzisThomas/SafeArchive">Homepage</a> | 
     <a href="https://github.com/KafetzisThomas/SafeArchive/tree/main/docs">Docs</a> | 
