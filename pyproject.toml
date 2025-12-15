@@ -1,7 +1,7 @@
 [project]
 name = "safearchive"
 version = "0.1.0"
-description = "Securely backup and manage your files locally and in the cloud."
+description = "Securely backup and manage your files locally with NAS support."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
