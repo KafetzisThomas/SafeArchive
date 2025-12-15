@@ -2,7 +2,7 @@
 This module handles remote file transfers via FTP.
 
 Setup Instructions:
-1. Select 'FTP' as the storage provider or update the 'storage_provider' value in settings.json.
+1. Enable the FTP switch within the application settings or set the "ftp" value to true in settings.json.
 2. Configure your credentials (hostname, username, password) directly in settings.json.
 """
 

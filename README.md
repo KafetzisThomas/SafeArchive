@@ -47,9 +47,9 @@ uv run main.py --nogui
 
 ## Setup for FTP Server
 
-1. Select **FTP** as the storage provider within the application or set the corresponding JSON value to `"FTP"`.
+1. Enable the `FTP` switch within the application settings or set the `"ftp"` value to `true` in `settings.json`.
 
-2. Edit the configuration file (`settings.json`) and add your FTP server **hostname**, **username** and **password**.
+2. Configure your credentials (**hostname**, **username**, **password**) directly in `settings.json`.
 
 ## Demo Images
 
