@@ -8,7 +8,7 @@ dependencies = [
     "art==6.5",
     "colorama==0.4.6",
     "dropbox==11.36.2",
-    "humanize==4.6.0",
+    "humanize==4.14.0",
     "prettytable==3.17.0",
     "psutil==6.0.0",
     "pydrive2==1.18.0",
