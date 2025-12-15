@@ -1,7 +1,7 @@
 <div align="center">
   <img src="/assets/logo.png" width="100" alt="Logo Icon"/>
   <h1>SafeArchive</h1>
-  <p>Securely backup and manage your files locally and in the cloud.</p>
+  <p>Securely backup and manage your files locally with NAS support.</p>
   <h3>
     <a href="https://github.com/KafetzisThomas/SafeArchive">Homepage</a> | 
     <a href="https://github.com/KafetzisThomas/SafeArchive/tree/main/docs">Docs</a> | 
@@ -20,7 +20,7 @@
 - [X] ZIP64 support for backup larger than **4 GiB**
 - [X] Automated backup expiry management
 - [ ] Automatic backups in the background (beta)
-- [X] Cloud integration: `Google Drive`, `Dropbox`, `FTP`
+- [X] Remote Backup: `FTP` (**NAS Support**)
 - [X] Multi-threaded backup process
 - [X] Command-line interface (CLI) support
 - [X] Real-time system notifications
@@ -44,6 +44,12 @@ uv run main.py --nogui
 **Note:** For the first run it's recommended to exit the program after setting your preferences so changes to be applied.
 
 > **Tip**: Learn how to [package](https://github.com/KafetzisThomas/SafeArchive/blob/main/docs/package_program.md) it yourself!
+
+## Setup for FTP Server
+
+1. Enable the `FTP` switch within the application settings or set the `"ftp"` value to `true` in `settings.json`.
+
+2. Configure your credentials (**hostname**, **username**, **password**) directly in `settings.json`.
 
 ## Demo Images
 

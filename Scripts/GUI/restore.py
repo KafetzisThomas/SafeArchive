@@ -113,7 +113,6 @@ class RestoreWindow(QDialog):
 
         # setup worker
         self.worker = RestoreWorker(filename, config['destination_path'], password)
-        self.worker.started.connect(lambda: self.restore_button.setEnabled(False))
         self.worker.finished_signal.connect(self.on_restore_finish)
         self.worker.success_signal.connect(lambda t, m: QMessageBox.information(self, t, m))
         self.worker.error_signal.connect(lambda t, m: QMessageBox.critical(self, t, m ))

@@ -198,6 +198,8 @@ class MainWindow(QMainWindow):
         self.worker.started_signal.connect(self.on_backup_start)
         self.worker.finished_signal.connect(self.on_backup_finish)
         self.worker.success_signal.connect(lambda t, m: QMessageBox.information(self, t, m))
+        self.worker.warning_signal.connect(lambda t, m: QMessageBox.warning(self, t, m))
+        self.worker.error_signal.connect(lambda t, m: QMessageBox.critical(self, t, m))
         self.worker.start()  # start thread
 
     def on_backup_start(self):
