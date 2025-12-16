@@ -23,11 +23,13 @@ def get_backup_size(DESTINATION_PATH):
 
     return total_size
 
-def storage_media_free_space():
+def storage_media_free_space(path=None):
     """
     Return storage media free space.
+    Use provided path or fallback to the config if running cli.
     """
-    disk_usage = psutil.disk_usage(config['destination_path']).free
+    target_path = path if path else config['destination_path']
+    disk_usage = psutil.disk_usage(target_path).free
     free_space = round(disk_usage / (1024**3), 2)  # convert free space to gb
     return free_space
 
