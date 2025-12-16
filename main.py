@@ -26,9 +26,10 @@ from PyQt6.QtWidgets import (
 )
 
 version = "1.5.0"
+config.load()  # load the json file into memory
 
 DESTINATION_PATH = config["destination_path"] + "SafeArchive/"  # get value from the json file
-config.load()  # load the json file into memory
+
 
 if len(sys.argv) > 1 and sys.argv[1] == "--nogui":
     runpy.run_path("cli.py")
