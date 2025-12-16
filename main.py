@@ -27,16 +27,12 @@ from PyQt6.QtWidgets import (
 
 version = "1.5.0"
 
-DESTINATION_PATH = config["destination_path"] + "SafeArchive/"  # get value from the json file
-create_destination_directory_path(DESTINATION_PATH)
 config.load()  # load the json file into memory
+DESTINATION_PATH = config["destination_path"] + "SafeArchive/"
 
-try:
-    if sys.argv[1] == "--nogui":
-        runpy.run_path("cli.py")
-        sys.exit()
-except IndexError:
-    pass
+if len(sys.argv) > 1 and sys.argv[1] == "--nogui":
+    runpy.run_path("cli.py")
+    sys.exit()
 
 
 class MainWindow(QMainWindow):
@@ -66,32 +62,28 @@ class MainWindow(QMainWindow):
         initial_val = DESTINATION_PATH.replace("SafeArchive/", "")
         self.drives_combobox.setCurrentText(initial_val)
 
-        self.drives_combobox.currentTextChanged.connect(
-            lambda choice: Combobox(key="destination_path", choice=choice)
-        )
+        self.drives_combobox.currentTextChanged.connect(self.on_drive_changed)
         top_layout.addWidget(self.drives_combobox)
 
         # size of backup label
-        self.size_of_backup_label = QLabel(
-            f"Size of backup: {humanize.naturalsize(get_backup_size(DESTINATION_PATH))}", self
-        )
+        self.size_of_backup_label = QLabel(self)
         self.size_of_backup_label.setFont(QFont("Helvetica", 10))
         self.size_of_backup_label.setWordWrap(True)
         top_layout.addWidget(self.size_of_backup_label)
 
         # total drive space label
-        self.total_drive_space_label = QLabel(
-            f"Free space on ({DESTINATION_PATH.replace('SafeArchive/', '')}): {storage_media_free_space()} GB", self
-        )
+        self.total_drive_space_label = QLabel(self)
         self.total_drive_space_label.setFont(QFont("Helvetica", 10))
         self.total_drive_space_label.setWordWrap(True)
         top_layout.addWidget(self.total_drive_space_label)
 
         # last backup label
-        self.last_backup_label = QLabel(f"Last backup: {last_backup(DESTINATION_PATH)}", self)
+        self.last_backup_label = QLabel(self)
         self.last_backup_label.setFont(QFont("Helvetica", 10))
         self.last_backup_label.setWordWrap(True)
         top_layout.addWidget(self.last_backup_label)
+
+        self.update_drive_labels(initial_val)
 
         # backup these folders label
         self.backup_these_folders_label = QLabel("Backup these folders:", self)
@@ -152,7 +144,7 @@ class MainWindow(QMainWindow):
         self.restore_icon.setIconSize(QSize(20, 20))
         self.restore_icon.setFixedSize(35, 35)
         self.restore_icon.setStyleSheet(no_border_style)
-        self.restore_icon.clicked.connect(lambda: RestoreWindow(self, DESTINATION_PATH))
+        self.restore_icon.clicked.connect(lambda: RestoreWindow(self, self.current_destination_path))
         bottom_layout.addWidget(self.restore_icon)
 
         # spacer
@@ -176,25 +168,48 @@ class MainWindow(QMainWindow):
         self.backup_button.clicked.connect(self.start_backup_process)
         bottom_layout.addWidget(self.backup_button)
 
-    def start_backup_process(self):
+    def on_drive_changed(self, choice):
         """
-        1. Get password (if needed) on main thread
-        2. Create thread
-        3. Connect signals
-        4. Start thread
+        Triggered when the user selects a different drive from combobox:
+        1. Save new path to config
+        2. Update labels
         """
-        password = None
+        Combobox(key="destination_path", choice=choice)  # save config
+        self.update_drive_labels(choice)  # update ui
 
+    def update_drive_labels(self, drive_path):
+        """
+        Recalculate stats for the given drive path and update labels.
+        Ensure folder exists on the selected drive.
+        """
+        self.current_destination_path = drive_path + "SafeArchive/"
+        create_destination_directory_path(self.current_destination_path)
+
+        # update backup size label
+        size = get_backup_size(self.current_destination_path)
+        size_str = humanize.naturalsize(size)
+        self.size_of_backup_label.setText(f"Size of backup: {size_str}")
+
+        # update free space label
+        free = storage_media_free_space(drive_path)
+        self.total_drive_space_label.setText(f"Free space on ({drive_path}): {free} GB")
+
+        # update last backup label
+        lb_text = last_backup(self.current_destination_path)
+        self.last_backup_label.setText(f"Last backup: {lb_text}")
+
+    def start_backup_process(self):
         # check if we need a password
+        password = None
         if config['encryption'] and config['compression_method'] in ["ZIP_DEFLATED", "ZIP_STORED"]:
             password = get_backup_password()
             if not password: 
                 return
 
-        # initialize worker thread
-        self.worker = BackupWorker(source_paths=config["source_paths"], destination_path=DESTINATION_PATH, password=password)
-
-        # connect signals
+        # ensure we use the active drive selection
+        self.worker = BackupWorker(
+            source_paths=config["source_paths"], destination_path=self.current_destination_path, password=password
+        )
         self.worker.started_signal.connect(self.on_backup_start)
         self.worker.finished_signal.connect(self.on_backup_finish)
         self.worker.success_signal.connect(lambda t, m: QMessageBox.information(self, t, m))
@@ -211,6 +226,10 @@ class MainWindow(QMainWindow):
         self.backup_progressbar.setValue(0)
         self.backup_button.setEnabled(True)
         self.worker.deleteLater()  # clean up thread resource
+
+        # refresh info in labels after backup finishes
+        current_drive = self.drives_combobox.currentText()
+        self.update_drive_labels(current_drive)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

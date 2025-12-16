@@ -12,8 +12,6 @@ from getpass import getpass
 from colorama import Fore as F
 colorama.init(autoreset=True)
 
-config.load()
-
 
 class Backup:
     """

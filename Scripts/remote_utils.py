@@ -10,8 +10,6 @@ import os
 import ftplib
 from .configs import config
 
-config.load()
-
 
 class FTP:
     """

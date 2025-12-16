@@ -40,8 +40,6 @@ uv run main.py
 uv run main.py --nogui
 ```
 
-**Note:** For the first run it's recommended to exit the program after setting your preferences so changes to be applied.
-
 > **Tip**: Learn how to [package](https://github.com/KafetzisThomas/SafeArchive/blob/main/docs/package_program.md) it yourself!
 
 ## Setup for FTP Server
