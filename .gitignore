@@ -144,6 +144,5 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# Configuration files
-client_secrets.json
+# configuration files
 settings.json
