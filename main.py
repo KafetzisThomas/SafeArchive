@@ -10,13 +10,15 @@ import sys
 import runpy
 import humanize
 import qtawesome as qta
-from Scripts.file_utils import get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path
-from Scripts.GUI.file_utils import get_available_drives, update_listbox, remove_item, add_item
-from Scripts.GUI.widgets import Combobox
-from Scripts.GUI.backup_utils import BackupWorker, get_backup_password
-from Scripts.GUI.about import AboutWindow
-from Scripts.GUI.restore import RestoreWindow
-from Scripts.GUI.settings import SettingsWindow
+from Scripts.file_utils import (
+    get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path,
+    get_available_drives, update_listbox, remove_item, add_item
+)
+from Scripts.widgets import Combobox
+from Scripts.backup_utils import BackupWorker, get_backup_password
+from Scripts.about import AboutWindow
+from Scripts.restore import RestoreWindow
+from Scripts.settings import SettingsWindow
 from Scripts.configs import config
 from PyQt6.QtCore import QSize
 from PyQt6.QtGui import QIcon, QFont

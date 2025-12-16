@@ -2,7 +2,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QDialog, QFrame, QLabel, QComboBox, QCheckBox, QVBoxLayout
 from .widgets import Combobox, Switch
-from ..configs import config
+from .configs import config
 
 
 class SettingsWindow(QDialog):

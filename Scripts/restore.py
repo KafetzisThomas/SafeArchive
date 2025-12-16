@@ -3,7 +3,7 @@ import pyzipper
 from pyzipper import BadZipFile
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtWidgets import QDialog, QListWidget, QPushButton, QVBoxLayout, QInputDialog, QLineEdit, QMessageBox
-from ..configs import config
+from .configs import config
 
 
 class RestoreWorker(QThread):

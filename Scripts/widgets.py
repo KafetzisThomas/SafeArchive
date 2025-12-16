@@ -1,4 +1,4 @@
-from ..configs import config
+from .configs import config
 
 """
 Update the values of the keys in the dictionary.

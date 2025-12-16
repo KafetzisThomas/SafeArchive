@@ -4,9 +4,9 @@ from datetime import date
 from pyzipper import BadZipFile
 from PyQt6.QtCore import QThread, pyqtSignal
 from PyQt6.QtWidgets import QApplication, QInputDialog, QLineEdit
-from ..remote_utils import FTP
-from ..file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
-from ..configs import config
+from .remote_utils import FTP
+from .file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
+from .configs import config
 
 
 class BackupWorker(QThread):
