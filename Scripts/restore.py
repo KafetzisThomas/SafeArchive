@@ -1,4 +1,5 @@
 import os
+import shutil
 import pyzipper
 from pyzipper import BadZipFile
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
@@ -8,27 +9,43 @@ from .configs import config
 
 class RestoreWorker(QThread):
     """
-    Worker thread that handles zip extraction in background.
+    Worker thread that handles zip extraction.
     """
     finished_signal = pyqtSignal()
     success_signal = pyqtSignal(str, str)
     error_signal = pyqtSignal(str, str)
 
-    def __init__(self, zip_path, extract_to, password=None):
+    def __init__(self, zip_path, password=None):
         super().__init__()
         self.zip_path = zip_path
-        self.extract_to = extract_to
         self.password = password
 
     def run(self):
         """
-        Extract selected zip file and move zip file content to it's original location.
+        Extract selected zip file and move zip content to it's original location.
         """
         try:
+            # get system drive
+            system_root = os.environ.get('SystemDrive', 'C:') + os.sep if os.name == "nt" else "/"
             with pyzipper.AESZipFile(self.zip_path) as zipObj:
                 if self.password:
                     zipObj.setpassword(self.password)
-                zipObj.extractall(self.extract_to)
+                
+                for member in zipObj.infolist():
+                    # combine system drive with zip path
+                    target_path = os.path.join(system_root, member.filename)
+                    target_path = os.path.normpath(target_path)  # fix mixed / and \
+
+                    if member.is_dir():  # handle subfolder creation
+                        os.makedirs(target_path, exist_ok=True)
+                        continue
+
+                    # ensure parent directory exists
+                    parent_dir = os.path.dirname(target_path)
+                    os.makedirs(parent_dir, exist_ok=True)
+
+                    with zipObj.open(member) as source, open(target_path, "wb") as target:
+                        shutil.copyfileobj(source, target)
 
             self.success_signal.emit("Files Restored Successfully", "SafeArchive has finished the restore.")
 
@@ -36,6 +53,8 @@ class RestoreWorker(QThread):
             self.error_signal.emit("Restore Failed", "Wrong password or unable to decrypt.")
         except BadZipFile:
             self.error_signal.emit("Restore Failed", "The archive is corrupted.")
+        except PermissionError:
+            self.error_signal.emit("Restore Failed", "Permission denied. Run app as administrator or sudo.")
         except Exception as e:
             self.error_signal.emit("Restore Failed", str(e))
         finally:
@@ -112,7 +131,7 @@ class RestoreWindow(QDialog):
             password = bytes(pwd_text, 'utf-8')
 
         # setup worker
-        self.worker = RestoreWorker(filename, config.get('destination_path'), password)
+        self.worker = RestoreWorker(filename, password)
         self.worker.finished_signal.connect(self.on_restore_finish)
         self.worker.success_signal.connect(lambda t, m: QMessageBox.information(self, t, m))
         self.worker.error_signal.connect(lambda t, m: QMessageBox.critical(self, t, m ))
