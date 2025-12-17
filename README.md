@@ -1,11 +1,6 @@
 <div align="center">
   <img src="/assets/logo.png" width="100" alt="Logo Icon"/>
   <p><strong>SafeArchive:</strong> Securely backup and manage your files locally with NAS support.</p>
-  <h3>
-    <a href="https://github.com/KafetzisThomas/SafeArchive">Homepage</a> | 
-    <a href="https://github.com/KafetzisThomas/SafeArchive/tree/main/docs">Docs</a> | 
-    <a href="https://github.com/KafetzisThomas/SafeArchive/graphs/contributors">Contributors</a>
-  </h3>
   <a href="https://github.com/KafetzisThomas/SafeArchive/releases">
     <img src="https://img.shields.io/github/v/release/KafetzisThomas/SafeArchive?include_prereleases&label=Latest%20Release"/>
   </a>
@@ -40,7 +35,13 @@ uv run main.py
 uv run main.py --nogui
 ```
 
-> **Tip**: Learn how to [package](https://github.com/KafetzisThomas/SafeArchive/blob/main/docs/package_program.md) it yourself!
+## Packaging
+
+You can create a standalone executable using pyinstaller:
+
+```bash
+pyinstaller main.spec
+```
 
 ## Setup for FTP Server
 
@@ -68,5 +69,13 @@ uv run main.py --nogui
 
 - Report bugs via GitHub Issues.
 - Submit pull requests via GitHub Pull Requests.
+
+## Thanks to all contributors
+
+<a href="https://github.com/KafetzisThomas/SafeArchive/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=KafetzisThomas/SafeArchive" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
 
 Thank you for supporting SafeArchive!

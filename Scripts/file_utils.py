@@ -1,4 +1,5 @@
 import os
+import sys
 import platform
 import datetime
 import psutil
@@ -39,6 +40,17 @@ def get_drive_usage_percentage():
     drive_usage_percentage = psutil.disk_usage(config.get('destination_path')).percent
     return drive_usage_percentage
 
+def resource_path(relative_path):
+    """
+    Return the absolute path to resource for pyinstaller builds.
+    https://stackoverflow.com/a/72060275
+    """
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 # backup utils
 
 def create_destination_directory_path(DESTINATION_PATH):
@@ -77,7 +89,7 @@ def last_backup(DESTINATION_PATH):
         files = [file for file in os.listdir(DESTINATION_PATH) if os.path.isfile(os.path.join(DESTINATION_PATH, file))]
         
         # sort the list of files based on their modification time
-        files.sort(key=lambda file: get_modification_time(DESTINATION_PATH, file))
+        files.sort(key=lambda file: get_modification_time(file, DESTINATION_PATH))
 
         # the most recently modified file
         most_recently_modified_file = files[-1]

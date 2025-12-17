@@ -12,7 +12,7 @@ import humanize
 import qtawesome as qta
 from Scripts.file_utils import (
     get_backup_size, storage_media_free_space, last_backup, create_destination_directory_path,
-    get_available_drives, update_listbox, remove_item, add_item
+    get_available_drives, update_listbox, remove_item, add_item, resource_path
 )
 from Scripts.widgets import Combobox
 from Scripts.backup_utils import BackupWorker, get_backup_password
@@ -234,7 +234,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon("assets/logo.png"))  # apply icon to all windows
+    app.setWindowIcon(QIcon(resource_path("assets/logo.png")))  # apply icon to all windows
     window = MainWindow()
     window.show()
     sys.exit(app.exec())

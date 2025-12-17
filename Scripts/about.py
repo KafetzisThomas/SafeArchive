@@ -3,6 +3,7 @@ import webbrowser
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QPixmap
 from PyQt6.QtWidgets import QDialog, QFrame, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
+from .file_utils import resource_path
 
 
 class AboutWindow(QDialog):
@@ -37,7 +38,7 @@ class AboutWindow(QDialog):
         top_layout.setSpacing(5)
 
         # logo icon
-        icon_pixmap = QPixmap(os.path.join("assets", "logo.png")).scaled(
+        icon_pixmap = QPixmap(resource_path(os.path.join("assets", "logo.png"))).scaled(
             80, 80, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio, 
             transformMode=Qt.TransformationMode.SmoothTransformation
         )
