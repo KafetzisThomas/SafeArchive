@@ -24,17 +24,16 @@ For detailed setup instructions:
 https://github.com/KafetzisThomas/SafeArchive/blob/main/docs/automatic_backups.md
 """
 
-import schedule
 import time
+import schedule
 from CLI.backup_utils import Backup
 from .configs import config
-config.load()
 
-backup = Backup()
+DESTINATION_PATH = config.get("destination_path") + "SafeArchive/"
+backup_interval = config.get('backup_interval')
 
-DESTINATION_PATH = config['destination_path'] + "SafeArchive/"  # get value from the json file
-
-schedule.every(config['backup_interval']).hours.do(backup.perform_backup, DESTINATION_PATH)
+if backup_interval:
+    schedule.every(backup_interval).hours.do(Backup().perform_backup, DESTINATION_PATH)
 
 while True:
     schedule.run_pending()

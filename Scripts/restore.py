@@ -103,7 +103,7 @@ class RestoreWindow(QDialog):
 
         # ask for password if needed
         password = None
-        if config["encryption"]:
+        if config.get("encryption"):
             pwd_text, ok = QInputDialog.getText(
                 self, "Backup Encryption", "Enter Backup Password:", QLineEdit.EchoMode.Password
             )
@@ -112,7 +112,7 @@ class RestoreWindow(QDialog):
             password = bytes(pwd_text, 'utf-8')
 
         # setup worker
-        self.worker = RestoreWorker(filename, config['destination_path'], password)
+        self.worker = RestoreWorker(filename, config.get('destination_path'), password)
         self.worker.finished_signal.connect(self.on_restore_finish)
         self.worker.success_signal.connect(lambda t, m: QMessageBox.information(self, t, m))
         self.worker.error_signal.connect(lambda t, m: QMessageBox.critical(self, t, m ))

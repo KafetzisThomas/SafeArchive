@@ -12,23 +12,18 @@ import platform
 from Scripts.CLI.backup_utils import Backup
 from Scripts.CLI.restore import RestoreBackup
 from Scripts.file_utils import get_backup_size, storage_media_free_space,last_backup, create_destination_directory_path
-from Scripts.configs import config, display_config_info
+from Scripts.configs import config
 import humanize
 import colorama
 from art import text2art
 from colorama import Fore as F, Back as B
-
-backup = Backup()
-restore_backup = RestoreBackup()
 colorama.init(autoreset=True)
-config.load()
 
 # check system platform to set correct console clear command
 clear_command = "cls" if platform.system() == "Windows" else "clear"
 os.system(clear_command)
 
-# get value from the json file
-DESTINATION_PATH = config["destination_path"] + "SafeArchive/"
+DESTINATION_PATH = config.get("destination_path") + "SafeArchive/"
 
 create_destination_directory_path(DESTINATION_PATH)
 print(text2art("SafeArchive"))
@@ -52,14 +47,32 @@ except KeyboardInterrupt:
     sys.exit()
 
 if choice == 1:
-    display_config_info()
+    config_fields = {
+        "Source paths": config.get('source_paths'),
+        "Destination path": config.get('destination_path'),
+        "Compression method": config.get('compression_method'),
+        "Compression level": config.get('compression_level'),
+        "Backup expiry date": config.get('backup_expiry_date'),
+        "Backup interval": config.get('backup_interval'),
+        "Encryption": config.get('encryption'),
+        "ftp": config.get('ftp'),
+        "FTP hostname": config.get('ftp_hostname'),
+        "FTP username": config.get('ftp_username'),
+        "FTP password": config.get('ftp_password'),
+    }
+    print("Config Info:\n")
+    for key, value in config_fields.items():
+        print(f"{F.LIGHTGREEN_EX}{key}:{F.RESET} {value}")
+
 elif choice == 2:
     try:
-        backup.perform_backup(config["source_paths"], DESTINATION_PATH)
+        Backup().perform_backup(config.get("source_paths"), DESTINATION_PATH)
     except KeyboardInterrupt:
         print(f"{F.LIGHTRED_EX}[*] Backup process cancelled.")
         sys.exit()
+
 elif choice == 3:
-    restore_backup.run_restore_thread(DESTINATION_PATH)
+    RestoreBackup().run_restore_thread(DESTINATION_PATH)
+
 else:
     print(f"{F.LIGHTRED_EX}[*] Undefined choice.")

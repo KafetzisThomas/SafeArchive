@@ -16,9 +16,9 @@ class FTP:
     Handle file transfers to an FTP server.
     """
     def __init__(self):
-        self.hostname = config['ftp_hostname']
-        self.username = config['ftp_username']
-        self.password = config['ftp_password']
+        self.hostname = config.get('ftp_hostname')
+        self.username = config.get('ftp_username')
+        self.password = config.get('ftp_password')
         self.ftp_server = None
 
     def backup_to_ftp_server(self, folderpath):

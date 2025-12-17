@@ -46,9 +46,9 @@ class RestoreBackup:
             # open the zipfile in read mode, extract its content
             with pyzipper.AESZipFile(file=file_name, mode='r') as zipObj:
                 try:
-                    if config['encryption'] and (config['compression_method'] == "ZIP_DEFLATED" or config['compression_method'] == "ZIP_STORED"):
+                    if config.get('encryption') and config.get('compression_method') in ["ZIP_DEFLATED", "ZIP_STORED"]:
                         zipObj.setpassword(self.get_backup_password())
-                    zipObj.extractall(config['destination_path'])
+                    zipObj.extractall(config.get('destination_path'))
                     print(f"{F.LIGHTYELLOW_EX}[*] Files Restored Sucessfully.")
                 except (RuntimeError, TypeError):
                     pass

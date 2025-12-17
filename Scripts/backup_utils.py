@@ -35,7 +35,7 @@ class BackupWorker(QThread):
         """
         self.started_signal.emit()
         if get_drive_usage_percentage() <= 90:
-            if config['backup_expiry_date'] != "Forever":
+            if config.get('backup_expiry_date') != "Forever":
                 backup_expiry_date(self.destination_path)
             try:
                 self.perform_zip()
@@ -63,11 +63,11 @@ class BackupWorker(QThread):
             "ZIP_STORED": pyzipper.ZIP_STORED, "ZIP_DEFLATED": pyzipper.ZIP_DEFLATED,
             "ZIP_BZIP2": pyzipper.ZIP_BZIP2, "ZIP_LZMA": pyzipper.ZIP_LZMA
         }
-        compression_method = compression_mapping.get(config['compression_method'], pyzipper.ZIP_DEFLATED)
-        compression_level = int(config['compression_level'])
+        compression_method = compression_mapping.get(config.get('compression_method'), pyzipper.ZIP_DEFLATED)
+        compression_level = int(config.get('compression_level'))
 
         encryption = None
-        if config['encryption'] and config['compression_method'] in ["ZIP_DEFLATED", "ZIP_STORED"]:
+        if config.get('encryption') and config.get('compression_method') in ["ZIP_DEFLATED", "ZIP_STORED"]:
             encryption = pyzipper.WZ_AES
 
         with pyzipper.AESZipFile(file=filename, mode='w', compression=compression_method,
@@ -103,8 +103,8 @@ class BackupWorker(QThread):
         """
         Upload zip file to the ftp server.
         """
-        if config['ftp']:
-            if config['ftp_hostname'] and config['ftp_username'] and config['ftp_password']: 
+        if config.get('ftp'):
+            if config.get('ftp_hostname') and config.get('ftp_username') and config.get('ftp_password'):
                 FTP().backup_to_ftp_server(self.destination_path)
             else:
                 raise Exception("FTP is enabled but credentials are missing in settings.json.")

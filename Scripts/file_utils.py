@@ -27,7 +27,7 @@ def storage_media_free_space(path=None):
     Return storage media free space.
     Use provided path or fallback to the config if running cli.
     """
-    target_path = path if path else config['destination_path']
+    target_path = path if path else config.get('destination_path')
     disk_usage = psutil.disk_usage(target_path).free
     free_space = round(disk_usage / (1024**3), 2)  # convert free space to gb
     return free_space
@@ -36,7 +36,7 @@ def get_drive_usage_percentage():
     """
     Return drive usage percentage.
     """
-    drive_usage_percentage = psutil.disk_usage(config['destination_path']).percent
+    drive_usage_percentage = psutil.disk_usage(config.get('destination_path')).percent
     return drive_usage_percentage
 
 # backup utils
@@ -103,15 +103,15 @@ def backup_expiry_date(DESTINATION_PATH):
             # get the modification time of the file
             os.path.getmtime(filepath))
 
-        if config['backup_expiry_date'] == "1 month":
+        if config.get('backup_expiry_date') == "1 month":
             days = 30
-        elif config['backup_expiry_date'] == "3 months":
+        elif config.get('backup_expiry_date') == "3 months":
             days = 90
-        elif config['backup_expiry_date'] == "6 months":
+        elif config.get('backup_expiry_date') == "6 months":
             days = 180
-        elif config['backup_expiry_date'] == "9 months":
+        elif config.get('backup_expiry_date') == "9 months":
             days = 270
-        elif config['backup_expiry_date'] == "1 year":
+        elif config.get('backup_expiry_date') == "1 year":
             days = 365
         else:
             is_valid_expiry_date = False

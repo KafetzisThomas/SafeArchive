@@ -1,109 +1,75 @@
-"""
-This file manages configurations and provides functionality to save and load them as well.
-It also automatically triggers the saving of the configuration file whenever a setting is changed or deleted.
-"""
-
 import os
 import json
 import platform
-import colorama
 from pathlib import Path
-from colorama import Fore as F
 
-colorama.init(autoreset=True)
+SETTINGS_PATH = Path("settings.json")
 
+DEFAULT_CONFIG = {
+    "source_paths": [  # type: list of strings
+        str(Path('~/Desktop').expanduser()) + "/",
+        str(Path('~/Documents').expanduser()) + "/",
+        str(Path('~/Downloads').expanduser()) + "/",
+    ],
+    "destination_path": (  # type: string
+        os.path.abspath(os.sep).replace("\\", "/") if platform.system() == "Windows" else str(Path("~").expanduser())
+    ),
+    "compression_method": "ZIP_DEFLATED",  # type: string
+    "compression_level": "5",  # 1: fast process, 9: small file size, type: integer
+    "backup_expiry_date": "Forever",  # type: string
+    "backup_interval": False,  # automatic backup frequency (specify: hours), type: boolean
+    "encryption": False,  # type: boolean
+    "ftp": False,  # type: boolean
+    "ftp_hostname": "",  # type: string
+    "ftp_username": "",  # type: string
+    "ftp_password": "",  # type: string
+}
 
-class ConfigDict(dict):
+class Config:
     """
-    Set configs and save every time a setting changes.
+    JSON backed configuration manager.
+    Automatically create the config file on first run.
     """
-    __slots__ = ["path"]
+    def __init__(self, path: Path, defaults: dict):
+        self.path = path
+        self.data = defaults.copy()
+        self.load_or_create()
 
-    def __init__(self, config: dict, path: str):
-        self.update(config)
-        self.path = Path(path)
-
-    def __setitem__(self, key, value):
+    def load_or_create(self):
         """
-        Triggers whenever a value is set.
+        Load or create the config file.
         """
-        super().__setitem__(key, value)
-        self.save()
-
-    def __delitem__(self, key):
-        """
-        Triggers whenever a value is deleted.
-        """
-        super().__delitem__(key)
-        self.save()
+        if self.path.exists():
+            with open(self.path, "r", encoding="utf-8") as f:
+                self.data.update(json.load(f))
+        else:
+            self.save()
 
     def save(self):
         """
-        Saves the config file to the given path.
+        Persist the current configuration to disk.
         """
-        with open(self.path, 'w') as file:
-            json.dump(self, file, indent=2)
+        with open(self.path, "w", encoding="utf-8") as f:
+            json.dump(self.data, f, indent=2)
 
-    def load(self):
+    def get(self, key, default=None):
         """
-        Loads the config file from the given path.
+        Retrieve a configuration value.
         """
-        with open(self.path, 'r') as file:
-            self.update(json.load(file))
+        return self.data.get(key, default)
 
-SETTINGS_PATH = 'settings.json'
-config = ConfigDict({
-    "_comments": {
-        "source_paths": "List of source paths (local folders) for backups (type: list with strings)",
-        "destination_path": "Destination path (storage media) for backups (type: string)",
-        "compression_method": "Specify the compression method for your backups (type: string)",
-        "compression_level": "Specify compression level for zip files (backups) - 1: fast, 9: small size (type: integer)",
-        "backup_expiry_date": "Expiry date for the backups in the storage media (type: string)",
-        "backup_interval": "Set automatic backup frequency (specify: hours) (type: integer)",
-        "encryption": "Enable/Disable encryption on backups (type: boolean)",
-        "ftp": "Enable/Disable ftp (type: boolean)",
-        "ftp_hostname": "Hostname for FTP configuration (type: string)",
-        "ftp_username": "Username for FTP configuration (type: string)",
-        "ftp_password": "Password for FTP configuration (type: string)",
-  },
-    "source_paths": [
-        str(Path('~/Desktop').expanduser()).replace("\\", "/") + "/",
-        str(Path('~/Documents').expanduser()).replace("\\", "/") + "/",
-        str(Path('~/Downloads').expanduser()).replace("\\", "/") + "/",
-    ],
-    "destination_path": os.path.abspath(os.sep).replace("\\", "/") if platform.system() == "Windows" else os.path.join(os.path.expanduser("~"), ""),
-    "compression_method": "ZIP_DEFLATED",
-    "compression_level": "5",
-    "backup_expiry_date": "Forever",
-    "backup_interval": None,
-    "encryption": False,
-    "ftp": False,
-    "ftp_hostname": "",
-    "ftp_username": "",
-    "ftp_password": "",
-}, SETTINGS_PATH)
+    def set(self, key, value):
+        """
+        Triggers whenever a value is set.
+        """
+        self.data[key] = value
+        self.save()
 
-def display_config_info():
-    """
-    Display the current configuration settings in a user-friendly format.
-    """
-    config_fields = {
-        "Source paths": config['source_paths'],
-        "Destination path": config['destination_path'],
-        "Compression method": config['compression_method'],
-        "Compression level": config['compression_level'],
-        "Backup expiry date": config['backup_expiry_date'],
-        "Backup interval": config['backup_interval'],
-        "Encryption": config['encryption'],
-        "ftp": config['ftp'],
-        "FTP hostname": config['ftp_hostname'],
-        "FTP username": config['ftp_username'],
-        "FTP password": config['ftp_password'],
-    }
-    
-    print("Config Info:\n")
-    for key, value in config_fields.items():
-        print(f"{F.LIGHTGREEN_EX}{key}:{F.RESET} {value}")
+    def delete(self, key):
+        """
+        Triggers whenever a value is deleted.
+        """
+        self.data.pop(key, None)
+        self.save()
 
-if not os.path.exists(config.path):
-    config.save()
+config = Config(SETTINGS_PATH, DEFAULT_CONFIG)

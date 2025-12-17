@@ -35,7 +35,7 @@ class SettingsWindow(QDialog):
 
         compression_combobox = QComboBox()
         compression_combobox.addItems(["ZIP_DEFLATED", "ZIP_STORED", "ZIP_LZMA", "ZIP_BZIP2"])
-        compression_combobox.setCurrentText(config['compression_method'])
+        compression_combobox.setCurrentText(config.get('compression_method'))
         compression_combobox.setFixedSize(230, 30)
         compression_combobox.currentTextChanged.connect(lambda choice: Combobox(key='compression_method', choice=choice))
         main_layout.addWidget(compression_combobox)
@@ -47,7 +47,7 @@ class SettingsWindow(QDialog):
 
         compression_level_combobox = QComboBox()
         compression_level_combobox.addItems([str(i) for i in range(1, 10)])  # create a list of strings [1, 9]
-        compression_level_combobox.setCurrentText(str(config['compression_level']))
+        compression_level_combobox.setCurrentText(str(config.get('compression_level')))
         compression_level_combobox.setFixedSize(230, 30)
         compression_level_combobox.currentTextChanged.connect(lambda choice: Combobox(key='compression_level', choice=choice))
         main_layout.addWidget(compression_level_combobox)
@@ -59,7 +59,7 @@ class SettingsWindow(QDialog):
 
         keep_my_backups_combobox = QComboBox()
         keep_my_backups_combobox.addItems(["1 month", "3 months", "6 months", "9 months", "1 year", "Forever"])
-        keep_my_backups_combobox.setCurrentText(config['backup_expiry_date'])
+        keep_my_backups_combobox.setCurrentText(config.get('backup_expiry_date'))
         keep_my_backups_combobox.setFixedSize(230, 30)
         keep_my_backups_combobox.currentTextChanged.connect(lambda choice: Combobox(key='backup_expiry_date', choice=choice))
         main_layout.addWidget(keep_my_backups_combobox)
@@ -69,14 +69,14 @@ class SettingsWindow(QDialog):
         # encryption switch
         encryption_switch = QCheckBox("Encrypt Backups")
         encryption_switch.setFont(QFont('Helvetica', 10))
-        encryption_switch.setChecked(config['encryption'])
+        encryption_switch.setChecked(config.get('encryption'))
         encryption_switch.toggled.connect(lambda checked: Switch(key='encryption', value=checked))
         main_layout.addWidget(encryption_switch)
 
         # ftp switch
         ftp_switch = QCheckBox("Enable FTP")
         ftp_switch.setFont(QFont('Helvetica', 10))
-        ftp_switch.setChecked(config['ftp'])
+        ftp_switch.setChecked(config.get('ftp'))
         ftp_switch.toggled.connect(lambda checked: Switch(key='ftp', value=checked))
         main_layout.addWidget(ftp_switch)
 

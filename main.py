@@ -29,8 +29,7 @@ from PyQt6.QtWidgets import (
 
 version = "1.5.0"
 
-config.load()  # load the json file into memory
-DESTINATION_PATH = config["destination_path"] + "SafeArchive/"
+DESTINATION_PATH = config.get("destination_path") + "SafeArchive/"
 
 if len(sys.argv) > 1 and sys.argv[1] == "--nogui":
     runpy.run_path("cli.py")
@@ -103,7 +102,7 @@ class MainWindow(QMainWindow):
         vbox.setContentsMargins(7, 7, 7, 7)
         vbox.addWidget(self.listbox)
 
-        update_listbox(listbox=self.listbox, SOURCE_PATHS=config['source_paths'])
+        update_listbox(listbox=self.listbox, SOURCE_PATHS=config.get('source_paths'))
 
         # backup progress bar
         self.backup_progressbar = QProgressBar(self)
@@ -155,13 +154,13 @@ class MainWindow(QMainWindow):
         # plus button
         self.plus_button = QPushButton("+")
         self.plus_button.setFixedSize(35, 35)
-        self.plus_button.clicked.connect(lambda: add_item(listbox=self.listbox, SOURCE_PATHS=config["source_paths"]))
+        self.plus_button.clicked.connect(lambda: add_item(listbox=self.listbox, SOURCE_PATHS=config.get("source_paths")))
         bottom_layout.addWidget(self.plus_button)
 
         # minus button
         self.minus_button = QPushButton("-")
         self.minus_button.setFixedSize(35, 35)
-        self.minus_button.clicked.connect(lambda: remove_item(listbox=self.listbox, SOURCE_PATHS=config["source_paths"]))
+        self.minus_button.clicked.connect(lambda: remove_item(listbox=self.listbox, SOURCE_PATHS=config.get("source_paths")))
         bottom_layout.addWidget(self.minus_button)
 
         # backup button
@@ -203,14 +202,14 @@ class MainWindow(QMainWindow):
     def start_backup_process(self):
         # check if we need a password
         password = None
-        if config['encryption'] and config['compression_method'] in ["ZIP_DEFLATED", "ZIP_STORED"]:
+        if config.get('encryption') and config.get('compression_method') in ["ZIP_DEFLATED", "ZIP_STORED"]:
             password = get_backup_password()
             if not password: 
                 return
 
         # ensure we use the active drive selection
         self.worker = BackupWorker(
-            source_paths=config["source_paths"], destination_path=self.current_destination_path, password=password
+            source_paths=config.get("source_paths"), destination_path=self.current_destination_path, password=password
         )
         self.worker.started_signal.connect(self.on_backup_start)
         self.worker.finished_signal.connect(self.on_backup_finish)

@@ -28,15 +28,15 @@ class Backup:
         if get_drive_usage_percentage() <= 90:
             print("[+] driver usage is below 90%")
             print("[!] setting expiry date..")
-            if config['backup_expiry_date'] != "Forever":
+            if config.get('backup_expiry_date') != "Forever":
                 backup_expiry_date(DESTINATION_PATH)
 
             file_name = f"{DESTINATION_PATH}{date.today()}.zip"
             compression_method = self.get_compression_method()
-            compression_level = config['compression_level']
+            compression_level = config.get('compression_level')
 
             encryption, self.password = None, None
-            if config['encryption'] and config['compression_method'] in ["ZIP_DEFLATED", "ZIP_STORED"]:
+            if config.get('encryption') and config.get('compression_method') in ["ZIP_DEFLATED", "ZIP_STORED"]:
                 encryption = pyzipper.WZ_AES
                 self.password = self.get_backup_password()
 
@@ -89,7 +89,7 @@ class Backup:
             "ZIP_BZIP2": pyzipper.ZIP_BZIP2,
             "ZIP_LZMA": pyzipper.ZIP_LZMA
         }
-        compression_method_key = config['compression_method']
+        compression_method_key = config.get('compression_method')
         compression_method = compression_mapping.get(compression_method_key)
         return compression_method
 
@@ -109,8 +109,8 @@ class Backup:
         """
         Upload zip file to the ftp server.
         """
-        if config['ftp']:
-            if config['ftp_hostname'] and config['ftp_username'] and config['ftp_password']:
+        if config.get('ftp'):
+            if config.get('ftp_hostname') and config.get('ftp_username') and config.get('ftp_password'):
                 FTP().backup_to_ftp_server(DESTINATION_PATH)
             else:
                 print(f"{F.LIGHTRED_EX}[*] FTP is enabled but credentials are missing in settings.json.")
