@@ -49,7 +49,7 @@ class SettingsWindow(QDialog):
         compression_level_combobox.addItems([str(i) for i in range(1, 10)])  # create a list of strings [1, 9]
         compression_level_combobox.setCurrentText(str(config.get('compression_level')))
         compression_level_combobox.setFixedSize(230, 30)
-        compression_level_combobox.currentTextChanged.connect(lambda choice: Combobox(key='compression_level', choice=choice))
+        compression_level_combobox.currentTextChanged.connect(lambda choice: Combobox(key='compression_level', choice=int(choice)))
         main_layout.addWidget(compression_level_combobox)
 
         # keep my backups label + combobox
@@ -73,11 +73,11 @@ class SettingsWindow(QDialog):
         encryption_switch.toggled.connect(lambda checked: Switch(key='encryption', value=checked))
         main_layout.addWidget(encryption_switch)
 
-        # ftp switch
-        ftp_switch = QCheckBox("Enable FTP")
-        ftp_switch.setFont(QFont('Helvetica', 10))
-        ftp_switch.setChecked(config.get('ftp'))
-        ftp_switch.toggled.connect(lambda checked: Switch(key='ftp', value=checked))
-        main_layout.addWidget(ftp_switch)
+        # sftp switch
+        sftp_switch = QCheckBox("Enable SFTP")
+        sftp_switch.setFont(QFont('Helvetica', 10))
+        sftp_switch.setChecked(config.get('sftp'))
+        sftp_switch.toggled.connect(lambda checked: Switch(key='sftp', value=checked))
+        main_layout.addWidget(sftp_switch)
 
         main_layout.addStretch()

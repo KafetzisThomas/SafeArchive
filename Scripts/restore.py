@@ -60,6 +60,7 @@ class RestoreWorker(QThread):
         finally:
             self.finished_signal.emit()
 
+
 class RestoreWindow(QDialog):
     def __init__(self, App, DESTINATION_PATH):
         super().__init__(App)
