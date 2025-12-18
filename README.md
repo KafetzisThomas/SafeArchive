@@ -8,17 +8,13 @@
 
 ## Features
 
-- [X] Backup files to your drive
-- [X] Supported compression methods: `ZIP_DEFLATED`, `ZIP_STORED`, `ZIP_LZMA`, `ZIP_BZIP2`
-- [X] Supported compression level range: **1-9**
-- [X] ZIP64 support for backup larger than **4 GiB**
+- [X] Backup to **local drives** or via `SFTP` (using **SSH**, **NAS friendly**)
+- [X] Supported compression: `DEFLATED`, `STORED`, `LZMA`, `BZIP2` (Levels **1-9**) and `ZIP64` (**>4GB**)
+- [X] Backup **encryption** and built-in **restoration**
 - [X] Automated backup expiry management
+- [X] Multi-threaded process
+- [X] Command line interface support
 - [ ] Automatic backups in the background (beta)
-- [X] Remote backups via `SFTP` (using **SSH**, **NAS friendly**)
-- [X] Multi-threaded backup process
-- [X] Command-line interface (CLI) support
-- [X] Real-time system notifications
-- [X] Backup **encryption** and **restoration**
 
 **Supported platforms:** `Windows`, `Linux`, `macOS`
 
