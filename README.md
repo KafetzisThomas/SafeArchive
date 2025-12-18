@@ -14,7 +14,7 @@
 - [X] ZIP64 support for backup larger than **4 GiB**
 - [X] Automated backup expiry management
 - [ ] Automatic backups in the background (beta)
-- [X] Remote Backup: `SFTP` (**NAS Support**)
+- [X] Remote backups via `SFTP` (using **SSH**, **NAS friendly**)
 - [X] Multi-threaded backup process
 - [X] Command-line interface (CLI) support
 - [X] Real-time system notifications
