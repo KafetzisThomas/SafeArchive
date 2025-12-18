@@ -14,7 +14,7 @@
 - [X] ZIP64 support for backup larger than **4 GiB**
 - [X] Automated backup expiry management
 - [ ] Automatic backups in the background (beta)
-- [X] Remote Backup: `FTP` (**NAS Support**)
+- [X] Remote Backup: `SFTP` (**NAS Support**)
 - [X] Multi-threaded backup process
 - [X] Command-line interface (CLI) support
 - [X] Real-time system notifications
@@ -43,9 +43,9 @@ You can create a standalone executable using pyinstaller:
 pyinstaller main.spec
 ```
 
-## Setup for FTP Server
+## Setup for SFTP Server
 
-1. Enable the `FTP` switch within the application settings or set the `"ftp"` value to `true` in `settings.json`.
+1. Enable the `SFTP` switch within the application settings or set the `"sftp"` value to `true` in `settings.json`.
 
 2. Configure your credentials (**hostname**, **username**, **password**) directly in `settings.json`.
 

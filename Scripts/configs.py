@@ -15,14 +15,15 @@ DEFAULT_CONFIG = {
         os.path.abspath(os.sep).replace("\\", "/") if platform.system() == "Windows" else str(Path("~").expanduser())
     ),
     "compression_method": "ZIP_DEFLATED",  # type: string
-    "compression_level": "5",  # 1: fast process, 9: small file size, type: integer
+    "compression_level": 5,  # 1: fast process, 9: small file size, type: integer
     "backup_expiry_date": "Forever",  # type: string
     "backup_interval": False,  # automatic backup frequency (specify: hours), type: boolean
     "encryption": False,  # type: boolean
-    "ftp": False,  # type: boolean
-    "ftp_hostname": "",  # type: string
-    "ftp_username": "",  # type: string
-    "ftp_password": "",  # type: string
+    "sftp": False,  # type: boolean
+    "sftp_hostname": "",  # type: string
+    "sftp_username": "",  # type: string
+    "sftp_password": "",  # type: string
+    "sftp_port": 22,  # type: integer
 }
 
 class Config:

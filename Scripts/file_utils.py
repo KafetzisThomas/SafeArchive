@@ -111,9 +111,8 @@ def backup_expiry_date(DESTINATION_PATH):
     for filename in os.listdir(DESTINATION_PATH):
         filepath = os.path.join(DESTINATION_PATH, filename)
 
-        modification_time = datetime.datetime.fromtimestamp(
-            # get the modification time of the file
-            os.path.getmtime(filepath))
+        # get the modification time of the file
+        modification_time = datetime.datetime.fromtimestamp(os.path.getmtime(filepath))
 
         if config.get('backup_expiry_date') == "1 month":
             days = 30

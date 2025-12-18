@@ -4,7 +4,7 @@ from datetime import date
 from pyzipper import BadZipFile
 from PyQt6.QtCore import QThread, pyqtSignal
 from PyQt6.QtWidgets import QApplication, QInputDialog, QLineEdit
-from .remote_utils import FTP
+from .remote_utils import SFTP
 from .file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
 from .configs import config
 
@@ -29,9 +29,9 @@ class BackupWorker(QThread):
     def run(self):
         """
         Zip source path files to destination path:
-            - Supported compression methods: ZIP_DEFLATED, ZIP_STORED, ZIP_LZMA, ZIP_BZIP2.
-            - Enabled Zip64 (this parameter use the ZIP64 extensions when the zip file is larger than 4GiB).
-            - Set compression level (1: fast ... 9: saves storage space).
+        - Supported compression methods: ZIP_DEFLATED, ZIP_STORED, ZIP_LZMA, ZIP_BZIP2.
+        - Enabled Zip64 (this parameter use the ZIP64 extensions when the zip file is larger than 4GiB).
+        - Set compression level (1: fast process, 9: small file size).
         """
         self.started_signal.emit()
         if get_drive_usage_percentage() <= 90:
@@ -64,7 +64,7 @@ class BackupWorker(QThread):
             "ZIP_BZIP2": pyzipper.ZIP_BZIP2, "ZIP_LZMA": pyzipper.ZIP_LZMA
         }
         compression_method = compression_mapping.get(config.get('compression_method'), pyzipper.ZIP_DEFLATED)
-        compression_level = int(config.get('compression_level'))
+        compression_level = config.get('compression_level')
 
         encryption = None
         if config.get('encryption') and config.get('compression_method') in ["ZIP_DEFLATED", "ZIP_STORED"]:
@@ -101,13 +101,13 @@ class BackupWorker(QThread):
 
     def upload_to_remote(self):
         """
-        Upload zip file to the ftp server.
+        Upload zip file to the sftp server.
         """
-        if config.get('ftp'):
-            if config.get('ftp_hostname') and config.get('ftp_username') and config.get('ftp_password'):
-                FTP().backup_to_ftp_server(self.destination_path)
+        if config.get('sftp'):
+            if config.get('sftp_hostname') and config.get('sftp_username') and config.get('sftp_password'):
+                SFTP().backup_to_sftp_server(self.destination_path)
             else:
-                raise Exception("FTP is enabled but credentials are missing in settings.json.")
+                raise Exception("SFTP is enabled but credentials are missing in settings.json.")
 
 def get_backup_password():
     """

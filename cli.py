@@ -55,10 +55,11 @@ if choice == 1:
         "Backup expiry date": config.get('backup_expiry_date'),
         "Backup interval": config.get('backup_interval'),
         "Encryption": config.get('encryption'),
-        "ftp": config.get('ftp'),
-        "FTP hostname": config.get('ftp_hostname'),
-        "FTP username": config.get('ftp_username'),
-        "FTP password": config.get('ftp_password'),
+        "SFTP enabled": config.get('sftp'),
+        "SFTP hostname": config.get('sftp_hostname'),
+        "SFTP username": config.get('sftp_username'),
+        "SFTP password": config.get('sftp_password'),
+        "SFTP port": config.get('sftp_port'),
     }
     print("Config Info:\n")
     for key, value in config_fields.items():

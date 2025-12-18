@@ -6,7 +6,7 @@ import colorama
 from datetime import date
 from pyzipper import BadZipFile
 from ..file_utils import get_drive_usage_percentage, backup_expiry_date, last_backup
-from ..remote_utils import FTP
+from ..remote_utils import SFTP
 from ..configs import config
 from getpass import getpass
 from colorama import Fore as F
@@ -19,10 +19,10 @@ class Backup:
     """
     def zip_files(self, SOURCE_PATHS, DESTINATION_PATH):
         """
-        Zip (backup) source path files to destination path:
-            - Supported compression methods: ZIP_DEFLATED, ZIP_STORED, ZIP_LZMA, ZIP_BZIP2.
-            - Enabled Zip64 (this parameter use the ZIP64 extensions when the zip file is larger than 4GiB).
-            - Set compression level (1: fast ... 9: saves storage space).
+        Zip source path files to destination path:
+        - Supported compression methods: ZIP_DEFLATED, ZIP_STORED, ZIP_LZMA, ZIP_BZIP2.
+        - Enabled Zip64 (this parameter use the ZIP64 extensions when the zip file is larger than 4GiB).
+        - Set compression level (1: fast process, 9: small file size).
         """
         print("[!] backup init")
         if get_drive_usage_percentage() <= 90:
@@ -31,7 +31,7 @@ class Backup:
             if config.get('backup_expiry_date') != "Forever":
                 backup_expiry_date(DESTINATION_PATH)
 
-            file_name = f"{DESTINATION_PATH}{date.today()}.zip"
+            filename = f"{DESTINATION_PATH}{date.today()}.zip"
             compression_method = self.get_compression_method()
             compression_level = config.get('compression_level')
 
@@ -41,7 +41,8 @@ class Backup:
                 self.password = self.get_backup_password()
 
             print("[!] Opening zipfile in write mode")
-            with pyzipper.AESZipFile(file=file_name, mode='w', compression=compression_method, encryption=encryption, allowZip64=True, compresslevel=int(compression_level)) as zipObj:
+            with pyzipper.AESZipFile(file=filename, mode='w', compression=compression_method, encryption=encryption,
+                                     allowZip64=True, compresslevel=compression_level) as zipObj:
                 try:
                     if self.password:
                         zipObj.setpassword(self.password)
@@ -107,13 +108,13 @@ class Backup:
 
     def upload_to_remote(self, DESTINATION_PATH):
         """
-        Upload zip file to the ftp server.
+        Upload zip file to the sftp server.
         """
-        if config.get('ftp'):
-            if config.get('ftp_hostname') and config.get('ftp_username') and config.get('ftp_password'):
-                FTP().backup_to_ftp_server(DESTINATION_PATH)
+        if config.get('sftp'):
+            if config.get('sftp_hostname') and config.get('sftp_username') and config.get('sftp_password'):
+                SFTP().backup_to_sftp_server(DESTINATION_PATH)
             else:
-                print(f"{F.LIGHTRED_EX}[*] FTP is enabled but credentials are missing in settings.json.")
+                print(f"{F.LIGHTRED_EX}[*] SFTP is enabled but credentials are missing in settings.json.")
 
     def get_backup_password(self):
         """
