@@ -27,7 +27,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, QProgressBar, QPushButton, QMessageBox, QWidget, QHBoxLayout,
 )
 
-version = "1.5.0"
+version = "2.0.0"
 
 DESTINATION_PATH = config.get("destination_path") + "SafeArchive/"
 
