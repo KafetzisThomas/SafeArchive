@@ -11,7 +11,7 @@ dependencies = [
     "paramiko>=4.0.0",
     "prettytable==3.17.0",
     "psutil==7.2.2",
-    "pyinstaller>=6.17.0",
+    "pyinstaller>=6.20.0",
     "pyqt6>=6.10.1",
     "pyzipper==0.3.6",
     "qtawesome>=1.4.0",
