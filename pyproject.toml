@@ -14,6 +14,6 @@ dependencies = [
     "pyinstaller>=6.17.0",
     "pyqt6>=6.10.1",
     "pyzipper==0.3.6",
-    "qtawesome>=1.4.0",
+    "qtawesome>=1.4.2",
     "schedule==1.2.2",
 ]
