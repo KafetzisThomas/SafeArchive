@@ -9,7 +9,7 @@ dependencies = [
     "colorama==0.4.6",
     "humanize==4.16.0",
     "paramiko>=5.0.0",
-    "prettytable==3.17.0",
+    "prettytable==3.18.0",
     "psutil==7.2.2",
     "pyinstaller>=6.21.0",
     "pyqt6>=6.10.1",
